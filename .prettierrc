@@ -1,0 +1,14 @@
+{
+  "arrowParens": "avoid",
+  "semi": true,
+  "useTabs": false,
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "bracketSameLine": false,
+  "parser": "typescript",
+  "endOfLine": "lf",
+  "requirePragma": false,
+  "prettier.cssEnable": ["css", "less", "scss", "sass"]
+}

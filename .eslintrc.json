@@ -1,0 +1,230 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "airbnb",
+    "airbnb-typescript/base",
+    "eslint:recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true,
+    "jest": true
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "typescript-names",
+    "react-hooks",
+    "prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": [
+      "./tsconfig.json"
+    ],
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "no-undef": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-shadow": "warn",
+    "no-import-assign": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".tsx",
+          ".ts"
+        ]
+      }
+    ],
+    "react/require-default-props": "off",
+    "react/destructuring-assignment": "off",
+    "@typescript-eslint/lines-between-class-members": "off",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+    "typescript-names/enum-name": [
+      "warn",
+      {
+        "declarations": "PascalCase",
+        "members": "PascalCase"
+      }
+    ],
+    "arrow-parens": [
+      "warn",
+      "as-needed"
+    ],
+    "linebreak-style": [
+      "warn",
+      "unix"
+    ],
+    "import/no-unresolved": 0,
+    "arrow-body-style": 1,
+    "prefer-template": 1,
+    "@typescript-eslint/consistent-type-assertions": 0,
+    "@typescript-eslint/interface-name-prefix": 0,
+    "@typescript-eslint/no-unused-expressions": 0,
+    "prefer-const": 0,
+    "eqeqeq": 1,
+    "valid-typeof": 1,
+    "no-unused-expressions": 0,
+    "no-param-reassign": [
+      "warn",
+      {
+        "props": false
+      }
+    ],
+    "no-new-wrappers": 2,
+    "no-redeclare": 1,
+    "no-empty": 1,
+    "import/no-extraneous-dependencies": 0,
+    "no-fallthrough": 2,
+    "@typescript-eslint/no-unused-vars": 1,
+    "no-var": 1,
+    "no-void": 1,
+    "no-shadow": 1,
+    "eol-last": [
+      1,
+      "always"
+    ],
+    "comma-dangle": [
+      1,
+      "only-multiline"
+    ],
+    "lines-between-class-members": [
+      1,
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "@typescript-eslint/no-inferrable-types": 0,
+    "implicit-arrow-linebreak": "off",
+    "@typescript-eslint/naming-convention": "off",
+    // next rules added because packs of errors in project
+    "@typescript-eslint/no-use-before-define": 1,
+    "@typescript-eslint/type-annotation-spacing": 1,
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/member-delimiter-style": 1,
+    "@typescript-eslint/brace-style": 1,
+    "@typescript-eslint/ban-types": 1,
+    "@typescript-eslint/no-empty-interface": 1,
+    "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true,
+        "allowHigherOrderFunctions": true
+      }
+    ],
+    "import/prefer-default-export": 0,
+    "import/extensions": 0,
+    "import/no-webpack-loader-syntax": 0,
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "tabWidth": 2,
+        "ignoreComments": true,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ],
+    "no-unused-vars": 1,
+    "no-irregular-whitespace": [
+      "error",
+      {
+        "skipStrings": true,
+        "skipComments": true,
+        "skipRegExps": true,
+        "skipTemplates": true
+      }
+    ],
+    "no-return-assign": 0,
+    "import/order": 0,
+    "no-return-await": 0,
+    "quotes": 1,
+    "import/named": 1,
+    "function-paren-newline": 0,
+    "prefer-destructuring": 0,
+    "no-extra-boolean-cast": 0,
+    "class-methods-use-this": 0,
+    "object-curly-spacing": 1,
+    "consistent-return": 1,
+    "import/export": 1,
+    "padded-blocks": 1,
+    "no-useless-escape": 0,
+    "import/no-cycle": 1,
+    "no-trailing-spaces": 1,
+    "default-case": 1,
+    "no-restricted-globals": 1,
+    "react/prop-types": 1,
+    "react/display-name": 0,
+    "max-classes-per-file": 0,
+    "import/no-useless-path-segments": 1,
+    "object-property-newline": 1,
+    "no-mixed-operators": 1,
+    "require-atomic-updates": 1,
+    "no-plusplus": 0,
+    "no-restricted-syntax": 0,
+    "no-await-in-loop": 0,
+    "no-multi-assign": 1,
+    "no-nested-ternary": 0,
+    "arrow-spacing": 1,
+    "import/first": 1,
+    "no-case-declarations": 1,
+    "react/jsx-key": 1,
+    "no-sequences": 1,
+    "space-infix-ops": 1,
+    "no-async-promise-executor": 1,
+    "operator-assignment": 1,
+    "no-useless-return": 1,
+    "generator-star-spacing": 1,
+    "no-sparse-arrays": 1,
+    "comma-style": 1,
+    "react/jsx-no-undef": 1,
+    "prettier/prettier": 1,
+    "spaced-comment": 0,
+    "object-curly-newline": 0,
+    "operator-linebreak": 0,
+    "no-underscore-dangle": 0,
+    "no-confusing-arrow": 0,
+    "react/jsx-no-target-blank": 0,
+    "no-lonely-if": 0,
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "error"
+        ]
+      }
+    ],
+    "no-bitwise": 0,
+    "@typescript-eslint/no-explicit-any": "off",
+    "react/jsx-pascal-case": "off",
+    "import/no-mutable-exports": "off",
+    "no-continue": "off",
+    "no-constant-condition": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/no-array-index-key": "warn",
+    "react/function-component-definition": 0,
+    "react/jsx-no-useless-fragment": 0
+  }
+}
