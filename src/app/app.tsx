@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Loader from './components/loader/loader';
+import TechnicalIssues from './components/technical-issues/technical-issues';
 // import Loader from './components/loader/loader';
 import { BootState } from './constants/boot-state';
 import RouterComponent from './routes/router-component';
@@ -11,10 +13,10 @@ import {
   FirebaseStore,
   FirebaseContext,
 } from './stores/firebase-store/firebase-store';
-// import {
-//   MainPageStore,
-//   MainPageStoreContext,
-// } from './stores/main-page-store/main-page-store';
+import {
+  MainPageStore,
+  MainPageStoreContext,
+} from './stores/main-page-store/main-page-store';
 // import {
 //   ProfileStore,
 //   ProfileStoreContext,
@@ -26,7 +28,7 @@ const App = (): JSX.Element | null => {
   const [firebaseStore, setFirebaseStore] = useState<FirebaseStore>();
   // const [adminStore, setAdminStore] = useState<AdminStore>();
   // const [profileStore, setProfileStore] = useState<ProfileStore>();
-  // const [mainPageStore, setMainPageStore] = useState<MainPageStore>();
+  const [mainPageStore, setMainPageStore] = useState<MainPageStore>();
 
   useEffect(() => {
     setBootState(BootState.Loading);
@@ -34,13 +36,13 @@ const App = (): JSX.Element | null => {
     const firebase = new FirebaseStore();
     // const adminPagesStore = new AdminStore(firebase);
     // const profilePageStore = new ProfileStore(firebase);
-    // const mainStore = new MainPageStore(firebase);
+    const mainStore = new MainPageStore(firebase);
 
     try {
       setFirebaseStore(firebase);
       // setAdminStore(adminPagesStore);
       // setProfileStore(profilePageStore);
-      // setMainPageStore(mainStore);
+      setMainPageStore(mainStore);
       setBootState(BootState.Success);
     } catch {
       setBootState(BootState.Error);
@@ -54,7 +56,9 @@ const App = (): JSX.Element | null => {
         <FirebaseContext.Provider value={firebaseStore}>
           <ThemeStoreProvider>
             <AuthStoreProvider>
-              <RouterComponent />
+              <MainPageStoreContext.Provider value={mainPageStore}>
+                <RouterComponent />
+              </MainPageStoreContext.Provider>
               {/* <AdminStoreContext.Provider value={adminStore}>
                 <ProfileStoreContext.Provider value={profileStore}>
                   <MainPageStoreContext.Provider value={mainPageStore}>
@@ -67,9 +71,15 @@ const App = (): JSX.Element | null => {
         </FirebaseContext.Provider>
       );
     case BootState.Loading:
-      return <p>...loading</p>;
+      return <Loader />;
     case BootState.Error:
-      return <div>error in initiation</div>;
+      return (
+        <TechnicalIssues
+          code=""
+          header="Ошибка"
+          message="При рендере приложения возникла ошибка, перезагрузите"
+        />
+      );
     default:
       return null;
   }

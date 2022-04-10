@@ -1,5 +1,6 @@
 import ErrorBoundary from 'app/components/error-boundary/error-boundary';
 import Header from 'app/components/header/header';
+import Loader from 'app/components/loader/loader';
 // import Loader from 'app/components/loader/loader';
 // import Header from 'app/containers/header/header';
 import React, { lazy, Suspense } from 'react';
@@ -45,7 +46,7 @@ const RouterComponent = (): JSX.Element => (
   <Router>
     <ErrorBoundary>
       <Header />
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<Loader />}>
         <Switch>
           <Route exact path={Routes.SIGN_IN} component={SignInPage} />
           <Route exact path={Routes.SIGN_UP} component={SignUpPage} />

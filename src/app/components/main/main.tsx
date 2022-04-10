@@ -1,5 +1,9 @@
 import { Box } from '@mui/material';
+import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import React from 'react';
+import Container from '../container/container';
+import DrawerContent from '../header/sub-components/drawer-content';
+import { Aside } from './sub-components/styled-elements';
 
 interface Props {
   children: JSX.Element | JSX.Element[];
@@ -7,8 +11,16 @@ interface Props {
 
 const Main = (props: Props): JSX.Element => {
   const { children } = props;
+  const { userInfo } = useAuthStore();
 
-  return <Box component="main">{children}</Box>;
+  return (
+    <Container sx={{ display: 'flex', flexGrow: 1 }}>
+      <Aside component="aside">
+        <DrawerContent isAdmin={userInfo ? userInfo.isSuperAdmin : undefined} />
+      </Aside>
+      <Box component="main">{children}</Box>
+    </Container>
+  );
 };
 
 export default Main;

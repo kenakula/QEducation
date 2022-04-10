@@ -12,6 +12,10 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "downlevelIteration": true,
+    "typeRoots": [
+      "./src/custom.d.ts",
+      "./node_modules/@types"
+    ],
     "lib": [
       "esnext",
       "dom"

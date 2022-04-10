@@ -1,20 +1,20 @@
-import { Box } from '@mui/material';
+import { Box, styled } from '@mui/material';
 import { ColorMode, useThemeStore } from 'app/stores/theme-store/theme-store';
 import React from 'react';
 import './style.scss';
+
+const LoaderContaienr = styled(Box)(({ theme }) => ({
+  ...theme.typography.body1,
+  '& div::after': {
+    background: theme.palette.text.primary,
+  },
+}));
 
 const Loader = (): JSX.Element => {
   const { mode } = useThemeStore();
 
   return (
-    <Box
-      className="lds-spinner"
-      sx={{
-        '& div:after': {
-          background: mode === ColorMode.Light ? '#222222' : '#F9F8F8',
-        },
-      }}
-    >
+    <LoaderContaienr className="lds-spinner">
       <div />
       <div />
       <div />
@@ -27,7 +27,7 @@ const Loader = (): JSX.Element => {
       <div />
       <div />
       <div />
-    </Box>
+    </LoaderContaienr>
   );
 };
 

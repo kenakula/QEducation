@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { createTheme, CssBaseline } from '@mui/material';
+import { createTheme, CssBaseline, PaletteColorOptions } from '@mui/material';
 import { Theme } from '@mui/system';
 import React, { useContext, useMemo, useState } from 'react';
 
@@ -30,6 +30,13 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
 
   const [mode, setMode] = useState<ColorMode>(ColorMode.Light);
 
+  const primaryColor: PaletteColorOptions = {
+    main: '#00bfa6',
+    light: '#00f5d4',
+    dark: '#008f7c',
+    contrastText: '#ffffff',
+  };
+
   const theme = useMemo(
     () =>
       createTheme({
@@ -45,6 +52,7 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
           background: {
             default: mode === ColorMode.Dark ? '#222222' : '#fffdfc',
           },
+          primary: primaryColor,
         },
       }),
     [mode],

@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component<any, StateProps> {
       // Error path
       return (
         <div style={{ padding: '0 20px' }}>
-          <h2>Something went wrong.</h2>
+          <h2>Что-то не так</h2>
           <details style={{ whiteSpace: 'pre-wrap' }}>
             {this.state.error && this.state.error.toString()}
             <br />

@@ -6,26 +6,18 @@ import {
   deleteDoc,
   doc,
   DocumentData,
-  DocumentSnapshot,
-  enableIndexedDbPersistence,
   Firestore,
   getDoc,
   getDocs,
   getFirestore,
-  onSnapshot,
   query,
   setDoc,
-  Unsubscribe,
   updateDoc,
   where,
-  WhereFilterOp,
 } from 'firebase/firestore';
 import React from 'react';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
-import {
-  firebaseProdConfig,
-  firebaseTestConfig,
-} from 'app/constants/firebase-config';
+import { firebaseProdConfig } from 'app/constants/firebase-config';
 
 export class FirebaseStore {
   app: FirebaseApp;
@@ -35,15 +27,8 @@ export class FirebaseStore {
   constructor() {
     this.app = initializeApp(firebaseProdConfig);
     this.store = getFirestore();
-    enableIndexedDbPersistence(this.store).catch(err => {
-      if (err.code === 'failed-precondition') {
-        console.error('multiple tab open');
-      } else if (err.code === 'unimplemented') {
-        console.error('Ваш браузер не поддерживает оффлайн режим');
-      }
-    });
-
     this.auth = getAuth(this.app);
+
     makeAutoObservable(this);
   }
 
