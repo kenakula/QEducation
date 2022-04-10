@@ -11,14 +11,8 @@ import { Routes } from './routes';
 const LandingPage = lazy(() => import('app/pages/landing-page/landing-page'));
 const SignInPage = lazy(() => import('app/pages/sign-in-page/sign-in-page'));
 const SignUpPage = lazy(() => import('app/pages/sign-up-page/sign-up-page'));
-// const RestorePasswordPage = lazy(
-//   () => import('app/pages/restore-password-page/restore-password-page'),
-// );
-// const NotFoundPage = lazy(
-//   () => import('app/pages/not-found-page/not-found-page'),
-// );
 const MainPage = lazy(() => import('app/pages/main-page/main-page'));
-// const ProfilePage = lazy(() => import('app/pages/profile-page/profile-page'));
+const ProfilePage = lazy(() => import('app/pages/profile-page/profile-page'));
 // const CategoryPage = lazy(
 //   () => import('app/pages/category-page/category-page'),
 // );
@@ -26,18 +20,18 @@ const MainPage = lazy(() => import('app/pages/main-page/main-page'));
 //   () => import('app/pages/single-article-page/single-article-page'),
 // );
 // const TestsPage = lazy(() => import('app/pages/tests-page/tests-page'));
-// const AdminStaffPage = lazy(
-//   () => import('app/pages/admin-staff-page/admin-staff-page'),
-// );
-// const StaffDetailsPage = lazy(
-//   () => import('app/pages/staff-details-page/staff-details-page'),
-// );
-// const AdminArticlesPage = lazy(
-//   () => import('app/pages/admin-articles-page/admin-articles-page'),
-// );
-// const AdminArticlesEditor = lazy(
-//   () => import('app/pages/admin-articles-editor/admin-articles-editor'),
-// );
+const AdminStaffPage = lazy(
+  () => import('app/pages/admin-staff-page/admin-staff-page'),
+);
+const StaffDetailsPage = lazy(
+  () => import('app/pages/staff-details-page/staff-details-page'),
+);
+const AdminArticlesPage = lazy(
+  () => import('app/pages/admin-articles-page/admin-articles-page'),
+);
+const AdminArticlesEditor = lazy(
+  () => import('app/pages/admin-articles-editor/admin-articles-editor'),
+);
 // const AdminListsPage = lazy(
 //   () => import('app/pages/admin-lists-page/admin-lists-page'),
 // );
@@ -50,15 +44,11 @@ const RouterComponent = (): JSX.Element => (
         <Switch>
           <Route exact path={Routes.SIGN_IN} component={SignInPage} />
           <Route exact path={Routes.SIGN_UP} component={SignUpPage} />
-          {/* <Route
-            exact
-            path={Routes.RESTORE_PASSWORD}
-            component={RestorePasswordPage}
-          /> */}
           <Route exact path={Routes.LANDING} component={LandingPage} />
 
           <PrivateRoute exact path={Routes.MAIN} component={MainPage} />
-          {/* <PrivateRoute exact path={Routes.PROFILE} component={ProfilePage} /> */}
+          <PrivateRoute exact path={Routes.MAIN_TAB} component={MainPage} />
+          <PrivateRoute exact path={Routes.PROFILE} component={ProfilePage} />
           {/* <PrivateRoute
             exact
             path={Routes.CATEGORY_ARTICLES}
@@ -74,33 +64,32 @@ const RouterComponent = (): JSX.Element => (
             path={Routes.ARTICLE_PAGE}
             component={SingleArticlePage}
           /> */}
-          {/* <PrivateRoute exact path={Routes.TESTS} component={TestsPage} /> */}
 
           {/* admin */}
-          {/* <PrivateRoute
+          <PrivateRoute
             exact
             adminRoute
             path={Routes.ADMIN_STAFF}
             component={AdminStaffPage}
-          /> */}
-          {/* <PrivateRoute
+          />
+          <PrivateRoute
             exact
             adminRoute
             path={Routes.ADMIN_STAFF_DETAILS}
             component={StaffDetailsPage}
-          /> */}
-          {/* <PrivateRoute
+          />
+          <PrivateRoute
             exact
             adminRoute
             path={Routes.ADMIN_ARTICLES}
             component={AdminArticlesPage}
-          /> */}
-          {/* <PrivateRoute
+          />
+          <PrivateRoute
             exact
             adminRoute
             path={Routes.ADMIN_ARTICLES_EDITOR}
             component={AdminArticlesEditor}
-          /> */}
+          />
           {/* <PrivateRoute
             exact
             adminRoute

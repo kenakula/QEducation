@@ -17,6 +17,7 @@ export class MainPageStore {
 
   public currentUserTab: string = userTabs[0].value;
   public profileInfo: UserModel;
+  public profileInfoUpdating: boolean = false;
   public categories: Category[] = [];
   public categoriesLoadState: BootState = BootState.None;
   public articles: ArticleModel[] = [];
@@ -36,6 +37,18 @@ export class MainPageStore {
           }
         });
     }
+  };
+
+  updateUserInfo = async (id: string, data: UserModel): Promise<void> => {
+    this.profileInfoUpdating = true;
+
+    await this.firebase
+      .updateDocument(FirestoreCollection.Users, id, data)
+      .then(() => {
+        runInAction(() => {
+          this.profileInfoUpdating = false;
+        });
+      });
   };
 
   fetchCategories = async (): Promise<void> => {
@@ -88,6 +101,7 @@ export class MainPageStore {
 
     try {
       await this.fetchUserInfo();
+      await this.fetchCategories();
 
       runInAction(() => (this._bootState = BootState.Success));
     } catch (error) {

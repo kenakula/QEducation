@@ -54,6 +54,7 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
             size="small"
             aria-label="show 17 new notifications"
             color="default"
+            sx={{ mr: 2 }}
           >
             <Badge badgeContent={0} color="error">
               <NotificationsIcon />
@@ -62,7 +63,7 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
           {userInfo ? (
             <>
               <IconButton
-                size="large"
+                size="small"
                 edge="end"
                 aria-label="account of current user"
                 aria-controls={menuId}

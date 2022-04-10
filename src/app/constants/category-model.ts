@@ -1,16 +1,11 @@
-export interface RoadMapArticle {
-  title: string;
-  id: string;
-}
-
-export interface RoadMap {
+export interface CategoryArticle {
   title: string;
   description: string;
-  articles: RoadMapArticle[];
+  id: string;
 }
 
 export interface Category {
   label: string;
   description: string;
-  roadMaps: RoadMap[];
+  articles: CategoryArticle[];
 }

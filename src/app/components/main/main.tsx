@@ -18,7 +18,9 @@ const Main = (props: Props): JSX.Element => {
       <Aside component="aside">
         <DrawerContent isAdmin={userInfo ? userInfo.isSuperAdmin : undefined} />
       </Aside>
-      <Box component="main">{children}</Box>
+      <Box component="main" sx={{ width: '100%', paddingTop: '40px' }}>
+        {children}
+      </Box>
     </Container>
   );
 };

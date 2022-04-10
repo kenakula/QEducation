@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Loader from './components/loader/loader';
 import TechnicalIssues from './components/technical-issues/technical-issues';
-// import Loader from './components/loader/loader';
 import { BootState } from './constants/boot-state';
 import RouterComponent from './routes/router-component';
-// import {
-//   AdminStore,
-//   AdminStoreContext,
-// } from './stores/admin-store/admin-store';
+import {
+  AdminStore,
+  AdminStoreContext,
+} from './stores/admin-store/admin-store';
 import { AuthStoreProvider } from './stores/auth-store/auth-store';
 import {
   FirebaseStore,
@@ -17,31 +16,24 @@ import {
   MainPageStore,
   MainPageStoreContext,
 } from './stores/main-page-store/main-page-store';
-// import {
-//   ProfileStore,
-//   ProfileStoreContext,
-// } from './stores/profile-store/profile-store';
 import { ThemeStoreProvider } from './stores/theme-store/theme-store';
 
 const App = (): JSX.Element | null => {
   const [bootState, setBootState] = useState<BootState>(BootState.None);
   const [firebaseStore, setFirebaseStore] = useState<FirebaseStore>();
-  // const [adminStore, setAdminStore] = useState<AdminStore>();
-  // const [profileStore, setProfileStore] = useState<ProfileStore>();
+  const [adminStore, setAdminStore] = useState<AdminStore>();
   const [mainPageStore, setMainPageStore] = useState<MainPageStore>();
 
   useEffect(() => {
     setBootState(BootState.Loading);
 
     const firebase = new FirebaseStore();
-    // const adminPagesStore = new AdminStore(firebase);
-    // const profilePageStore = new ProfileStore(firebase);
+    const adminPagesStore = new AdminStore(firebase);
     const mainStore = new MainPageStore(firebase);
 
     try {
       setFirebaseStore(firebase);
-      // setAdminStore(adminPagesStore);
-      // setProfileStore(profilePageStore);
+      setAdminStore(adminPagesStore);
       setMainPageStore(mainStore);
       setBootState(BootState.Success);
     } catch {
@@ -56,16 +48,11 @@ const App = (): JSX.Element | null => {
         <FirebaseContext.Provider value={firebaseStore}>
           <ThemeStoreProvider>
             <AuthStoreProvider>
-              <MainPageStoreContext.Provider value={mainPageStore}>
-                <RouterComponent />
-              </MainPageStoreContext.Provider>
-              {/* <AdminStoreContext.Provider value={adminStore}>
-                <ProfileStoreContext.Provider value={profileStore}>
-                  <MainPageStoreContext.Provider value={mainPageStore}>
-                    <RouterComponent />
-                  </MainPageStoreContext.Provider>
-                </ProfileStoreContext.Provider>
-              </AdminStoreContext.Provider> */}
+              <AdminStoreContext.Provider value={adminStore}>
+                <MainPageStoreContext.Provider value={mainPageStore}>
+                  <RouterComponent />
+                </MainPageStoreContext.Provider>
+              </AdminStoreContext.Provider>
             </AuthStoreProvider>
           </ThemeStoreProvider>
         </FirebaseContext.Provider>
