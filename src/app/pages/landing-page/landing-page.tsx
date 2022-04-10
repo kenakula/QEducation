@@ -31,13 +31,13 @@ const LandingPage = (): JSX.Element => {
               >
                 Начать учиться
               </Button>
-            ) : (
+            ) : authState === AuthStates.NotAuthorized ? (
               <Typography color="text.secondary">
                 Чтобы получить доступ к материалам, пожалуйста,{' '}
                 <Link to={Routes.SIGN_IN}>войдите</Link> в свой профиль или
                 <Link to={Routes.SIGN_UP}>зарегистрируйтесь</Link>.
               </Typography>
-            )}
+            ) : null}
           </Grid>
           <Grid item sm={4}>
             <EducationIcon />

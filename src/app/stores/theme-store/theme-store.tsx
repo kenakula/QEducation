@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme, CssBaseline, PaletteColorOptions } from '@mui/material';
 import { Theme } from '@mui/system';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line no-shadow
 export enum ColorMode {
@@ -30,6 +30,14 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
 
   const [mode, setMode] = useState<ColorMode>(ColorMode.Light);
 
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('theme');
+
+    if (storedTheme) {
+      setMode(storedTheme as ColorMode);
+    }
+  }, []);
+
   const primaryColor: PaletteColorOptions = {
     main: '#00bfa6',
     light: '#00f5d4',
@@ -50,7 +58,7 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
         palette: {
           mode,
           background: {
-            default: mode === ColorMode.Dark ? '#222222' : '#fffdfc',
+            default: mode === ColorMode.Dark ? '#212738' : '#FDFFFC',
           },
           primary: primaryColor,
         },
@@ -59,9 +67,14 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
   );
 
   const toggleColorMode = (): void => {
-    setMode((prev: ColorMode) =>
-      prev === ColorMode.Light ? ColorMode.Dark : ColorMode.Light,
-    );
+    setMode((prev: ColorMode) => {
+      const newMode =
+        prev === ColorMode.Light ? ColorMode.Dark : ColorMode.Light;
+
+      localStorage.setItem('theme', newMode);
+
+      return newMode;
+    });
   };
 
   const value = useMemo(
