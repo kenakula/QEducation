@@ -9,6 +9,9 @@ export const PromoBlock = styled(Box)(({ theme }) => ({
     alignItems: 'center',
     padding: `${theme.spacing(6)} 0`,
   },
+  [theme.breakpoints.up('lg')]: {
+    padding: `${theme.spacing(6)} ${theme.spacing(4)}`,
+  },
 
   '& > .MuiButton-root': {
     alignSelf: 'flex-start',

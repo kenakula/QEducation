@@ -7,7 +7,7 @@ import { UserRole } from 'app/constants/user-roles';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, useHistory } from 'react-router-dom';
 import { ReactComponent as ArticleImage } from 'assets/images/article-image.svg';
 import {
   CategoriesContainer,
@@ -20,7 +20,6 @@ import { Category } from 'app/constants/category-model';
 import TabsComponent, {
   TabsItem,
 } from 'app/components/tabs-component/tabs-component';
-import qs from 'qs';
 import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
 import Construction from 'app/components/construction/construction';
@@ -71,23 +70,31 @@ const MainPage = observer((): JSX.Element => {
   const store = useMainPageStore();
 
   const history = useHistory();
-  const location = useLocation();
 
   const [currentRoleTab, setCurrentRoleTab] = useState<UserRole>(
-    UserRole.Doctor,
+    ((store.pageParams && store.pageParams.role) as UserRole) ??
+      UserRole.Doctor,
   );
   const [currentContentTab, setCurrentContentTab] = useState<PageContentType>(
-    PageContentType.Articles,
+    ((store.pageParams && store.pageParams.content) as PageContentType) ??
+      PageContentType.Articles,
   );
 
   useEffect(() => {
     store.init();
   }, [store]);
 
+  useEffect(() => {
+    if (store.profileInfo && !store.profileInfo.isSuperAdmin) {
+      setCurrentRoleTab(store.profileInfo.role);
+    }
+  }, [store.profileInfo]);
+
   const handleRoleTabChange = (
     event: React.SyntheticEvent,
     newValue: UserRole,
   ): void => {
+    store.setPageParams({ role: newValue });
     setCurrentRoleTab(newValue);
   };
 
@@ -95,6 +102,7 @@ const MainPage = observer((): JSX.Element => {
     event: React.SyntheticEvent,
     newValue: PageContentType,
   ): void => {
+    store.setPageParams({ content: newValue });
     setCurrentContentTab(newValue);
   };
 
@@ -146,13 +154,13 @@ const MainPage = observer((): JSX.Element => {
                 </CategoriesSection>
               </TabItemPanel>
               <TabItemPanel value={PageContentType.Checklists}>
-                <Construction text="Тут буду чеклисты" />
+                <Construction text="Тут будут чеклисты" />
               </TabItemPanel>
               <TabItemPanel value={PageContentType.Scripts}>
-                <Construction text="Тут буду скрипты" />
+                <Construction text="Тут будут скрипты" />
               </TabItemPanel>
               <TabItemPanel value={PageContentType.Vebinars}>
-                <Construction text="Тут буду вебинары" />
+                <Construction text="Тут будут вебинары" />
               </TabItemPanel>
             </TabContext>
           </>

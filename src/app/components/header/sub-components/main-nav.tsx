@@ -6,7 +6,7 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import GroupIcon from '@mui/icons-material/Group';
 
-export const drawerWidth = 200;
+export const drawerWidth = 250;
 
 export interface NavItem {
   text: string;

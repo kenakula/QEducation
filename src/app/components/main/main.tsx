@@ -6,7 +6,7 @@ import DrawerContent from '../header/sub-components/drawer-content';
 import { Aside } from './sub-components/styled-elements';
 
 interface Props {
-  children: JSX.Element | JSX.Element[];
+  children: JSX.Element | JSX.Element[] | React.ReactNode | null;
 }
 
 const Main = (props: Props): JSX.Element => {

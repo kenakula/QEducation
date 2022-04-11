@@ -19,7 +19,9 @@ const Construction = (props: Props): JSX.Element => (
     }}
   >
     <EngineeringIcon sx={{ fontSize: '150px' }} color="primary" />
-    <Typography variant="h5">{props.text}</Typography>
+    <Typography variant="h4" textAlign="center">
+      {props.text}
+    </Typography>
   </Box>
 );
 

@@ -8,7 +8,6 @@ import React from 'react';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
-import { LocalStorageKeys } from 'app/constants/local-storage-keys';
 
 export interface MainPageParams {
   role?: string;
@@ -26,6 +25,7 @@ export class MainPageStore {
     return this._isInited;
   }
 
+  public pageParams: MainPageParams;
   public profileInfo: UserModel;
   public profileInfoUpdating: boolean = false;
   public categories: Category[] = [];
@@ -38,6 +38,13 @@ export class MainPageStore {
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
   }
+
+  setPageParams = (obj: any): void => {
+    this.pageParams = {
+      ...this.pageParams,
+      ...obj,
+    };
+  };
 
   fetchUserInfo = async (): Promise<void> => {
     if (this.auth.currentUser) {

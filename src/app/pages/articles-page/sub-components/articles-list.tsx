@@ -1,8 +1,9 @@
-import { Button } from '@mui/material';
+import { List, ListItemText } from '@mui/material';
 import { ArticleModel } from 'app/constants/article-model';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { ArticleListItem } from './styled-elements';
 
 interface Props {
   list: ArticleModel[];
@@ -19,24 +20,22 @@ const ArticlesList = (props: Props): JSX.Element => {
   };
 
   return (
-    <ul>
+    <List dense>
       {list.map(item => (
-        <li key={item.id}>
-          <Button
-            size="small"
-            color="inherit"
-            onClick={() => handleClick(item.id)}
-            endIcon={
-              readArticles.includes(item.id) ? (
-                <CheckCircleOutlineIcon color="success" />
-              ) : undefined
-            }
-          >
-            {item.title}
-          </Button>
-        </li>
+        <ArticleListItem
+          onClick={() => handleClick(item.id)}
+          sx={{ cursor: 'pointer' }}
+          key={item.id}
+          secondaryAction={
+            readArticles.includes(item.id) ? (
+              <CheckCircleOutlineIcon color="success" />
+            ) : undefined
+          }
+        >
+          <ListItemText primary={item.title} />
+        </ArticleListItem>
       ))}
-    </ul>
+    </List>
   );
 };
 
