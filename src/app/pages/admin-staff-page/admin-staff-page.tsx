@@ -3,7 +3,7 @@ import { GridInitialStateCommunity } from '@mui/x-data-grid/models/gridStateComm
 import DataGridComponent from 'app/components/data-grid/data-grid-component';
 import { IToolbarFields } from 'app/components/data-grid/sub-components/custom-toolbar';
 import Main from 'app/components/main/main';
-import { PageTitle } from 'app/components/page-title/page-title';
+import PageTitle from 'app/components/page-title/page-title';
 import { BootState } from 'app/constants/boot-state';
 import { UserModel } from 'app/constants/user-model';
 import { Routes } from 'app/routes/routes';
@@ -59,7 +59,7 @@ const AdminStaffPage = observer((): JSX.Element => {
 
   return (
     <Main>
-      <PageTitle variant="h1">Сотрудники</PageTitle>
+      <PageTitle>Сотрудники</PageTitle>
       {adminStore.bootState === BootState.Success ? (
         <DataGridComponent<UserModel>
           columns={columns}

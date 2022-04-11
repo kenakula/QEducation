@@ -12,6 +12,9 @@ const LandingPage = lazy(() => import('app/pages/landing-page/landing-page'));
 const SignInPage = lazy(() => import('app/pages/sign-in-page/sign-in-page'));
 const SignUpPage = lazy(() => import('app/pages/sign-up-page/sign-up-page'));
 const MainPage = lazy(() => import('app/pages/main-page/main-page'));
+const ArticlesPage = lazy(
+  () => import('app/pages/articles-page/articles-page'),
+);
 const ProfilePage = lazy(() => import('app/pages/profile-page/profile-page'));
 // const CategoryPage = lazy(
 //   () => import('app/pages/category-page/category-page'),
@@ -47,7 +50,11 @@ const RouterComponent = (): JSX.Element => (
           <Route exact path={Routes.LANDING} component={LandingPage} />
 
           <PrivateRoute exact path={Routes.MAIN} component={MainPage} />
-          <PrivateRoute exact path={Routes.MAIN_TAB} component={MainPage} />
+          <PrivateRoute
+            exact
+            path={Routes.ARTICLES_VIEW}
+            component={ArticlesPage}
+          />
           <PrivateRoute exact path={Routes.PROFILE} component={ProfilePage} />
           {/* <PrivateRoute
             exact

@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { createTheme, CssBaseline, PaletteColorOptions } from '@mui/material';
 import { Theme } from '@mui/system';
+import { LocalStorageKeys } from 'app/constants/local-storage-keys';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line no-shadow
@@ -31,7 +32,7 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
   const [mode, setMode] = useState<ColorMode>(ColorMode.Light);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme');
+    const storedTheme = localStorage.getItem(LocalStorageKeys.Theme);
 
     if (storedTheme) {
       setMode(storedTheme as ColorMode);
@@ -63,6 +64,7 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
           primary: primaryColor,
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mode],
   );
 
@@ -71,7 +73,7 @@ export function ThemeStoreProvider(props: Props): JSX.Element {
       const newMode =
         prev === ColorMode.Light ? ColorMode.Dark : ColorMode.Light;
 
-      localStorage.setItem('theme', newMode);
+      localStorage.setItem(LocalStorageKeys.Theme, newMode);
 
       return newMode;
     });

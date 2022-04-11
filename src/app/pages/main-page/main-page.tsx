@@ -1,53 +1,105 @@
-import { Grid, ListItem, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import Loader from 'app/components/loader/loader';
 import Main from 'app/components/main/main';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import { BootState } from 'app/constants/boot-state';
 import { UserRole } from 'app/constants/user-roles';
-import { Routes } from 'app/routes/routes';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import RoleTabs from './sub-components/tabs';
-
+import { generatePath, useHistory, useLocation } from 'react-router-dom';
 import { ReactComponent as ArticleImage } from 'assets/images/article-image.svg';
 import {
   CategoriesContainer,
   CategoriesSection,
+  CategoryItem,
   ImageContainer,
+  TabItemPanel,
 } from './sub-components/styled-elements';
 import { Category } from 'app/constants/category-model';
+import TabsComponent, {
+  TabsItem,
+} from 'app/components/tabs-component/tabs-component';
+import qs from 'qs';
+import { Routes } from 'app/routes/routes';
+import { TabContext } from '@mui/lab';
+import Construction from 'app/components/construction/construction';
 
-interface LocationParams {
-  tabId: string;
+// eslint-disable-next-line no-shadow
+enum PageContentType {
+  Articles = 'articles',
+  Checklists = 'checklists',
+  Vebinars = 'vebinars',
+  Scripts = 'scripts',
 }
+
+const roleTabs: TabsItem<UserRole>[] = [
+  {
+    value: UserRole.Doctor,
+    label: 'Врачи',
+  },
+  {
+    value: UserRole.Administrator,
+    label: 'Администраторы',
+  },
+  {
+    value: UserRole.Nurse,
+    label: 'Медсёстры',
+  },
+];
+
+const contentTabs: TabsItem<PageContentType>[] = [
+  {
+    value: PageContentType.Articles,
+    label: 'Статьи',
+  },
+  {
+    value: PageContentType.Checklists,
+    label: 'Чеклисты',
+  },
+  {
+    value: PageContentType.Vebinars,
+    label: 'Вебинары',
+  },
+  {
+    value: PageContentType.Scripts,
+    label: 'Скрипты',
+  },
+];
 
 const MainPage = observer((): JSX.Element => {
   const store = useMainPageStore();
-  const params = useParams<LocationParams>();
-  const history = useHistory();
 
-  const [currentTab, setCurrentTab] = useState<UserRole>(UserRole.Doctor);
+  const history = useHistory();
+  const location = useLocation();
+
+  const [currentRoleTab, setCurrentRoleTab] = useState<UserRole>(
+    UserRole.Doctor,
+  );
+  const [currentContentTab, setCurrentContentTab] = useState<PageContentType>(
+    PageContentType.Articles,
+  );
 
   useEffect(() => {
     store.init();
   }, [store]);
 
-  useEffect(() => {
-    const tabId = params.tabId;
-
-    if (tabId) {
-      setCurrentTab(tabId.slice(1) as UserRole);
-    }
-  }, [params.tabId]);
-
-  const handleTabChange = (
+  const handleRoleTabChange = (
     event: React.SyntheticEvent,
     newValue: UserRole,
   ): void => {
-    setCurrentTab(newValue);
-    history.push(`${Routes.MAIN}/:${newValue}`);
+    setCurrentRoleTab(newValue);
+  };
+
+  const handleContentTabChange = (
+    event: React.SyntheticEvent,
+    newValue: PageContentType,
+  ): void => {
+    setCurrentContentTab(newValue);
+  };
+
+  const handleCategoryClick = (label: string): void => {
+    history.push(generatePath(Routes.ARTICLES_VIEW, { category: label }));
   };
 
   const renderContent = (): JSX.Element => {
@@ -56,28 +108,53 @@ const MainPage = observer((): JSX.Element => {
         return (
           <>
             {store.profileInfo.isSuperAdmin ? (
-              <RoleTabs
-                currentTab={currentTab}
-                handleChange={handleTabChange}
+              <TabsComponent<UserRole>
+                currentTab={currentRoleTab}
+                handleChange={handleRoleTabChange}
+                tabs={roleTabs}
               />
             ) : null}
-            <CategoriesSection container spacing={4} alignItems="center">
-              <Grid item xs={12} md={6}>
-                <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
-                  Выберите категорию
-                </Typography>
-                <ImageContainer>
-                  <ArticleImage width="100%" height={300} />
-                </ImageContainer>
-              </Grid>
-              <Grid xs={12} md={6} item>
-                <CategoriesContainer>
-                  {store.categories.map((item: Category) => (
-                    <ListItem key={item.label}>{item.label}</ListItem>
-                  ))}
-                </CategoriesContainer>
-              </Grid>
-            </CategoriesSection>
+            <TabsComponent<PageContentType>
+              currentTab={currentContentTab}
+              handleChange={handleContentTabChange}
+              tabs={contentTabs}
+            />
+            <TabContext value={currentContentTab}>
+              <TabItemPanel value={PageContentType.Articles}>
+                <CategoriesSection container spacing={4} alignItems="center">
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
+                      Выберите категорию
+                    </Typography>
+                    <ImageContainer>
+                      <ArticleImage width="100%" height={300} />
+                    </ImageContainer>
+                  </Grid>
+                  <Grid xs={12} md={6} item>
+                    <CategoriesContainer>
+                      {store.categories.map((item: Category) => (
+                        <CategoryItem
+                          key={item.label}
+                          onClick={() => handleCategoryClick(item.label)}
+                        >
+                          {item.label}
+                          <span />
+                        </CategoryItem>
+                      ))}
+                    </CategoriesContainer>
+                  </Grid>
+                </CategoriesSection>
+              </TabItemPanel>
+              <TabItemPanel value={PageContentType.Checklists}>
+                <Construction text="Тут буду чеклисты" />
+              </TabItemPanel>
+              <TabItemPanel value={PageContentType.Scripts}>
+                <Construction text="Тут буду скрипты" />
+              </TabItemPanel>
+              <TabItemPanel value={PageContentType.Vebinars}>
+                <Construction text="Тут буду вебинары" />
+              </TabItemPanel>
+            </TabContext>
           </>
         );
       case BootState.Error:

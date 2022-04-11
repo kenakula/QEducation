@@ -18,6 +18,9 @@ export const LogoElement = styled(Link)(({ theme }) => ({
     duration: 300,
     easing: 'ease-in',
   }),
+  '&:first-letter': {
+    color: theme.palette.primary.main,
+  },
   '&:hover': {
     color: theme.palette.text.secondary,
   },

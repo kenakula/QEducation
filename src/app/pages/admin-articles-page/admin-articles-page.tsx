@@ -26,7 +26,7 @@ import CategoriesDialog from '../admin-articles-editor/sub-components/categories
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Category } from 'app/constants/category-model';
 import Main from 'app/components/main/main';
-import { PageTitle } from 'app/components/page-title/page-title';
+import PageTitle from 'app/components/page-title/page-title';
 
 export interface DeleteConfirmProps {
   id: string;
@@ -158,7 +158,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
 
   return (
     <Main>
-      <PageTitle variant="h1">Все статьи</PageTitle>
+      <PageTitle>Все статьи</PageTitle>
       {adminStore.bootState === BootState.Success ? (
         <DataGridComponent<ArticleModel>
           columns={columns}

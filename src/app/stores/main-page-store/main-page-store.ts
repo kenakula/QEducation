@@ -1,13 +1,19 @@
 import { BootState } from 'app/constants/boot-state';
 import { Category } from 'app/constants/category-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
-import { userTabs } from 'app/constants/tabs';
 import { UserModel } from 'app/constants/user-model';
 import { Auth, getAuth } from 'firebase/auth';
 import { makeAutoObservable, runInAction } from 'mobx';
 import React from 'react';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
+import { DocumentData } from 'firebase/firestore';
+import { LocalStorageKeys } from 'app/constants/local-storage-keys';
+
+export interface MainPageParams {
+  role?: string;
+  content?: string;
+}
 
 export class MainPageStore {
   private _bootState: BootState = BootState.None;
@@ -15,13 +21,19 @@ export class MainPageStore {
     return this._bootState;
   }
 
-  public currentUserTab: string = userTabs[0].value;
+  private _isInited: boolean = false;
+  public get isInited(): boolean {
+    return this._isInited;
+  }
+
   public profileInfo: UserModel;
   public profileInfoUpdating: boolean = false;
   public categories: Category[] = [];
   public categoriesLoadState: BootState = BootState.None;
   public articles: ArticleModel[] = [];
   public articlesLoadState: BootState = BootState.None;
+  public article: ArticleModel | null = null;
+  public articleLoadState: BootState = BootState.None;
 
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
@@ -48,7 +60,31 @@ export class MainPageStore {
         runInAction(() => {
           this.profileInfoUpdating = false;
         });
+
+        this.fetchUserInfo();
       });
+  };
+
+  checkArticleRead = async (
+    articleId: string,
+    value: boolean,
+  ): Promise<void> => {
+    await this.fetchUserInfo();
+
+    if (!this.profileInfo) {
+      return;
+    }
+
+    let readArticles = this.profileInfo.readArticles;
+
+    if (value) {
+      readArticles.push(articleId);
+    } else {
+      readArticles = readArticles.filter(item => item !== articleId);
+    }
+
+    const data = { ...this.profileInfo, readArticles };
+    await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
   fetchCategories = async (): Promise<void> => {
@@ -92,8 +128,30 @@ export class MainPageStore {
       );
   };
 
-  setUserTab = (value: string): void => {
-    this.currentUserTab = value;
+  resetArticle = (): void => {
+    this.article = null;
+    this.articleLoadState = BootState.None;
+  };
+
+  fetchArticle = async (id: string): Promise<void> => {
+    this.articleLoadState = BootState.Loading;
+
+    this.firebase
+      .readDocument(FirestoreCollection.Articles, id)
+      .then((value: void | DocumentData | undefined) => {
+        if (value) {
+          const data = value.data();
+
+          runInAction(() => {
+            this.article = data;
+            this.articleLoadState = BootState.Success;
+          });
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        this.articleLoadState = BootState.Error;
+      });
   };
 
   init = async (): Promise<void> => {
@@ -103,7 +161,10 @@ export class MainPageStore {
       await this.fetchUserInfo();
       await this.fetchCategories();
 
-      runInAction(() => (this._bootState = BootState.Success));
+      runInAction(() => {
+        this._bootState = BootState.Success;
+        this._isInited = true;
+      });
     } catch (error) {
       console.error(error);
       this._bootState = BootState.Error;

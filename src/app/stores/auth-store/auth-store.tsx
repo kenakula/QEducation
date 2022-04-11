@@ -87,6 +87,7 @@ export function AuthStoreProvider(props: Props): JSX.Element {
           lastName: data.lastName,
           email: data.email,
           role: data.role,
+          readArticles: [],
         };
 
         firebase.addDocument(FirestoreCollection.Users, userData, user.uid);

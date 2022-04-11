@@ -11,5 +11,5 @@ export interface UserModel {
   role: UserRole;
   birthDate?: Date;
   gender?: Gender;
-  readArticles?: string[];
+  readArticles: string[];
 }
