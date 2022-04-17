@@ -9,7 +9,7 @@ export interface ReadMoreItem {
 export interface ArticleModel {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   delta: any;
   roles: UserRole[];
   categories: Category[];

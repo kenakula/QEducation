@@ -60,3 +60,9 @@ export const CategoryItem = styled(ListItem)(({ theme }) => ({
     backgroundColor: theme.palette.grey[300],
   },
 }));
+
+export const AdminToolsRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row-reverse',
+  marginBottom: theme.spacing(3),
+}));

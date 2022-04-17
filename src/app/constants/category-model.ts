@@ -5,7 +5,8 @@ export interface CategoryArticle {
 }
 
 export interface Category {
-  label: string;
-  description: string;
+  id: string;
+  title: string;
+  description?: string;
   articles: CategoryArticle[];
 }

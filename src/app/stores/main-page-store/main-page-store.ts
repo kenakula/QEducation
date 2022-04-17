@@ -8,10 +8,24 @@ import React from 'react';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
+import { IRole, UserRole } from 'app/constants/user-roles';
 
 export interface MainPageParams {
-  role?: string;
-  content?: string;
+  role?: UserRole;
+  content?: PageContentType;
+}
+
+export interface ArtilcesPageParams {
+  role?: UserRole;
+  article?: string;
+}
+
+// eslint-disable-next-line no-shadow
+export enum PageContentType {
+  Articles = 'articles',
+  Checklists = 'checklists',
+  Vebinars = 'vebinars',
+  Scripts = 'scripts',
 }
 
 export class MainPageStore {
@@ -27,8 +41,12 @@ export class MainPageStore {
 
   public pageParams: MainPageParams;
   public profileInfo: UserModel;
+  public isSuperAdmin: boolean;
   public profileInfoUpdating: boolean = false;
+  public selectedCategory: Category;
   public categories: Category[] = [];
+  public roles: IRole[] = [];
+  public roleCategories: Category[] = [];
   public categoriesLoadState: BootState = BootState.None;
   public articles: ArticleModel[] = [];
   public articlesLoadState: BootState = BootState.None;
@@ -52,7 +70,12 @@ export class MainPageStore {
         .readDocument(FirestoreCollection.Users, this.auth.currentUser.uid)
         .then(val => {
           if (val) {
-            runInAction(() => (this.profileInfo = val.data()));
+            runInAction(() => {
+              this.profileInfo = val.data();
+              if (this.profileInfo.isSuperAdmin) {
+                this.isSuperAdmin = true;
+              }
+            });
           }
         });
     }
@@ -76,10 +99,8 @@ export class MainPageStore {
     articleId: string,
     value: boolean,
   ): Promise<void> => {
-    await this.fetchUserInfo();
-
     if (!this.profileInfo) {
-      return;
+      await this.fetchUserInfo();
     }
 
     let readArticles = this.profileInfo.readArticles;
@@ -94,45 +115,66 @@ export class MainPageStore {
     await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
+  getUserCategories = (role: UserRole): void => {
+    const currentRole = this.roles.find(item => item.title === role);
+
+    if (currentRole) {
+      const categories = currentRole.categories;
+
+      runInAction(() => {
+        this.roleCategories = categories;
+      });
+    }
+  };
+
   fetchCategories = async (): Promise<void> => {
     this.categoriesLoadState = BootState.Loading;
 
-    this.firebase
-      .readDocument(FirestoreCollection.Resources, 'categories')
-      .then(value => {
-        const response = value?.data();
-        runInAction(() => {
-          this.categories = response.list;
-          this.categoriesLoadState = BootState.Success;
-        });
-      })
-      .catch(error => {
-        console.error(error);
-        this.categoriesLoadState = BootState.Error;
+    try {
+      const response = await this.firebase.getDocumentsFormCollection<Category>(
+        FirestoreCollection.Categories,
+      );
+
+      runInAction(() => {
+        this.categories = response;
+        this.categoriesLoadState = BootState.Success;
       });
+    } catch (error) {
+      console.error(error);
+      this.categoriesLoadState = BootState.Error;
+    }
   };
 
-  fetchArticlesByCategory = async (label: string): Promise<void> => {
+  fetchArticlesByCategory = async (id: string): Promise<void> => {
     this.articlesLoadState = BootState.Loading;
+
+    if (!this.categories.length) {
+      await this.fetchCategories();
+    }
+
+    const selectedCategory = this.categories.find(item => item.id === id);
+
+    if (!selectedCategory) {
+      return;
+    }
 
     this.firebase
       .queryForDocumentInCollection<ArticleModel>(
         FirestoreCollection.Articles,
         'categories',
-        label,
+        selectedCategory.title,
       )
-      .then(res =>
+      .then(list => {
         runInAction(() => {
-          this.articles = res;
+          this.articles = list;
+          this.selectedCategory = selectedCategory;
           this.articlesLoadState = BootState.Success;
-        }),
-      )
-      .catch(err =>
-        runInAction(() => {
-          console.error(err);
-          this.articlesLoadState = BootState.Error;
-        }),
-      );
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        this.articleLoadState = BootState.Error;
+      });
   };
 
   resetArticle = (): void => {
@@ -161,10 +203,25 @@ export class MainPageStore {
       });
   };
 
+  fetchRoles = async (): Promise<void> => {
+    try {
+      const response = await this.firebase.getDocumentsFormCollection<IRole>(
+        FirestoreCollection.Roles,
+      );
+
+      runInAction(() => {
+        this.roles = response;
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   init = async (): Promise<void> => {
     this._bootState = BootState.Loading;
 
     try {
+      await this.fetchRoles();
       await this.fetchUserInfo();
       await this.fetchCategories();
 

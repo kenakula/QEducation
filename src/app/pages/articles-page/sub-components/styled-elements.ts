@@ -49,10 +49,21 @@ export const AccordionElement = styled(Accordion)(({ theme }) => ({
     listStyle: 'none',
   },
   [theme.breakpoints.up('md')]: {
-    minWidth: '240px',
+    minWidth: '350px',
     borderRight: `1px solid ${theme.palette.divider}`,
     '& .MuiAccordionDetails-root': {
       padding: 0,
+    },
+    '& .MuiAccordionSummary-root': {
+      cursor: 'default',
+    },
+    '& .MuiAccordionSummary-content': {
+      cursor: 'default',
+
+      '&.Mui-expanded': {
+        margin: 0,
+        minHeight: '20px',
+      },
     },
     '& .MuiButton-root': {
       textAlign: 'left',
@@ -72,7 +83,7 @@ export const ArticleListItem = styled(ListItem)(({ theme }) => ({
 
 export const ArticleContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
-  padding: `0 ${theme.spacing(2)}`,
+  padding: theme.spacing(2),
   maxWidth: '100%',
   '& iframe': {
     maxWidth: '100%',

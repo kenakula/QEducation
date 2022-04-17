@@ -68,10 +68,10 @@ export class FirebaseStore {
     );
   };
 
-  getDocumentsFormCollection = async (
+  getDocumentsFormCollection = async <T>(
     collName: FirestoreCollection,
-  ): Promise<any[]> => {
-    const result: any[] = [];
+  ): Promise<T[]> => {
+    const result: T[] = [];
     const q = query(collection(this.store, collName));
 
     const snapShot = await getDocs(q);

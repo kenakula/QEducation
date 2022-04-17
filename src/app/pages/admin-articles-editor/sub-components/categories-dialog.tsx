@@ -23,6 +23,7 @@ import { InputType } from 'app/constants/input-type';
 import { AdminStore } from 'app/stores/admin-store/admin-store';
 import InputComponent from 'app/components/input-component/input-component';
 import { Category, CategoryArticle } from 'app/constants/category-model';
+import { nanoid } from 'nanoid';
 
 const DialogElement = styled(Dialog)(({ theme }) => ({
   ...theme.typography.body1,
@@ -30,13 +31,13 @@ const DialogElement = styled(Dialog)(({ theme }) => ({
 }));
 
 const formShchema = yup.object({
-  label: yup.string().required('Введите название'),
-  description: yup.string().required('Введите описание'),
+  title: yup.string().required('Введите название'),
+  description: yup.string(),
 });
 
 interface FormModel {
-  label: string;
-  description: string;
+  title: string;
+  description?: string;
   articles: CategoryArticle[];
 }
 
@@ -52,7 +53,7 @@ const CategoriesDialog = observer((props: Props): JSX.Element => {
   const { control, handleSubmit, formState, reset, setError } =
     useForm<FormModel>({
       defaultValues: {
-        label: '',
+        title: '',
         description: '',
         articles: [],
       },
@@ -60,14 +61,14 @@ const CategoriesDialog = observer((props: Props): JSX.Element => {
     });
 
   const onSave = (data: FormModel): void => {
-    const isSameName = store.categories.some(item => item.label === data.label);
+    const isSameName = store.categories.find(item => item.title === data.title);
 
     if (isSameName) {
-      setError('label', { message: 'Такая категория существует' });
+      setError('title', { message: 'Такая категория существует' });
       return;
     }
 
-    store.saveCategory(data);
+    store.saveCategory({ ...data, id: nanoid() });
     reset();
   };
 
@@ -77,12 +78,15 @@ const CategoriesDialog = observer((props: Props): JSX.Element => {
       <List sx={{ pt: 0, maxHeight: '300px', overflow: 'auto' }}>
         {store.categories.length ? (
           store.categories.map((item: Category) => (
-            <ListItem key={item.label}>
-              <ListItemText primary={item.label} />
+            <ListItem key={item.id}>
+              <ListItemText
+                primary={item.title}
+                secondary={item.description ?? undefined}
+              />
               <ListItemIcon>
                 <IconButton
                   color="error"
-                  onClick={() => store.deleteCategory(item.label)}
+                  onClick={() => store.deleteCategory(item.id)}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -107,10 +111,10 @@ const CategoriesDialog = observer((props: Props): JSX.Element => {
             formControl={control}
             type={InputType.Text}
             name="label"
-            error={!!formState.errors.label}
+            error={!!formState.errors.title}
             errorMessage={
-              !!formState.errors.label
-                ? formState.errors.label.message
+              !!formState.errors.title
+                ? formState.errors.title.message
                 : undefined
             }
             placeholder="Введите название"

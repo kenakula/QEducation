@@ -4,19 +4,22 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ArticleListItem } from './styled-elements';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   list: ArticleModel[];
   readArticles: string[];
+  onClick: () => void;
 }
 
-const ArticlesList = (props: Props): JSX.Element => {
-  const { list, readArticles } = props;
+const ArticlesList = observer((props: Props): JSX.Element => {
+  const { list, readArticles, onClick } = props;
 
   const history = useHistory();
 
   const handleClick = (id: string): void => {
-    history.push({ search: `?${id}` });
+    history.push({ search: `${history.location.search}&article=${id}` });
+    onClick();
   };
 
   return (
@@ -37,6 +40,6 @@ const ArticlesList = (props: Props): JSX.Element => {
       ))}
     </List>
   );
-};
+});
 
 export default ArticlesList;

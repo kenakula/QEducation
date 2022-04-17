@@ -19,9 +19,9 @@ const ProfilePage = lazy(() => import('app/pages/profile-page/profile-page'));
 // const CategoryPage = lazy(
 //   () => import('app/pages/category-page/category-page'),
 // );
-// const SingleArticlePage = lazy(
-//   () => import('app/pages/single-article-page/single-article-page'),
-// );
+const SingleArticlePage = lazy(
+  () => import('app/pages/single-article-page/single-article-page'),
+);
 // const TestsPage = lazy(() => import('app/pages/tests-page/tests-page'));
 const AdminStaffPage = lazy(
   () => import('app/pages/admin-staff-page/admin-staff-page'),
@@ -61,11 +61,11 @@ const RouterComponent = (): JSX.Element => (
             path={Routes.CATEGORY_ARTICLES}
             component={CategoryPage}
           /> */}
-          {/* <PrivateRoute
+          <PrivateRoute
             exact
             path={Routes.ARTICLE_PAGE}
             component={SingleArticlePage}
-          /> */}
+          />
           {/* <PrivateRoute
             exact
             path={Routes.ARTICLE_PAGE}

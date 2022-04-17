@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { Grid, Typography, Skeleton, Stack, Button } from '@mui/material';
+import { Grid, Typography, Skeleton, Button } from '@mui/material';
 import { BootState } from 'app/constants/boot-state';
-import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { observer } from 'mobx-react-lite';
 import PersonIcon from '@mui/icons-material/Person';
 import MainInfoForm from './sub-components/main-info-form';

@@ -1,10 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Grid, Typography } from '@mui/material';
 import Loader from 'app/components/loader/loader';
 import Main from 'app/components/main/main';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import { BootState } from 'app/constants/boot-state';
 import { UserRole } from 'app/constants/user-roles';
-import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import {
+  PageContentType,
+  useMainPageStore,
+} from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { generatePath, useHistory } from 'react-router-dom';
@@ -23,14 +27,9 @@ import TabsComponent, {
 import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
 import Construction from 'app/components/construction/construction';
-
-// eslint-disable-next-line no-shadow
-enum PageContentType {
-  Articles = 'articles',
-  Checklists = 'checklists',
-  Vebinars = 'vebinars',
-  Scripts = 'scripts',
-}
+import AdminToolbar from './sub-components/admin-toolbar';
+import UserCategoriesDialog from './sub-components/user-categories-dialog';
+import { OpenState } from 'app/constants/open-state';
 
 const roleTabs: TabsItem<UserRole>[] = [
   {
@@ -71,6 +70,9 @@ const MainPage = observer((): JSX.Element => {
 
   const history = useHistory();
 
+  const [categoriesDialogOpenState, setCategoriesDialogOpenState] = useState(
+    OpenState.Closed,
+  );
   const [currentRoleTab, setCurrentRoleTab] = useState<UserRole>(
     ((store.pageParams && store.pageParams.role) as UserRole) ??
       UserRole.Doctor,
@@ -81,20 +83,32 @@ const MainPage = observer((): JSX.Element => {
   );
 
   useEffect(() => {
+    store.setPageParams({ role: currentRoleTab });
+  }, []);
+
+  useEffect(() => {
     store.init();
   }, [store]);
 
   useEffect(() => {
-    if (store.profileInfo && !store.profileInfo.isSuperAdmin) {
+    if (store.profileInfo && !store.isSuperAdmin) {
       setCurrentRoleTab(store.profileInfo.role);
     }
   }, [store.profileInfo]);
+
+  useEffect(() => {
+    if (store.roles && store.profileInfo) {
+      const role = store.isSuperAdmin ? currentRoleTab : store.profileInfo.role;
+      store.getUserCategories(role);
+    }
+  }, [store.roles, store.profileInfo]);
 
   const handleRoleTabChange = (
     event: React.SyntheticEvent,
     newValue: UserRole,
   ): void => {
     store.setPageParams({ role: newValue });
+    store.getUserCategories(newValue);
     setCurrentRoleTab(newValue);
   };
 
@@ -106,8 +120,23 @@ const MainPage = observer((): JSX.Element => {
     setCurrentContentTab(newValue);
   };
 
-  const handleCategoryClick = (label: string): void => {
-    history.push(generatePath(Routes.ARTICLES_VIEW, { category: label }));
+  const handleCategoryChoose = (id: string): void => {
+    history.push({
+      pathname: generatePath(Routes.ARTICLES_VIEW, { categoryId: id }),
+      search: `?role=${
+        store.profileInfo.isSuperAdmin
+          ? store.pageParams.role
+          : store.profileInfo.role
+      }`,
+    });
+  };
+
+  const handleCategoriesDialogOpen = (): void => {
+    setCategoriesDialogOpenState(OpenState.Opened);
+  };
+
+  const handleCategoriesDialogClose = (): void => {
+    setCategoriesDialogOpenState(OpenState.Closed);
   };
 
   const renderContent = (): JSX.Element => {
@@ -129,7 +158,7 @@ const MainPage = observer((): JSX.Element => {
             />
             <TabContext value={currentContentTab}>
               <TabItemPanel value={PageContentType.Articles}>
-                <CategoriesSection container spacing={4} alignItems="center">
+                <CategoriesSection container spacing={4}>
                   <Grid item xs={12} md={6}>
                     <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
                       Выберите категорию
@@ -139,19 +168,39 @@ const MainPage = observer((): JSX.Element => {
                     </ImageContainer>
                   </Grid>
                   <Grid xs={12} md={6} item>
-                    <CategoriesContainer>
-                      {store.categories.map((item: Category) => (
-                        <CategoryItem
-                          key={item.label}
-                          onClick={() => handleCategoryClick(item.label)}
-                        >
-                          {item.label}
-                          <span />
-                        </CategoryItem>
-                      ))}
-                    </CategoriesContainer>
+                    {store.isSuperAdmin ? (
+                      <AdminToolbar
+                        onOpenCategoriesDialog={handleCategoriesDialogOpen}
+                      />
+                    ) : null}
+                    {store.roleCategories.length ? (
+                      <CategoriesContainer>
+                        {store.roleCategories.map((item: Category) => (
+                          <CategoryItem
+                            key={item.id}
+                            onClick={() => handleCategoryChoose(item.id)}
+                          >
+                            {item.title}
+                            <Typography variant="caption">
+                              {item.description}
+                            </Typography>
+                            <span />
+                          </CategoryItem>
+                        ))}
+                      </CategoriesContainer>
+                    ) : (
+                      <Typography textAlign="center" variant="h4">
+                        Нет категорий и статей для просмотра
+                      </Typography>
+                    )}
                   </Grid>
                 </CategoriesSection>
+                <UserCategoriesDialog
+                  openState={categoriesDialogOpenState}
+                  store={store}
+                  role={currentRoleTab}
+                  onClose={handleCategoriesDialogClose}
+                />
               </TabItemPanel>
               <TabItemPanel value={PageContentType.Checklists}>
                 <Construction text="Тут будут чеклисты" />

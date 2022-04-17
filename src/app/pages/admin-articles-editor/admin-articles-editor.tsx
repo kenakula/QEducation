@@ -218,8 +218,8 @@ const AdminArticlesEditor = observer((): JSX.Element => {
                   <SelectComponent
                     small
                     options={adminStore.categories.map((item: Category) => ({
-                      label: item.label,
-                      value: item.label,
+                      label: item.title,
+                      value: item.title,
                     }))}
                     id="categories"
                     formControl={control}

@@ -1,3 +1,4 @@
+import { Category } from './category-model';
 import { SelectOption } from './select-option';
 
 /* eslint-disable no-shadow */
@@ -22,3 +23,8 @@ export const userRolesOptions: SelectOption[] = [
     value: UserRole.Doctor,
   },
 ];
+
+export interface IRole {
+  title: UserRole;
+  categories: Category[];
+}

@@ -1,10 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-danger */
 import {
-  Box,
   Fab,
-  FormControl,
   FormControlLabel,
-  InputLabel,
   Switch,
   Typography,
   useTheme,
@@ -15,7 +13,7 @@ import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import { ArticleModel } from 'app/constants/article-model';
 import { BootState } from 'app/constants/boot-state';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ArticleContainer } from './styled-elements';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';

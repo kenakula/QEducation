@@ -1,10 +1,4 @@
-import {
-  Button,
-  Skeleton,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Button, Skeleton, useMediaQuery, useTheme } from '@mui/material';
 import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
 import DataGridComponent from 'app/components/data-grid/data-grid-component';
 import { IToolbarFields } from 'app/components/data-grid/sub-components/custom-toolbar';
@@ -96,8 +90,8 @@ const AdminArticlesPage = observer((): JSX.Element => {
       fieldName: 'categories',
       label: 'Категории',
       options: adminStore.categories.map((item: Category) => ({
-        label: item.label,
-        value: item.label,
+        label: item.title,
+        value: item.title,
       })),
     },
     {

@@ -4,8 +4,6 @@ import { BootState } from 'app/constants/boot-state';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
-import { FirestoreResources } from 'app/constants/firestore-resources';
-import { DocumentData } from 'firebase/firestore';
 import { UserModel } from 'app/constants/user-model';
 import { nanoid } from 'nanoid';
 import { Category } from 'app/constants/category-model';
@@ -57,7 +55,7 @@ export class AdminStore {
     this.articlesLoading = true;
 
     this.firebase
-      .getDocumentsFormCollection(FirestoreCollection.Articles)
+      .getDocumentsFormCollection<ArticleModel>(FirestoreCollection.Articles)
       .then(value => {
         runInAction(() => {
           this.articles = value;
@@ -72,48 +70,37 @@ export class AdminStore {
 
   getCategories = async (): Promise<void> => {
     this.firebase
-      .readDocument(
-        FirestoreCollection.Resources,
-        FirestoreResources.Categories,
-      )
-      .then((value: void | DocumentData | undefined) => {
-        if (value) {
-          const data = value.data();
-          runInAction(() => {
-            this.categories = data.list;
-          });
-        }
-      })
-      .catch(err => {
-        console.error(err);
+      .getDocumentsFormCollection<Category>(FirestoreCollection.Categories)
+      .then(value => {
+        runInAction(() => {
+          this.categories = value;
+        });
       });
   };
 
   saveCategory = async (data: Category): Promise<void> => {
-    this.categories.push(data);
-
     try {
-      await this.firebase.updateDocument(
-        FirestoreCollection.Resources,
-        'categories',
-        { list: this.categories },
+      await this.firebase.addDocument(
+        FirestoreCollection.Categories,
+        data,
+        data.id,
       );
+      await this.getCategories();
     } catch (error) {
       console.error(error);
     }
-    this.getCategories();
   };
 
-  deleteCategory = async (category: string): Promise<void> => {
-    this.categories = this.categories.filter(item => item.label !== category);
-    await this.firebase.updateDocument(
-      FirestoreCollection.Resources,
-      'categories',
-      {
-        list: this.categories,
-      },
-    );
-    this.getCategories();
+  deleteCategory = async (categoryId: string): Promise<void> => {
+    try {
+      await this.firebase.deleteDocument(
+        FirestoreCollection.Categories,
+        categoryId,
+      );
+      await this.getCategories();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   getArticleFromStorage = (): ArticleModel | null => {
@@ -170,7 +157,7 @@ export class AdminStore {
     this.usersLoading = true;
 
     this.firebase
-      .getDocumentsFormCollection(FirestoreCollection.Users)
+      .getDocumentsFormCollection<UserModel>(FirestoreCollection.Users)
       .then(value => {
         runInAction(() => {
           this.users = value;
