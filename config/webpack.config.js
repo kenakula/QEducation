@@ -317,6 +317,8 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
+        'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
+        'react/jsx-runtime': 'react/jsx-runtime.js',
         // app: path.resolve(__dirname, 'src/app/'),
         // assets: path.resolve(__dirname, 'src/assets/'),
       },

@@ -121,7 +121,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
   };
 
   useEffect(() => {
-    adminStore.startArticleAutosave(saveToDrafts, 180000);
+    adminStore.startArticleAutosave(saveToDrafts, 60000);
 
     return () => adminStore.stopArticleAutoSave();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   Typography,
+  Box,
 } from '@mui/material';
 import SelectComponent from 'app/components/select-component/select-component';
 import { OpenState } from 'app/constants/open-state';
@@ -14,16 +15,21 @@ import {
   InputContainer,
 } from 'app/pages/admin-articles-editor/sub-components/elements';
 import { MainPageStore } from 'app/stores/main-page-store/main-page-store';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import DialogTitleContainer from './dialog-title-container';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Category } from 'app/constants/category-model';
+import { Category, CategoryArticle } from 'app/constants/category-model';
 import { observer } from 'mobx-react-lite';
+import SortableList from 'app/components/sortable-list/sortable-list';
+import { useAdminStore } from 'app/stores/admin-store/admin-store';
+import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 
 const schema = yup.object({
   category: yup.string().required('Это поле обязательно'),
+  list: yup.array(),
 });
 
 interface Props {
@@ -31,26 +37,68 @@ interface Props {
   role: UserRole;
   openState: OpenState;
   onClose: () => void;
+  list?: CategoryArticle[];
 }
 
 export interface UserCategoriesFormModel {
   category: string;
+  list: CategoryArticle[];
 }
 
 const UserCategoriesDialog = observer((props: Props): JSX.Element => {
-  const { store, role, openState, onClose } = props;
+  const { store, role, openState, onClose, list } = props;
 
-  const { formState, control, watch } = useForm<UserCategoriesFormModel>({
-    defaultValues: {
-      category: '',
-    },
-    resolver: yupResolver(schema),
+  const adminStore = useAdminStore();
+
+  const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
+    openState: OpenState.Closed,
+    message: 'Категория сохранена',
+    alert: 'success',
   });
+
+  const { formState, control, watch, handleSubmit, setValue, reset } =
+    useForm<UserCategoriesFormModel>({
+      defaultValues: {
+        category: '',
+        list: list ?? store.articles,
+      },
+      resolver: yupResolver(schema),
+    });
 
   const watchCategory = watch('category', '');
 
   useEffect(() => {
+    if (adminStore.editingUserCategory) {
+      setValue('category', adminStore.editingUserCategory);
+    }
+  }, [adminStore.editingUserCategory]);
+
+  const handleListChange = (newList: CategoryArticle[]): void => {
+    setValue('list', newList);
+  };
+
+  const onSubmit = (data: UserCategoriesFormModel): void => {
+    adminStore
+      .setUserCategory(data.category, role, data)
+      .then(() => {
+        store.fetchRoles();
+        store.getUserCategories(role);
+        reset();
+        setValue('list', []);
+        store.resetArticles();
+        adminStore.setEditingUserCategory('');
+      })
+      .then(() =>
+        setSnackbarState(prev => ({
+          ...prev,
+          openState: OpenState.Opened,
+        })),
+      );
+  };
+
+  useEffect(() => {
     store.fetchArticlesByCategory(watchCategory);
+    setValue('list', []);
   }, [watchCategory]);
 
   return (
@@ -92,18 +140,32 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
             }
           />
         </InputContainer>
-        <ul>
-          {store.articles.map(item => (
-            <li key={item.id}>{item.title}</li>
-          ))}
-        </ul>
+        <Box>
+          {store.articles.length ? (
+            <Box sx={{ overflowX: 'hidden' }}>
+              <SortableList<CategoryArticle>
+                onChange={handleListChange}
+                list={store.articles}
+              />
+            </Box>
+          ) : (
+            <Typography
+              sx={{ mt: 2 }}
+              textAlign="center"
+              color="text.secondary"
+            >
+              нет статей в категории
+            </Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button>Сохранить</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Сохранить</Button>
         <Button color="error" onClick={onClose}>
           Отмена
         </Button>
       </DialogActions>
+      <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
     </Dialog>
   );
 });

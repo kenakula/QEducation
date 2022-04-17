@@ -1,5 +1,5 @@
 import { BootState } from 'app/constants/boot-state';
-import { Category } from 'app/constants/category-model';
+import { Category, CategoryArticle } from 'app/constants/category-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
 import { UserModel } from 'app/constants/user-model';
 import { Auth, getAuth } from 'firebase/auth';
@@ -115,7 +115,11 @@ export class MainPageStore {
     await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
-  getUserCategories = (role: UserRole): void => {
+  getUserCategories = async (role: UserRole): Promise<void> => {
+    if (!this.roles.length) {
+      await this.fetchRoles();
+    }
+
     const currentRole = this.roles.find(item => item.title === role);
 
     if (currentRole) {
@@ -125,6 +129,16 @@ export class MainPageStore {
         this.roleCategories = categories;
       });
     }
+  };
+
+  getArticlesFromUserCategories = (categoryId: string): CategoryArticle[] => {
+    const category = this.roleCategories.find(item => item.id === categoryId);
+
+    if (!category) {
+      return [];
+    }
+
+    return category.articles;
   };
 
   fetchCategories = async (): Promise<void> => {
@@ -142,6 +156,18 @@ export class MainPageStore {
     } catch (error) {
       console.error(error);
       this.categoriesLoadState = BootState.Error;
+    }
+  };
+
+  getCategoryById = async (id: string): Promise<void> => {
+    if (!this.categories.length) {
+      await this.fetchCategories();
+    }
+
+    const selectedCategory = this.categories.find(item => item.id === id);
+
+    if (selectedCategory) {
+      this.selectedCategory = selectedCategory;
     }
   };
 
@@ -173,13 +199,17 @@ export class MainPageStore {
       })
       .catch(error => {
         console.error(error);
-        this.articleLoadState = BootState.Error;
+        this.articlesLoadState = BootState.Error;
       });
   };
 
   resetArticle = (): void => {
     this.article = null;
     this.articleLoadState = BootState.None;
+  };
+
+  resetArticles = (): void => {
+    this.articles = [];
   };
 
   fetchArticle = async (id: string): Promise<void> => {
@@ -219,6 +249,7 @@ export class MainPageStore {
 
   init = async (): Promise<void> => {
     this._bootState = BootState.Loading;
+    this._isInited = false;
 
     try {
       await this.fetchRoles();
@@ -231,6 +262,7 @@ export class MainPageStore {
       });
     } catch (error) {
       console.error(error);
+      this._isInited = false;
       this._bootState = BootState.Error;
     }
   };

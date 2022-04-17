@@ -6,16 +6,20 @@ import { ArticleModel } from 'app/constants/article-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
 import { UserModel } from 'app/constants/user-model';
 import { nanoid } from 'nanoid';
-import { Category } from 'app/constants/category-model';
+import { Category, CategoryArticle } from 'app/constants/category-model';
+import { IRole, UserRole } from 'app/constants/user-roles';
+import { UserCategoriesFormModel } from 'app/pages/main-page/sub-components/user-categories-dialog';
 
 export class AdminStore {
   private _bootState: BootState = BootState.None;
   private _isInited: boolean = false;
   private _autosaveTimeout: NodeJS.Timeout;
 
+  public roles: IRole[] = [];
   public articles: ArticleModel[] = [];
   public articlesLoading: boolean;
   public categories: Category[] = [];
+  public editingUserCategory: string;
   public users: UserModel[] = [];
   public usersLoading: boolean;
   public userDetailsInfo: UserModel;
@@ -51,6 +55,92 @@ export class AdminStore {
     clearTimeout(this._autosaveTimeout);
   };
 
+  setEditingUserCategory = (id: string): void => {
+    this.editingUserCategory = id;
+  };
+
+  deleteUserCategory = async (
+    categoryId: string,
+    role: UserRole,
+  ): Promise<void> => {
+    if (!this.roles.length) {
+      await this.fetchRoles();
+    }
+
+    if (!this.categories.length) {
+      await this.getCategories();
+    }
+
+    const roleItem = this.roles.find(item => item.title === role);
+    const roleCategories = roleItem!.categories;
+
+    const newArr = roleCategories.filter(item => item.id !== categoryId);
+
+    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
+      categories: newArr,
+    });
+  };
+
+  setUserCategory = async (
+    categoryId: string,
+    role: UserRole,
+    data: UserCategoriesFormModel,
+  ): Promise<void> => {
+    if (!this.roles.length) {
+      await this.fetchRoles();
+    }
+
+    if (!this.categories.length) {
+      await this.getCategories();
+    }
+
+    const roleItem = this.roles.find(item => item.title === role);
+    const roleCategories = roleItem!.categories;
+    const hasCurrentCategory = roleCategories?.some(
+      item => item.id === categoryId,
+    );
+    const categoryObj = this.categories.find(item => item.id === categoryId);
+
+    if (!categoryObj) {
+      return;
+    }
+
+    const listOfArticles: CategoryArticle[] = data.list.map(item => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+    }));
+
+    let newArr: Category[] = [];
+
+    if (hasCurrentCategory) {
+      newArr = roleCategories!.filter(item => item.id !== categoryId);
+
+      newArr.push({ ...categoryObj, articles: listOfArticles });
+    } else {
+      roleCategories!.push({ ...categoryObj, articles: listOfArticles });
+      newArr = roleCategories;
+    }
+
+    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
+      categories: newArr,
+    });
+  };
+
+  fetchRoles = async (): Promise<void> => {
+    try {
+      const response = await this.firebase.getDocumentsFormCollection<IRole>(
+        FirestoreCollection.Roles,
+      );
+
+      runInAction(() => {
+        this.roles = response;
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   getArticles = async (): Promise<void> => {
     this.articlesLoading = true;
 
@@ -69,13 +159,17 @@ export class AdminStore {
   };
 
   getCategories = async (): Promise<void> => {
-    this.firebase
-      .getDocumentsFormCollection<Category>(FirestoreCollection.Categories)
-      .then(value => {
-        runInAction(() => {
-          this.categories = value;
-        });
+    try {
+      const response = await this.firebase.getDocumentsFormCollection<Category>(
+        FirestoreCollection.Categories,
+      );
+
+      runInAction(() => {
+        this.categories = response;
       });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   saveCategory = async (data: Category): Promise<void> => {

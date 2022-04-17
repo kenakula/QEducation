@@ -1,13 +1,14 @@
 import { List, ListItemText } from '@mui/material';
-import { ArticleModel } from 'app/constants/article-model';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ArticleListItem } from './styled-elements';
 import { observer } from 'mobx-react-lite';
+import { CategoryArticle } from 'app/constants/category-model';
+import qs from 'qs';
 
 interface Props {
-  list: ArticleModel[];
+  list: CategoryArticle[];
   readArticles: string[];
   onClick: () => void;
 }
@@ -16,9 +17,16 @@ const ArticlesList = observer((props: Props): JSX.Element => {
   const { list, readArticles, onClick } = props;
 
   const history = useHistory();
+  const location = useLocation();
 
   const handleClick = (id: string): void => {
-    history.push({ search: `${history.location.search}&article=${id}` });
+    if (location.search) {
+      const obj = qs.parse(location.search.slice(1));
+      obj.article = id;
+
+      history.replace({ search: qs.stringify(obj) });
+    }
+
     onClick();
   };
 

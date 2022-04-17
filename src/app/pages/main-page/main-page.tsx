@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Grid, Typography } from '@mui/material';
+import { Grid, IconButton, Typography } from '@mui/material';
 import Loader from 'app/components/loader/loader';
 import Main from 'app/components/main/main';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
@@ -20,7 +20,7 @@ import {
   ImageContainer,
   TabItemPanel,
 } from './sub-components/styled-elements';
-import { Category } from 'app/constants/category-model';
+import { Category, CategoryArticle } from 'app/constants/category-model';
 import TabsComponent, {
   TabsItem,
 } from 'app/components/tabs-component/tabs-component';
@@ -30,6 +30,13 @@ import Construction from 'app/components/construction/construction';
 import AdminToolbar from './sub-components/admin-toolbar';
 import UserCategoriesDialog from './sub-components/user-categories-dialog';
 import { OpenState } from 'app/constants/open-state';
+import ClearIcon from '@mui/icons-material/Clear';
+import EditIcon from '@mui/icons-material/Edit';
+import { useAdminStore } from 'app/stores/admin-store/admin-store';
+import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
+import { DeleteConfirmProps } from '../admin-articles-page/admin-articles-page';
+import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
+import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
 
 const roleTabs: TabsItem<UserRole>[] = [
   {
@@ -67,6 +74,7 @@ const contentTabs: TabsItem<PageContentType>[] = [
 
 const MainPage = observer((): JSX.Element => {
   const store = useMainPageStore();
+  const adminStore = useAdminStore();
 
   const history = useHistory();
 
@@ -81,6 +89,18 @@ const MainPage = observer((): JSX.Element => {
     ((store.pageParams && store.pageParams.content) as PageContentType) ??
       PageContentType.Articles,
   );
+  const [sortedList, setSortedList] = useState<CategoryArticle[] | undefined>(
+    undefined,
+  );
+  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
+    id: '',
+    openState: OpenState.Closed,
+  });
+  const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
+    openState: OpenState.Closed,
+    message: 'Категория сохранена',
+    alert: 'success',
+  });
 
   useEffect(() => {
     store.setPageParams({ role: currentRoleTab });
@@ -139,6 +159,24 @@ const MainPage = observer((): JSX.Element => {
     setCategoriesDialogOpenState(OpenState.Closed);
   };
 
+  const handleCategoryDelete = (e: React.MouseEvent, id: string): void => {
+    e.persist();
+    e.stopPropagation();
+    setDeleteAction(prev => ({
+      ...prev,
+      id,
+      openState: OpenState.Opened,
+    }));
+  };
+
+  const handleCategoryEdit = (e: React.MouseEvent, id: string): void => {
+    e.persist();
+    e.stopPropagation();
+    setSortedList(store.getArticlesFromUserCategories(id));
+    adminStore.setEditingUserCategory(id);
+    handleCategoriesDialogOpen();
+  };
+
   const renderContent = (): JSX.Element => {
     switch (store.bootState) {
       case BootState.Success:
@@ -184,18 +222,47 @@ const MainPage = observer((): JSX.Element => {
                             <Typography variant="caption">
                               {item.description}
                             </Typography>
+                            {store.isSuperAdmin ? (
+                              <>
+                                <IconButton
+                                  size="small"
+                                  onClick={e =>
+                                    handleCategoryDelete(e, item.id)
+                                  }
+                                >
+                                  <ClearIcon fontSize="small" color="error" />
+                                </IconButton>
+                                <IconButton
+                                  size="small"
+                                  onClick={e => handleCategoryEdit(e, item.id)}
+                                >
+                                  <EditIcon fontSize="small" color="primary" />
+                                </IconButton>
+                              </>
+                            ) : null}
                             <span />
                           </CategoryItem>
                         ))}
                       </CategoriesContainer>
                     ) : (
-                      <Typography textAlign="center" variant="h4">
+                      <Typography textAlign="center" variant="h5">
                         Нет категорий и статей для просмотра
+                        {store.isSuperAdmin ? (
+                          <Typography
+                            sx={{ display: 'block' }}
+                            textAlign="center"
+                            variant="caption"
+                            color="text.secondary"
+                          >
+                            Нажмите на плюсик чтобы вставить категорию
+                          </Typography>
+                        ) : null}
                       </Typography>
                     )}
                   </Grid>
                 </CategoriesSection>
                 <UserCategoriesDialog
+                  list={sortedList ?? undefined}
                   openState={categoriesDialogOpenState}
                   store={store}
                   role={currentRoleTab}
@@ -212,6 +279,32 @@ const MainPage = observer((): JSX.Element => {
                 <Construction text="Тут будут вебинары" />
               </TabItemPanel>
             </TabContext>
+            <ConfirmDialog
+              open={deleteAction.openState}
+              title="Уверены что хотите удалить категорию?"
+              message="Это действие необратимо"
+              handleClose={() =>
+                setDeleteAction(prev => ({
+                  ...prev,
+                  openState: OpenState.Closed,
+                }))
+              }
+              handleAgree={() => {
+                adminStore
+                  .deleteUserCategory(deleteAction.id, currentRoleTab)
+                  .then(() => store.fetchRoles())
+                  .then(() => store.getUserCategories(currentRoleTab))
+                  .then(() =>
+                    setSnackbarState(prev => ({
+                      ...prev,
+                      openState: OpenState.Opened,
+                      message: 'Категория удалена',
+                      alert: 'error',
+                    })),
+                  );
+              }}
+            />
+            <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
           </>
         );
       case BootState.Error:

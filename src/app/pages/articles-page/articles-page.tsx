@@ -4,7 +4,6 @@ import {
   AccordionSummary,
   Button,
   IconButton,
-  Skeleton,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -29,7 +28,6 @@ import {
   PageContent,
   PageTop,
 } from './sub-components/styled-elements';
-import { BootState } from 'app/constants/boot-state';
 import { observer } from 'mobx-react-lite';
 import ArticlesList from './sub-components/articles-list';
 import Article from './sub-components/article';
@@ -49,8 +47,8 @@ const ArticlesPage = observer((): JSX.Element => {
   const match = useMediaQuery('(min-width: 900px)');
 
   useEffect(() => {
-    store.fetchArticlesByCategory(params.categoryId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    store.getCategoryById(params.categoryId);
+
     return () => store.resetArticle();
   }, []);
 
@@ -60,6 +58,17 @@ const ArticlesPage = observer((): JSX.Element => {
 
       if (obj.article) {
         store.fetchArticle(obj.article);
+      }
+
+      if (obj.role) {
+        store.getUserCategories(obj.role);
+      } else if (!obj.role && obj.article) {
+        history.push(
+          generatePath(Routes.ARTICLE_PAGE, {
+            category: params.categoryId,
+            articleId: obj.article,
+          }),
+        );
       }
     }
   }, [location.search]);
@@ -76,6 +85,9 @@ const ArticlesPage = observer((): JSX.Element => {
     <Main>
       <PageTop>
         <PageTitle>
+          <Typography sx={{ mr: 2 }} color="text.secondary">
+            Категория:{' '}
+          </Typography>
           {store.selectedCategory ? store.selectedCategory.title : ''}
         </PageTitle>
         <Button
@@ -120,13 +132,14 @@ const ArticlesPage = observer((): JSX.Element => {
                 <EditIcon />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Удалить">
+            <Tooltip title="Удалить (в работе)">
+              {/* TODO добавить окно подтверждения и удалять из списка статей у роли пользователя */}
               <IconButton
                 color="error"
                 size="small"
                 onClick={() => {
-                  adminStore.deleteArticle(store.article!.id);
-                  history.push(Routes.MAIN);
+                  // adminStore.deleteArticle(store.article!.id);
+                  // history.push(Routes.MAIN);
                 }}
               >
                 <DeleteForeverIcon />
@@ -136,32 +149,24 @@ const ArticlesPage = observer((): JSX.Element => {
         ) : null}
       </PageTop>
       <PageContent>
-        {store.articlesLoadState === BootState.Success ? (
-          <AccordionElement
-            onChange={handleAllArticlesAccordionChange}
-            expanded={match || allArticlesExpanded}
-            elevation={0}
-          >
-            <AccordionSummary
-              expandIcon={match ? undefined : <ExpandMoreIcon />}
-            >
-              <Typography variant="h6">Список статей:</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+        <AccordionElement
+          onChange={handleAllArticlesAccordionChange}
+          expanded={match || allArticlesExpanded}
+          elevation={0}
+        >
+          <AccordionSummary expandIcon={match ? undefined : <ExpandMoreIcon />}>
+            <Typography variant="h6">Список статей:</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {store.profileInfo ? (
               <ArticlesList
-                list={store.articles}
+                list={store.getArticlesFromUserCategories(params.categoryId)}
                 readArticles={store.profileInfo.readArticles}
                 onClick={() => setAllArticlesExpanded(false)}
               />
-            </AccordionDetails>
-          </AccordionElement>
-        ) : (
-          <Skeleton
-            width={match ? 350 : '100%'}
-            height={match ? 500 : 50}
-            sx={{ transform: 'none' }}
-          />
-        )}
+            ) : null}
+          </AccordionDetails>
+        </AccordionElement>
         <Article article={store.article} bootState={store.articleLoadState} />
       </PageContent>
     </Main>

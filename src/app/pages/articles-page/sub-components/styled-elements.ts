@@ -49,7 +49,7 @@ export const AccordionElement = styled(Accordion)(({ theme }) => ({
     listStyle: 'none',
   },
   [theme.breakpoints.up('md')]: {
-    minWidth: '350px',
+    minWidth: '300px',
     borderRight: `1px solid ${theme.palette.divider}`,
     '& .MuiAccordionDetails-root': {
       padding: 0,
@@ -83,7 +83,7 @@ export const ArticleListItem = styled(ListItem)(({ theme }) => ({
 
 export const ArticleContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
-  padding: theme.spacing(2),
+  padding: theme.spacing(4),
   maxWidth: '100%',
   '& iframe': {
     maxWidth: '100%',

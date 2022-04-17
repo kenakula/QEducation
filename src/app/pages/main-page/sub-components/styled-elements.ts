@@ -43,21 +43,44 @@ export const CategoryItem = styled(ListItem)(({ theme }) => ({
   }),
   cursor: 'pointer',
 
-  '&:hover': {
-    boxShadow: theme.shadows[5],
-  },
-
   '&:active': {
     opacity: '0.7',
   },
 
-  '& span': {
+  '& > span': {
     position: 'absolute',
     bottom: 0,
     left: 0,
     width: '100%',
     height: '3px',
     backgroundColor: theme.palette.grey[300],
+  },
+
+  '& > button': {
+    position: 'absolute',
+    opacity: 0,
+    transition: theme.transitions.create('opacity', {
+      duration: 200,
+      easing: 'ease-in',
+    }),
+  },
+
+  '& > button:first-of-type': {
+    right: '5px',
+    top: '5px',
+  },
+
+  '& > button:last-of-type': {
+    right: '5px',
+    bottom: '5px',
+  },
+
+  '&:hover': {
+    boxShadow: theme.shadows[5],
+
+    '& > button': {
+      opacity: 1,
+    },
   },
 }));
 
