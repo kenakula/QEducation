@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Typography } from '@mui/material';
 import { ItemList } from './styled-elements';
 import { SortableListItemProps } from '../sortable-list';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface Props<T> {
   data: T;
@@ -27,6 +28,7 @@ export const SortableItem = <T extends SortableListItemProps>(
   return (
     <ItemList ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <span>{index + 1}</span>
+      <DragIndicatorIcon />
       <Typography variant="h6">{data.title}</Typography>
       {data.description ? (
         <Typography variant="body1" color="text.secondary">

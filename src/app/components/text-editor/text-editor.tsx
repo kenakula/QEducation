@@ -16,7 +16,7 @@ export const TextEditor = (props: Props): JSX.Element => {
     },
     toolbarButtonSize: 'large',
     defaultMode: '1',
-    toolbarStickyOffset: 64,
+    toolbarStickyOffset: 0,
     editorCssClass: 'article-editor',
     showCharsCounter: false,
     askBeforePasteHTML: false,

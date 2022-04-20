@@ -5,6 +5,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import QuizIcon from '@mui/icons-material/Quiz';
 import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import GroupIcon from '@mui/icons-material/Group';
+import ClassIcon from '@mui/icons-material/Class';
 
 export const drawerWidth = 250;
 
@@ -44,6 +45,11 @@ export const adminNavList: NavItem[] = [
     text: 'Все статьи',
     link: Routes.ADMIN_ARTICLES,
     icon: <ArticleIcon />,
+  },
+  {
+    text: 'Категории',
+    link: Routes.ADMIN_CATEGORIES,
+    icon: <ClassIcon />,
   },
   {
     text: 'Редактор',

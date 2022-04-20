@@ -208,7 +208,7 @@ export class AdminStore {
   };
 
   deleteArticleFromStorage = (): void => {
-    localStorage.clear();
+    localStorage.removeItem('article');
   };
 
   saveArticleToStorage = (data: ArticleModel): void => {

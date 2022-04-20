@@ -73,7 +73,7 @@ export const AccordionElement = styled(Accordion)(({ theme }) => ({
 
 export const ArticleListItem = styled(ListItem)(({ theme }) => ({
   '&:hover': {
-    background: theme.palette.grey[200],
+    background: theme.palette.divider,
   },
   '& .MuiListItemSecondaryAction-root': {
     display: 'flex',

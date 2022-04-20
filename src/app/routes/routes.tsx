@@ -22,5 +22,5 @@ export class Routes {
   public static readonly ADMIN_STAFF = '/admin/staff';
   public static readonly ADMIN_STAFF_DETAILS = '/admin/staff/:staffId';
   public static readonly ADMIN_TESTS = '/admin/tests';
-  public static readonly ADMIN_LISTS = '/admin/lists';
+  public static readonly ADMIN_CATEGORIES = '/admin/categories';
 }

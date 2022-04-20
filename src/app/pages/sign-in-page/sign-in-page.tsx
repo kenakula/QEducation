@@ -85,7 +85,7 @@ const SignInPage = observer((): JSX.Element => {
             error={!!errors.email}
             errorMessage={errors.email && errors.email.message}
             placeholder="Ваша почта"
-            styles={{ marginBottom: theme.spacing(1) }}
+            styles={{ marginBottom: theme.spacing(2) }}
           />
           <InputComponent
             type={InputType.Password}

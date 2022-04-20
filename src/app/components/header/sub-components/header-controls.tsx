@@ -10,6 +10,8 @@ import { NavLink } from 'react-router-dom';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ProfileMenu from './profile-menu';
+import { useAdminStore } from 'app/stores/admin-store/admin-store';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
 interface Props {
   menuId: string;
@@ -18,6 +20,7 @@ interface Props {
 const HeaderControls = observer((props: Props): JSX.Element | null => {
   const { menuId } = props;
   const { authState, userInfo, logOut } = useAuthStore();
+  const store = useMainPageStore();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -34,6 +37,7 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
   const handleLogout = (): void => {
     if (logOut) {
       logOut();
+      store.dispose();
     }
   };
 

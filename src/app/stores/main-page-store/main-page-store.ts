@@ -266,6 +266,10 @@ export class MainPageStore {
       this._bootState = BootState.Error;
     }
   };
+
+  dispose = (): void => {
+    this.isSuperAdmin = false;
+  };
 }
 
 export const MainPageStoreContext = React.createContext<

@@ -35,9 +35,9 @@ const AdminArticlesPage = lazy(
 const AdminArticlesEditor = lazy(
   () => import('app/pages/admin-articles-editor/admin-articles-editor'),
 );
-// const AdminListsPage = lazy(
-//   () => import('app/pages/admin-lists-page/admin-lists-page'),
-// );
+const AdminCategoriesPage = lazy(
+  () => import('app/pages/admin-categories/admin-categories-page'),
+);
 
 const RouterComponent = (): JSX.Element => (
   <Router>
@@ -56,21 +56,11 @@ const RouterComponent = (): JSX.Element => (
             component={ArticlesPage}
           />
           <PrivateRoute exact path={Routes.PROFILE} component={ProfilePage} />
-          {/* <PrivateRoute
-            exact
-            path={Routes.CATEGORY_ARTICLES}
-            component={CategoryPage}
-          /> */}
           <PrivateRoute
             exact
             path={Routes.ARTICLE_PAGE}
             component={SingleArticlePage}
           />
-          {/* <PrivateRoute
-            exact
-            path={Routes.ARTICLE_PAGE}
-            component={SingleArticlePage}
-          /> */}
 
           {/* admin */}
           <PrivateRoute
@@ -97,12 +87,12 @@ const RouterComponent = (): JSX.Element => (
             path={Routes.ADMIN_ARTICLES_EDITOR}
             component={AdminArticlesEditor}
           />
-          {/* <PrivateRoute
+          <PrivateRoute
             exact
             adminRoute
-            path={Routes.ADMIN_LISTS}
-            component={AdminListsPage}
-          /> */}
+            path={Routes.ADMIN_CATEGORIES}
+            component={AdminCategoriesPage}
+          />
 
           {/* <Route exact path={Routes.NOT_FOUND} component={NotFoundPage} /> */}
         </Switch>

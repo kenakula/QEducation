@@ -148,6 +148,9 @@ const ArticlesPage = observer((): JSX.Element => {
           </>
         ) : null}
       </PageTop>
+      <Typography variant="body1">
+        {store.selectedCategory ? store.selectedCategory.description : ''}
+      </Typography>
       <PageContent>
         <AccordionElement
           onChange={handleAllArticlesAccordionChange}
