@@ -9,6 +9,7 @@ import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
+import { VebinarModel } from 'app/constants/vebinar-model';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -22,7 +23,7 @@ export interface ArtilcesPageParams {
 
 // eslint-disable-next-line no-shadow
 export enum PageContentType {
-  Articles = 'articles',
+  Categories = 'categories',
   Checklists = 'checklists',
   Vebinars = 'vebinars',
   Scripts = 'scripts',
@@ -39,7 +40,8 @@ export class MainPageStore {
     return this._isInited;
   }
 
-  public pageParams: MainPageParams;
+  public selectedContentTab: PageContentType = PageContentType.Categories;
+  public selectedRole: UserRole = UserRole.Doctor;
   public profileInfo: UserModel;
   public isSuperAdmin: boolean;
   public profileInfoUpdating: boolean = false;
@@ -52,16 +54,38 @@ export class MainPageStore {
   public articlesLoadState: BootState = BootState.None;
   public article: ArticleModel | null = null;
   public articleLoadState: BootState = BootState.None;
+  public vebinars: VebinarModel[] = [];
+  public vebinarsLoadState: BootState = BootState.None;
 
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
   }
 
-  setPageParams = (obj: any): void => {
-    this.pageParams = {
-      ...this.pageParams,
-      ...obj,
-    };
+  setSelectedRole = (role: UserRole): void => {
+    this.selectedRole = role;
+  };
+
+  setSelectedContentTab = (tab: PageContentType): void => {
+    this.selectedContentTab = tab;
+  };
+
+  fetchVebinars = async (): Promise<void> => {
+    this.vebinarsLoadState = BootState.Loading;
+
+    try {
+      const response =
+        await this.firebase.getDocumentsFormCollection<VebinarModel>(
+          FirestoreCollection.Vebinars,
+        );
+
+      runInAction(() => {
+        this.vebinars = response;
+        this.vebinarsLoadState = BootState.Success;
+      });
+    } catch (err) {
+      console.error(err);
+      this.vebinarsLoadState = BootState.Error;
+    }
   };
 
   fetchUserInfo = async (): Promise<void> => {
@@ -255,6 +279,9 @@ export class MainPageStore {
       await this.fetchRoles();
       await this.fetchUserInfo();
       await this.fetchCategories();
+      await this.getUserCategories(
+        this.isSuperAdmin ? this.selectedRole : this.profileInfo.role,
+      );
 
       runInAction(() => {
         this._bootState = BootState.Success;

@@ -9,6 +9,7 @@ import { nanoid } from 'nanoid';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { UserCategoriesFormModel } from 'app/pages/main-page/sub-components/user-categories-dialog';
+import { VebinarModel } from 'app/constants/vebinar-model';
 
 export class AdminStore {
   private _bootState: BootState = BootState.None;
@@ -38,6 +39,12 @@ export class AdminStore {
   constructor(private firebase: FirebaseStore) {
     makeAutoObservable(this);
   }
+
+  addVebinar = async (data: VebinarModel): Promise<void> =>
+    this.firebase.addDocument(FirestoreCollection.Vebinars, data, data.id);
+
+  deleteVebinar = async (id: string): Promise<void> =>
+    this.firebase.deleteDocument(FirestoreCollection.Vebinars, id);
 
   startArticleAutosave = (cb: () => void, timeout: number): void => {
     this.articleAutoSave = true;

@@ -1,5 +1,5 @@
 import { TabPanel } from '@mui/lab';
-import { Box, Grid, List, ListItem, styled } from '@mui/material';
+import { Box, Grid, List, ListItem, Paper, styled } from '@mui/material';
 
 export const CategoriesSection = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -88,4 +88,29 @@ export const AdminToolsRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row-reverse',
   marginBottom: theme.spacing(3),
+}));
+
+export const VideoThumbnail = styled(Paper)(({ theme }) => ({
+  position: 'relative',
+  padding: theme.spacing(1),
+  display: 'flex',
+  flexDirection: 'column',
+  cursor: 'pointer',
+  transition: theme.transitions.create('transform', {
+    duration: 200,
+    easing: 'ease-in',
+  }),
+  transformOrigin: 'center',
+  '&:hover': {
+    transform: 'scale(1.1)',
+  },
+}));
+
+export const VideoContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  padding: theme.spacing(2),
+  '& iframe': {
+    maxWidth: '100%',
+  },
 }));

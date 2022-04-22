@@ -9,6 +9,7 @@ export class Routes {
 
   // private
   public static readonly MAIN = '/main';
+
   public static readonly ARTICLES_VIEW = '/main/:categoryId';
   public static readonly PROFILE = '/profile';
 

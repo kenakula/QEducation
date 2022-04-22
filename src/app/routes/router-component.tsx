@@ -50,6 +50,7 @@ const RouterComponent = (): JSX.Element => (
           <Route exact path={Routes.LANDING} component={LandingPage} />
 
           <PrivateRoute exact path={Routes.MAIN} component={MainPage} />
+
           <PrivateRoute
             exact
             path={Routes.ARTICLES_VIEW}

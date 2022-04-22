@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Fade, Grid, Typography, useMediaQuery } from '@mui/material';
 import Loader from 'app/components/loader/loader';
 import Main from 'app/components/main/main';

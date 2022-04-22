@@ -5,4 +5,5 @@ export enum FirestoreCollection {
   Articles = 'articles',
   Categories = 'categories',
   Roles = 'roles',
+  Vebinars = 'vebinars',
 }

@@ -10,7 +10,6 @@ import { NavLink } from 'react-router-dom';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ProfileMenu from './profile-menu';
-import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
 interface Props {

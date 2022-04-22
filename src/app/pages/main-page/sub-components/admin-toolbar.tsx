@@ -4,20 +4,17 @@ import { AdminToolsRow } from './styled-elements';
 import AddIcon from '@mui/icons-material/Add';
 
 interface Props {
-  onOpenCategoriesDialog: () => void;
+  dialogOpener: () => void;
+  tooltipText?: string;
 }
 
 const AdminToolbar = (props: Props): JSX.Element => {
-  const { onOpenCategoriesDialog } = props;
+  const { dialogOpener, tooltipText } = props;
 
   return (
     <AdminToolsRow>
-      <Tooltip title="Добавить категорию и статьи для выбранной роли пользователей">
-        <IconButton
-          onClick={onOpenCategoriesDialog}
-          size="large"
-          color="primary"
-        >
+      <Tooltip title={tooltipText ?? false}>
+        <IconButton onClick={dialogOpener} size="large" color="primary">
           <AddIcon fontSize="large" />
         </IconButton>
       </Tooltip>

@@ -1,8 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Grid, IconButton, Typography } from '@mui/material';
-import Loader from 'app/components/loader/loader';
 import Main from 'app/components/main/main';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import { BootState } from 'app/constants/boot-state';
 import { UserRole } from 'app/constants/user-roles';
 import {
@@ -10,33 +7,18 @@ import {
   useMainPageStore,
 } from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect, useState } from 'react';
-import { generatePath, useHistory } from 'react-router-dom';
-import { ReactComponent as ArticleImage } from 'assets/images/article-image.svg';
-import {
-  CategoriesContainer,
-  CategoriesSection,
-  CategoryItem,
-  ImageContainer,
-  TabItemPanel,
-} from './sub-components/styled-elements';
-import { Category, CategoryArticle } from 'app/constants/category-model';
+import React, { useEffect } from 'react';
+import { TabItemPanel } from './sub-components/styled-elements';
 import TabsComponent, {
   TabsItem,
 } from 'app/components/tabs-component/tabs-component';
 import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
-import Construction from 'app/components/construction/construction';
-import AdminToolbar from './sub-components/admin-toolbar';
-import UserCategoriesDialog from './sub-components/user-categories-dialog';
-import { OpenState } from 'app/constants/open-state';
-import ClearIcon from '@mui/icons-material/Clear';
-import EditIcon from '@mui/icons-material/Edit';
-import { useAdminStore } from 'app/stores/admin-store/admin-store';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import { DeleteConfirmProps } from '../admin-articles-page/admin-articles-page';
-import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+
+import Vebinars from './sub-components/vebinars';
+import { useLocation, useHistory } from 'react-router-dom';
+import Categories from 'app/pages/main-page/sub-components/categories';
+import qs from 'qs';
 
 const roleTabs: TabsItem<UserRole>[] = [
   {
@@ -55,266 +37,94 @@ const roleTabs: TabsItem<UserRole>[] = [
 
 const contentTabs: TabsItem<PageContentType>[] = [
   {
-    value: PageContentType.Articles,
+    value: PageContentType.Categories,
     label: 'Статьи',
-  },
-  {
-    value: PageContentType.Checklists,
-    label: 'Чеклисты',
   },
   {
     value: PageContentType.Vebinars,
     label: 'Вебинары',
   },
-  {
-    value: PageContentType.Scripts,
-    label: 'Скрипты',
-  },
 ];
 
 const MainPage = observer((): JSX.Element => {
   const store = useMainPageStore();
-  const adminStore = useAdminStore();
-
+  const location = useLocation();
   const history = useHistory();
 
-  const [categoriesDialogOpenState, setCategoriesDialogOpenState] = useState(
-    OpenState.Closed,
-  );
-  const [currentRoleTab, setCurrentRoleTab] = useState<UserRole>(
-    ((store.pageParams && store.pageParams.role) as UserRole) ??
-      UserRole.Doctor,
-  );
-  const [currentContentTab, setCurrentContentTab] = useState<PageContentType>(
-    ((store.pageParams && store.pageParams.content) as PageContentType) ??
-      PageContentType.Articles,
-  );
-  const [sortedList, setSortedList] = useState<CategoryArticle[] | undefined>(
-    undefined,
-  );
-  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
-    id: '',
-    openState: OpenState.Closed,
-  });
-  const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
-    message: 'Категория сохранена',
-    alert: 'success',
-  });
-
-  useEffect(() => {
-    store.setPageParams({ role: currentRoleTab });
-  }, []);
+  const getTabFromSearchParams = (params: any): void => {
+    if (params.tab) {
+      store.setSelectedContentTab(params.tab as PageContentType);
+    }
+  };
 
   useEffect(() => {
     store.init();
-  }, [store]);
+  }, []);
 
   useEffect(() => {
-    if (store.profileInfo && !store.isSuperAdmin) {
-      setCurrentRoleTab(store.profileInfo.role);
+    if (store.selectedContentTab && !location.search) {
+      history.push({ search: `tab=${store.selectedContentTab}` });
     }
-  }, [store.profileInfo]);
+  }, [store.selectedContentTab]);
 
   useEffect(() => {
-    if (store.roles && store.profileInfo) {
-      const role = store.isSuperAdmin ? currentRoleTab : store.profileInfo.role;
-      store.getUserCategories(role);
+    if (location.search) {
+      const params = qs.parse(location.search.slice(1));
+
+      getTabFromSearchParams(params);
     }
-  }, [store.roles, store.profileInfo]);
+  }, [location.search]);
 
   const handleRoleTabChange = (
     event: React.SyntheticEvent,
     newValue: UserRole,
   ): void => {
-    store.setPageParams({ role: newValue });
     store.getUserCategories(newValue);
-    setCurrentRoleTab(newValue);
+    store.setSelectedRole(newValue);
   };
 
   const handleContentTabChange = (
     event: React.SyntheticEvent,
     newValue: PageContentType,
   ): void => {
-    store.setPageParams({ content: newValue });
-    setCurrentContentTab(newValue);
-  };
-
-  const handleCategoryChoose = (id: string): void => {
+    store.setSelectedContentTab(newValue);
     history.push({
-      pathname: generatePath(Routes.ARTICLES_VIEW, { categoryId: id }),
-      search: `?role=${
-        store.profileInfo.isSuperAdmin
-          ? store.pageParams.role
-          : store.profileInfo.role
-      }`,
+      pathname: Routes.MAIN,
+      search: `tab=${newValue}`,
     });
   };
 
-  const handleCategoriesDialogOpen = (): void => {
-    setCategoriesDialogOpenState(OpenState.Opened);
-  };
+  const renderUserRoleTabs = (): JSX.Element => (
+    <TabsComponent<UserRole>
+      currentTab={store.selectedRole}
+      handleChange={handleRoleTabChange}
+      tabs={roleTabs}
+    />
+  );
 
-  const handleCategoriesDialogClose = (): void => {
-    setCategoriesDialogOpenState(OpenState.Closed);
-  };
+  return (
+    <Main>
+      {/* role tabs */}
+      {store.bootState === BootState.Success && store.isSuperAdmin
+        ? renderUserRoleTabs()
+        : null}
+      {/* page tabs */}
 
-  const handleCategoryDelete = (e: React.MouseEvent, id: string): void => {
-    e.persist();
-    e.stopPropagation();
-    setDeleteAction(prev => ({
-      ...prev,
-      id,
-      openState: OpenState.Opened,
-    }));
-  };
-
-  const handleCategoryEdit = (e: React.MouseEvent, id: string): void => {
-    e.persist();
-    e.stopPropagation();
-    setSortedList(store.getArticlesFromUserCategories(id));
-    adminStore.setEditingUserCategory(id);
-    handleCategoriesDialogOpen();
-  };
-
-  const renderContent = (): JSX.Element => {
-    switch (store.bootState) {
-      case BootState.Success:
-        return (
-          <>
-            {store.profileInfo.isSuperAdmin ? (
-              <TabsComponent<UserRole>
-                currentTab={currentRoleTab}
-                handleChange={handleRoleTabChange}
-                tabs={roleTabs}
-              />
-            ) : null}
-            <TabsComponent<PageContentType>
-              currentTab={currentContentTab}
-              handleChange={handleContentTabChange}
-              tabs={contentTabs}
-            />
-            <TabContext value={currentContentTab}>
-              <TabItemPanel value={PageContentType.Articles}>
-                <CategoriesSection container spacing={4}>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
-                      Выберите категорию
-                    </Typography>
-                    <ImageContainer>
-                      <ArticleImage width="100%" height={300} />
-                    </ImageContainer>
-                  </Grid>
-                  <Grid xs={12} md={6} item>
-                    {store.isSuperAdmin ? (
-                      <AdminToolbar
-                        onOpenCategoriesDialog={handleCategoriesDialogOpen}
-                      />
-                    ) : null}
-                    {store.roleCategories.length ? (
-                      <CategoriesContainer>
-                        {store.roleCategories.map((item: Category) => (
-                          <CategoryItem
-                            key={item.id}
-                            onClick={() => handleCategoryChoose(item.id)}
-                          >
-                            {item.title}
-                            <Typography variant="caption">
-                              {item.description}
-                            </Typography>
-                            {store.isSuperAdmin ? (
-                              <>
-                                <IconButton
-                                  size="small"
-                                  onClick={e =>
-                                    handleCategoryDelete(e, item.id)
-                                  }
-                                >
-                                  <ClearIcon fontSize="small" color="error" />
-                                </IconButton>
-                                <IconButton
-                                  size="small"
-                                  onClick={e => handleCategoryEdit(e, item.id)}
-                                >
-                                  <EditIcon fontSize="small" color="primary" />
-                                </IconButton>
-                              </>
-                            ) : null}
-                            <span />
-                          </CategoryItem>
-                        ))}
-                      </CategoriesContainer>
-                    ) : (
-                      <Typography textAlign="center" variant="h5">
-                        Нет категорий и статей для просмотра
-                        {store.isSuperAdmin ? (
-                          <Typography
-                            sx={{ display: 'block' }}
-                            textAlign="center"
-                            variant="caption"
-                            color="text.secondary"
-                          >
-                            Нажмите на плюсик чтобы вставить категорию
-                          </Typography>
-                        ) : null}
-                      </Typography>
-                    )}
-                  </Grid>
-                </CategoriesSection>
-                <UserCategoriesDialog
-                  list={sortedList ?? undefined}
-                  openState={categoriesDialogOpenState}
-                  store={store}
-                  role={currentRoleTab}
-                  onClose={handleCategoriesDialogClose}
-                />
-              </TabItemPanel>
-              <TabItemPanel value={PageContentType.Checklists}>
-                <Construction text="Тут будут чеклисты" />
-              </TabItemPanel>
-              <TabItemPanel value={PageContentType.Scripts}>
-                <Construction text="Тут будут скрипты" />
-              </TabItemPanel>
-              <TabItemPanel value={PageContentType.Vebinars}>
-                <Construction text="Тут будут вебинары" />
-              </TabItemPanel>
-            </TabContext>
-            <ConfirmDialog
-              open={deleteAction.openState}
-              title="Уверены что хотите удалить категорию?"
-              message="Это действие необратимо"
-              handleClose={() =>
-                setDeleteAction(prev => ({
-                  ...prev,
-                  openState: OpenState.Closed,
-                }))
-              }
-              handleAgree={() => {
-                adminStore
-                  .deleteUserCategory(deleteAction.id, currentRoleTab)
-                  .then(() => store.fetchRoles())
-                  .then(() => store.getUserCategories(currentRoleTab))
-                  .then(() =>
-                    setSnackbarState(prev => ({
-                      ...prev,
-                      openState: OpenState.Opened,
-                      message: 'Категория удалена',
-                      alert: 'error',
-                    })),
-                  );
-              }}
-            />
-            <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
-          </>
-        );
-      case BootState.Error:
-        return <TechnicalIssues />;
-      default:
-        return <Loader />;
-    }
-  };
-
-  return <Main>{renderContent()}</Main>;
+      <TabsComponent<PageContentType>
+        currentTab={store.selectedContentTab}
+        handleChange={handleContentTabChange}
+        tabs={contentTabs}
+      />
+      <TabContext value={store.selectedContentTab}>
+        <TabItemPanel value={PageContentType.Categories}>
+          <Categories />
+        </TabItemPanel>
+        <TabItemPanel value={PageContentType.Vebinars}>
+          <Vebinars />
+        </TabItemPanel>
+      </TabContext>
+    </Main>
+  );
 });
 
 export default MainPage;
