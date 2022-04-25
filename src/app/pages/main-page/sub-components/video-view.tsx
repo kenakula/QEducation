@@ -4,7 +4,8 @@ import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { VideoContainer } from './styled-elements';
 import { getYoutubeVideoId } from 'app/utils/youtube-helpers';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Routes } from 'app/routes/routes';
 
 interface Props {
   vebinar: VebinarModel;
@@ -12,17 +13,17 @@ interface Props {
 
 const VideoView = (props: Props): JSX.Element => {
   const { vebinar } = props;
-  const history = useHistory();
 
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse', mb: 2 }}>
         <Button
           startIcon={<ArrowBackIcon />}
-          variant="outlined"
-          onClick={() => history.goBack()}
+          component={Link}
+          to={`${Routes.MAIN}?tab=vebinars`}
+          color="inherit"
         >
-          Назад
+          К вебинарам
         </Button>
       </Box>
       <Typography variant="h4" textAlign="center" sx={{ mb: 2 }}>
@@ -37,7 +38,7 @@ const VideoView = (props: Props): JSX.Element => {
       <VideoContainer>
         <iframe
           title={vebinar.title}
-          src={`http://www.youtube.com/embed/${getYoutubeVideoId(
+          src={`https://www.youtube.com/embed/${getYoutubeVideoId(
             vebinar.link,
           )}`}
           frameBorder="0"

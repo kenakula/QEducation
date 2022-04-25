@@ -11,16 +11,16 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import qs from 'qs';
 
-import VideoThumbnailElement from './video-thumbnail-element';
-import VideoView from './video-view';
-import AdminToolbar from './admin-toolbar';
 import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
-import VebinarEditorDialog from './vebinar-editor-dialog';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
 import { DeleteConfirmProps } from 'app/pages/admin-articles-page/admin-articles-page';
+import VideoThumbnailElement from '../video-thumbnail-element';
+import VideoView from '../video-view';
+import AdminToolbar from '../admin-toolbar';
+import VebinarEditorDialog from '../vebinar-editor-dialog';
 
 const Vebinars = observer((): JSX.Element => {
   const store = useMainPageStore();

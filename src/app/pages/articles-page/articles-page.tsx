@@ -37,6 +37,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LaunchIcon from '@mui/icons-material/Launch';
 import qs from 'qs';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const ArticlesPage = observer((): JSX.Element => {
   const params = useParams<{ categoryId: string }>();
@@ -97,8 +98,9 @@ const ArticlesPage = observer((): JSX.Element => {
           to={Routes.MAIN}
           size="small"
           sx={{ mr: 3 }}
+          startIcon={<ArrowBackIcon />}
         >
-          На главную
+          К категориям
         </Button>
         {store.article ? (
           <Tooltip title="Открыть на отдельной странице">

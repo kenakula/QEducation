@@ -2,15 +2,15 @@
 import { Grid, IconButton, Typography } from '@mui/material';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
-import React, { useEffect, useState } from 'react';
-import AdminToolbar from './admin-toolbar';
+import React, { useState } from 'react';
+import AdminToolbar from '../admin-toolbar';
 import {
   CategoriesContainer,
   CategoriesSection,
   CategoryItem,
   ImageContainer,
-} from './styled-elements';
-import UserCategoriesDialog from './user-categories-dialog';
+} from '../styled-elements';
+import UserCategoriesDialog from '../user-categories-dialog';
 import { ReactComponent as ArticleImage } from 'assets/images/article-image.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,14 +28,10 @@ import { BootState } from 'app/constants/boot-state';
 import Loader from 'app/components/loader/loader';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 
-const Categories = observer((): JSX.Element => {
+const Articles = observer((): JSX.Element => {
   const store = useMainPageStore();
   const adminStore = useAdminStore();
   const history = useHistory();
-
-  useEffect(() => {
-    store.init();
-  }, []);
 
   const [categoriesDialogOpenState, setCategoriesDialogOpenState] = useState(
     OpenState.Closed,
@@ -96,9 +92,6 @@ const Categories = observer((): JSX.Element => {
         <>
           <CategoriesSection container spacing={4}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>
-                Выберите категорию
-              </Typography>
               <ImageContainer>
                 <ArticleImage width="100%" height={300} />
               </ImageContainer>
@@ -200,4 +193,4 @@ const Categories = observer((): JSX.Element => {
   }
 });
 
-export default Categories;
+export default Articles;

@@ -1,15 +1,11 @@
 import { Box, styled, Tab, Tabs } from '@mui/material';
 import React from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { TabsItem } from 'app/constants/tabs-model';
 
 export const TabsContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
-
-export interface TabsItem<T> {
-  value: T;
-  label: string;
-}
 
 interface Props<T> {
   currentTab: T;
