@@ -2,10 +2,7 @@
 import Main from 'app/components/main/main';
 import { BootState } from 'app/constants/boot-state';
 import { UserRole } from 'app/constants/user-roles';
-import {
-  PageContentType,
-  useMainPageStore,
-} from 'app/stores/main-page-store/main-page-store';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { TabItemPanel } from './sub-components/styled-elements';
@@ -14,11 +11,12 @@ import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
 import { useLocation, useHistory } from 'react-router-dom';
 import qs from 'qs';
-import { contentTabs, roleTabs } from './tabs';
+import { contentTabs, PageContentType, roleTabs } from './tabs';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import Loader from 'app/components/loader/loader';
 import Vebinars from './sub-components/tabs/vebinars';
 import Categories from './sub-components/tabs/categories';
+import Construction from 'app/components/construction/construction';
 
 interface PageParams {
   tab?: string;
@@ -101,6 +99,12 @@ const MainPage = observer((): JSX.Element => {
             </TabItemPanel>
             <TabItemPanel value={PageContentType.Vebinars}>
               <Vebinars />
+            </TabItemPanel>
+            <TabItemPanel value={PageContentType.Checklists}>
+              <Construction text="Тут скоро будут чеклисты" />
+            </TabItemPanel>
+            <TabItemPanel value={PageContentType.Scripts}>
+              <Construction text="Тут скоро будут скрипты" />
             </TabItemPanel>
           </TabContext>
         </Main>

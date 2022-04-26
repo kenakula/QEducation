@@ -10,6 +10,7 @@ import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
+import { PageContentType } from 'app/pages/main-page/tabs';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -19,14 +20,6 @@ export interface MainPageParams {
 export interface ArtilcesPageParams {
   role?: UserRole;
   article?: string;
-}
-
-// eslint-disable-next-line no-shadow
-export enum PageContentType {
-  Categories = 'categories',
-  Checklists = 'checklists',
-  Vebinars = 'vebinars',
-  Scripts = 'scripts',
 }
 
 export class MainPageStore {

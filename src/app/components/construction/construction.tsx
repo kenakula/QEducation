@@ -18,8 +18,8 @@ const Construction = (props: Props): JSX.Element => (
       justifyContent: 'center',
     }}
   >
-    <EngineeringIcon sx={{ fontSize: '150px' }} color="primary" />
-    <Typography variant="h4" textAlign="center">
+    <EngineeringIcon sx={{ fontSize: '120px' }} color="primary" />
+    <Typography variant="h5" textAlign="center">
       {props.text}
     </Typography>
   </Box>
