@@ -44,6 +44,7 @@ const VideoView = (props: Props): JSX.Element => {
           frameBorder="0"
           width="640"
           height="360"
+          allowFullScreen
         />
       </VideoContainer>
     </>
