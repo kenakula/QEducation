@@ -110,7 +110,7 @@ const CategoriesDialog = observer((props: Props): JSX.Element => {
           <InputComponent
             formControl={control}
             type={InputType.Text}
-            name="label"
+            name="title"
             error={!!formState.errors.title}
             errorMessage={
               !!formState.errors.title

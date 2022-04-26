@@ -1,6 +1,7 @@
-import { List, ListItem, ListItemText } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Category } from 'app/constants/category-model';
 import React from 'react';
+import { CategoriesContainer, CategoryItem } from './styled-elements';
 
 interface Props {
   list: Category[];
@@ -11,16 +12,14 @@ const CategoriesList = (props: Props): JSX.Element => {
   const { list, onClick } = props;
 
   return (
-    <List>
+    <CategoriesContainer>
       {list.map(item => (
-        <ListItem key={item.id} onClick={() => onClick(item)}>
-          <ListItemText
-            primary={item.title}
-            secondary={item.description ?? undefined}
-          />
-        </ListItem>
+        <CategoryItem key={item.id} onClick={() => onClick(item)}>
+          {item.title}
+          <Typography variant="caption">{item.description}</Typography>
+        </CategoryItem>
       ))}
-    </List>
+    </CategoriesContainer>
   );
 };
 
