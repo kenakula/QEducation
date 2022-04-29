@@ -21,6 +21,7 @@ import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Category } from 'app/constants/category-model';
 import Main from 'app/components/main/main';
 import PageTitle from 'app/components/page-title/page-title';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
 export interface DeleteConfirmProps {
   id: string;
@@ -29,6 +30,7 @@ export interface DeleteConfirmProps {
 
 const AdminArticlesPage = observer((): JSX.Element => {
   const adminStore = useAdminStore();
+  const store = useMainPageStore();
   const history = useHistory();
 
   const [categoriesOpenState, setCategoriesOpenState] = useState<OpenState>(
@@ -174,14 +176,17 @@ const AdminArticlesPage = observer((): JSX.Element => {
           setDeleteAction(prev => ({ ...prev, openState: OpenState.Closed }))
         }
         handleAgree={() => {
-          adminStore.deleteArticle(deleteAction.id).then(() =>
-            setSnackbarState(prev => ({
-              ...prev,
-              openState: OpenState.Opened,
-              message: 'Статья удалена',
-              alert: 'error',
-            })),
-          );
+          adminStore
+            .deleteArticle(deleteAction.id)
+            .then(() =>
+              setSnackbarState(prev => ({
+                ...prev,
+                openState: OpenState.Opened,
+                message: 'Статья удалена',
+                alert: 'error',
+              })),
+            )
+            .then(() => store.deleteArticleFromUserCategory(deleteAction.id));
         }}
       />
       <SnackbarAlert {...snackbarState} setState={setSnackbarState} />

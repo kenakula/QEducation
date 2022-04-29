@@ -6,18 +6,19 @@ import { ArticleListItem } from './styled-elements';
 import { observer } from 'mobx-react-lite';
 import { CategoryArticle } from 'app/constants/category-model';
 import qs from 'qs';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
 interface Props {
   list: CategoryArticle[];
-  readArticles: string[];
   onClick: () => void;
 }
 
 const ArticlesList = observer((props: Props): JSX.Element => {
-  const { list, readArticles, onClick } = props;
+  const { list, onClick } = props;
 
   const history = useHistory();
   const location = useLocation();
+  const store = useMainPageStore();
 
   const handleClick = (id: string): void => {
     if (location.search) {
@@ -38,7 +39,8 @@ const ArticlesList = observer((props: Props): JSX.Element => {
           sx={{ cursor: 'pointer' }}
           key={item.id}
           secondaryAction={
-            readArticles.includes(item.id) ? (
+            store.profileInfo &&
+            store.profileInfo.readArticles.includes(item.id) ? (
               <CheckCircleOutlineIcon color="success" />
             ) : undefined
           }

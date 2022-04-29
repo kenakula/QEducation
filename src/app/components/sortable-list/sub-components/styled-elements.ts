@@ -1,12 +1,21 @@
 import { Box, styled } from '@mui/material';
 
-export const ItemList = styled(Box)(({ theme }) => ({
+interface ItemListProps {
+  exluded: boolean;
+}
+
+export const ItemList = styled(Box)<ItemListProps>(({ theme, exluded }) => ({
   position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
   padding: theme.spacing(1),
   paddingLeft: theme.spacing(4),
   paddingRight: theme.spacing(4),
   borderBottom: `1px solid ${theme.palette.divider}`,
-  cursor: 'grab',
+  '& > .MuiBox-root': {
+    opacity: exluded ? '0.3' : '1',
+    textDecoration: exluded ? 'line-through' : 'none',
+  },
   '& > span': {
     position: 'absolute',
     left: 0,
@@ -21,6 +30,6 @@ export const ItemList = styled(Box)(({ theme }) => ({
     top: '50%',
     transform: 'translateY(-50%)',
     color: theme.palette.grey[500],
-    cursor: 'pointer',
+    cursor: 'grab',
   },
 }));

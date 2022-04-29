@@ -2,6 +2,7 @@
 import {
   AccordionDetails,
   AccordionSummary,
+  Box,
   Button,
   IconButton,
   Tooltip,
@@ -34,10 +35,12 @@ import Article from './sub-components/article';
 import { Routes } from 'app/routes/routes';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LaunchIcon from '@mui/icons-material/Launch';
 import qs from 'qs';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIcon from '@mui/icons-material/Add';
+import { nanoid } from 'nanoid';
+import { Category } from 'app/constants/category-model';
 
 const ArticlesPage = observer((): JSX.Element => {
   const params = useParams<{ categoryId: string }>();
@@ -49,8 +52,6 @@ const ArticlesPage = observer((): JSX.Element => {
 
   useEffect(() => {
     store.getCategoryById(params.categoryId);
-
-    return () => store.resetArticle();
   }, []);
 
   useEffect(() => {
@@ -62,7 +63,10 @@ const ArticlesPage = observer((): JSX.Element => {
       }
 
       if (obj.role) {
-        store.getUserCategories(obj.role);
+        store.setSelectedRole(obj.role);
+        store.getUserCategories(obj.role).then(() => {
+          store.getArticlesFromUserCategory(params.categoryId);
+        });
       } else if (!obj.role && obj.article) {
         history.push(
           generatePath(Routes.ARTICLE_PAGE, {
@@ -80,6 +84,24 @@ const ArticlesPage = observer((): JSX.Element => {
     isExpanded: boolean,
   ): void => {
     setAllArticlesExpanded(isExpanded);
+  };
+
+  const handleNewArticle = (): void => {
+    const url = location.pathname;
+
+    adminStore.editArticle(
+      {
+        id: nanoid(),
+        title: '',
+        description: '',
+        delta: '',
+        roles: [store.selectedRole],
+        categories: [store.selectedCategory.title as unknown as Category],
+        readMore: [],
+      },
+      url,
+    );
+    history.push(Routes.ADMIN_ARTICLES_EDITOR);
   };
 
   return (
@@ -134,19 +156,6 @@ const ArticlesPage = observer((): JSX.Element => {
                 <EditIcon />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Удалить (в работе)">
-              {/* TODO добавить окно подтверждения и удалять из списка статей у роли пользователя */}
-              <IconButton
-                color="error"
-                size="small"
-                onClick={() => {
-                  // adminStore.deleteArticle(store.article!.id);
-                  // history.push(Routes.MAIN);
-                }}
-              >
-                <DeleteForeverIcon />
-              </IconButton>
-            </Tooltip>
           </>
         ) : null}
       </PageTop>
@@ -160,16 +169,26 @@ const ArticlesPage = observer((): JSX.Element => {
           elevation={0}
         >
           <AccordionSummary expandIcon={match ? undefined : <ExpandMoreIcon />}>
-            <Typography variant="h6">Список статей:</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Typography variant="h6">Список статей:</Typography>
+              <Tooltip title="Создать статью в данной категории. Автоматически добавится к выбранной роли пользователя">
+                <IconButton onClick={handleNewArticle} color="primary">
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </AccordionSummary>
           <AccordionDetails>
-            {store.profileInfo ? (
-              <ArticlesList
-                list={store.getArticlesFromUserCategories(params.categoryId)}
-                readArticles={store.profileInfo.readArticles}
-                onClick={() => setAllArticlesExpanded(false)}
-              />
-            ) : null}
+            <ArticlesList
+              list={store.userCategoryArticles}
+              onClick={() => setAllArticlesExpanded(false)}
+            />
           </AccordionDetails>
         </AccordionElement>
         <Article article={store.article} bootState={store.articleLoadState} />

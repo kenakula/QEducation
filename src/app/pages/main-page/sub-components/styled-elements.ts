@@ -8,7 +8,7 @@ export const CategoriesSection = styled(Grid)(({ theme }) => ({
 }));
 
 export const TabItemPanel = styled(TabPanel)(() => ({
-  padding: 0,
+  padding: '0 0 40px 0',
 }));
 
 export const ImageContainer = styled(Box)(({ theme }) => ({

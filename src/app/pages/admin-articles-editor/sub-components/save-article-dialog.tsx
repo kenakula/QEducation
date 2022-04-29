@@ -10,16 +10,17 @@ import {
 import { OpenState } from 'app/constants/open-state';
 import { Routes } from 'app/routes/routes';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 interface Props {
   open: OpenState;
   handleClose: () => void;
   resetFunc: () => void;
+  goBack?: string;
 }
 
 const SaveArticleDialog = (props: Props): JSX.Element => {
-  const { open, handleClose, resetFunc } = props;
+  const { open, goBack, handleClose, resetFunc } = props;
 
   const history = useHistory();
 
@@ -62,6 +63,20 @@ const SaveArticleDialog = (props: Props): JSX.Element => {
         >
           К статьям
         </Button>
+        {goBack && (
+          <Button
+            variant="outlined"
+            component={Link}
+            sx={{ ml: 1 }}
+            to={goBack}
+            onClick={() => {
+              resetFunc();
+              handleClose();
+            }}
+          >
+            К категории
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

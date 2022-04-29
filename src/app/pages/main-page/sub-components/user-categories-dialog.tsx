@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import SelectComponent from 'app/components/select-component/select-component';
 import { OpenState } from 'app/constants/open-state';
-import { UserRole } from 'app/constants/user-roles';
 import {
   CustomInputLabel,
   InputContainer,
@@ -34,7 +33,6 @@ const schema = yup.object({
 
 interface Props {
   store: MainPageStore;
-  role: UserRole;
   openState: OpenState;
   onClose: () => void;
   list?: CategoryArticle[];
@@ -46,7 +44,7 @@ export interface UserCategoriesFormModel {
 }
 
 const UserCategoriesDialog = observer((props: Props): JSX.Element => {
-  const { store, role, openState, onClose, list } = props;
+  const { store, openState, onClose, list } = props;
 
   const adminStore = useAdminStore();
 
@@ -78,22 +76,29 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
   };
 
   const onSubmit = (data: UserCategoriesFormModel): void => {
+    const finalArr = data.list.filter(
+      item => !adminStore.excludedArticlesFromCategoryList.includes(item.id),
+    );
+
     adminStore
-      .setUserCategory(data.category, role, data)
+      .setUserCategory(data.category, store.selectedRole, {
+        ...data,
+        list: finalArr,
+      })
       .then(() => {
         store.fetchRoles();
-        store.getUserCategories(role);
         reset();
         setValue('list', []);
         store.resetArticles();
         adminStore.setEditingUserCategory('');
+        store.getUserCategories(store.selectedRole);
       })
-      .then(() =>
+      .then(() => {
         setSnackbarState(prev => ({
           ...prev,
           openState: OpenState.Opened,
-        })),
-      );
+        }));
+      });
   };
 
   useEffect(() => {
@@ -116,7 +121,7 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
             variant="caption"
             color="primary"
           >
-            {role}
+            {store.selectedRole}
           </Typography>
         </Typography>
       </DialogTitleContainer>

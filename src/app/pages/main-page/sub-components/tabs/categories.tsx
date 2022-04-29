@@ -21,7 +21,6 @@ import { observer } from 'mobx-react-lite';
 import { OpenState } from 'app/constants/open-state';
 import { DeleteConfirmProps } from 'app/pages/admin-articles-page/admin-articles-page';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import { UserRole } from 'app/constants/user-roles';
 import { generatePath, useHistory } from 'react-router-dom';
 import { Routes } from 'app/routes/routes';
 import { BootState } from 'app/constants/boot-state';
@@ -70,7 +69,7 @@ const Articles = observer((): JSX.Element => {
   const handleCategoryEdit = (e: React.MouseEvent, id: string): void => {
     e.persist();
     e.stopPropagation();
-    setSortedList(store.getArticlesFromUserCategories(id));
+    setSortedList(store.userCategoryArticles);
     adminStore.setEditingUserCategory(id);
     handleCategoriesDialogOpen();
   };
@@ -144,7 +143,8 @@ const Articles = observer((): JSX.Element => {
                       variant="caption"
                       color="text.secondary"
                     >
-                      Нажмите на плюсик чтобы вставить категорию
+                      Нажмите на плюсик чтобы добавить категорию и статьи для
+                      нее
                     </Typography>
                   ) : null}
                 </Typography>
@@ -155,7 +155,6 @@ const Articles = observer((): JSX.Element => {
             list={sortedList ?? undefined}
             openState={categoriesDialogOpenState}
             store={store}
-            role={UserRole.Doctor}
             onClose={handleCategoriesDialogClose}
           />
           <ConfirmDialog
@@ -170,9 +169,9 @@ const Articles = observer((): JSX.Element => {
             }
             handleAgree={() => {
               adminStore
-                .deleteUserCategory(deleteAction.id, UserRole.Doctor)
+                .deleteUserCategory(deleteAction.id, store.selectedRole)
                 .then(() => store.fetchRoles())
-                .then(() => store.getUserCategories(UserRole.Doctor))
+                .then(() => store.getUserCategories(store.selectedRole))
                 .then(() =>
                   setSnackbarState(prev => ({
                     ...prev,

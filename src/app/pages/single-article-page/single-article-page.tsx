@@ -60,7 +60,6 @@ const SingleArticlePage = observer((): JSX.Element => {
           </Grid>
         ) : (
           <Grid item md={9}>
-            {/* TODO заменить на скелет статьи */}
             <Skeleton />
           </Grid>
         )}

@@ -31,6 +31,7 @@ const SortableList = <T extends SortableListItemProps>(
 ): JSX.Element => {
   const { list, onChange } = props;
   const [items, setItems] = useState<T[]>([]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {

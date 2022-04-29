@@ -28,9 +28,11 @@ import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import SaveArticleDialog from './sub-components/save-article-dialog';
 import { Category } from 'app/constants/category-model';
 import Main from 'app/components/main/main';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
 const AdminArticlesEditor = observer((): JSX.Element => {
   const adminStore = useAdminStore();
+  const store = useMainPageStore();
 
   const [categoriesOpenState, setCategoriesOpenState] = useState<OpenState>(
     OpenState.Closed,
@@ -88,6 +90,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
     reset();
     adminStore.deleteArticleFromStorage();
     adminStore.emptyArticle();
+    adminStore.goBackToMainUrl = '';
     setValue('id', nanoid());
     setValue('delta', '');
     setValue('title', '');
@@ -140,6 +143,20 @@ const AdminArticlesEditor = observer((): JSX.Element => {
       .then(() => {
         setArticleLoading(false);
         adminStore.deleteArticleFromStorage();
+
+        if (adminStore.goBackToMainUrl && adminStore.goBackToMainUrl.length) {
+          adminStore
+            .addArticleToUserCategory(
+              { id: obj.id, description: obj.description, title: obj.title },
+              store.selectedRole,
+              store.selectedCategory,
+            )
+            .then(() => {
+              store.getUserCategories(store.selectedRole);
+              store.getArticlesFromUserCategory(store.selectedCategory.id);
+            });
+        }
+
         setSaveArticleDialog(OpenState.Opened);
       })
       .catch(error => {
@@ -298,6 +315,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
         open={saveArticleDialog}
         handleClose={handleSaveArticleDialogClose}
         resetFunc={resetForm}
+        goBack={adminStore.goBackToMainUrl}
       />
     </Main>
   );

@@ -33,6 +33,7 @@ export class MainPageStore {
     return this._isInited;
   }
 
+  public userCategoryArticles: CategoryArticle[] = [];
   public selectedContentTab: PageContentType = PageContentType.Categories;
   public selectedRole: UserRole = UserRole.Doctor;
   public profileInfo: UserModel;
@@ -133,9 +134,7 @@ export class MainPageStore {
   };
 
   getUserCategories = async (role: UserRole): Promise<void> => {
-    if (!this.roles.length) {
-      await this.fetchRoles();
-    }
+    await this.fetchRoles();
 
     const currentRole = this.roles.find(item => item.title === role);
 
@@ -148,14 +147,40 @@ export class MainPageStore {
     }
   };
 
-  getArticlesFromUserCategories = (categoryId: string): CategoryArticle[] => {
+  getArticlesFromUserCategory = async (categoryId: string): Promise<void> => {
     const category = this.roleCategories.find(item => item.id === categoryId);
 
-    if (!category) {
-      return [];
+    if (category) {
+      runInAction(() => {
+        this.userCategoryArticles = category.articles;
+      });
+    }
+  };
+
+  deleteArticleFromUserCategory = async (articleId: string): Promise<void> => {
+    if (!this.roles.length) {
+      await this.fetchRoles();
     }
 
-    return category.articles;
+    this.roles.forEach(role => {
+      const categories = role.categories;
+
+      if (!categories.length) return;
+
+      const newCategoriesArr: Category[] = [];
+
+      categories.forEach(category => {
+        const newArticlesArr = category.articles.filter(
+          article => article.id !== articleId,
+        );
+
+        newCategoriesArr.push({ ...category, articles: newArticlesArr });
+      });
+
+      this.firebase.updateDocument(FirestoreCollection.Roles, role.title, {
+        categories: newCategoriesArr,
+      });
+    });
   };
 
   fetchCategories = async (): Promise<void> => {
@@ -184,7 +209,9 @@ export class MainPageStore {
     const selectedCategory = this.categories.find(item => item.id === id);
 
     if (selectedCategory) {
-      this.selectedCategory = selectedCategory;
+      runInAction(() => {
+        this.selectedCategory = selectedCategory;
+      });
     }
   };
 

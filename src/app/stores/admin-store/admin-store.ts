@@ -16,11 +16,13 @@ export class AdminStore {
   private _isInited: boolean = false;
   private _autosaveTimeout: NodeJS.Timeout;
 
+  public goBackToMainUrl: string;
   public roles: IRole[] = [];
   public articles: ArticleModel[] = [];
   public articlesLoading: boolean;
   public categories: Category[] = [];
   public editingUserCategory: string;
+  public excludedArticlesFromCategoryList: string[] = [];
   public users: UserModel[] = [];
   public usersLoading: boolean;
   public userDetailsInfo: UserModel;
@@ -39,6 +41,17 @@ export class AdminStore {
   constructor(private firebase: FirebaseStore) {
     makeAutoObservable(this);
   }
+
+  setExcludedArticlesFromCategoryList = (id: string): void => {
+    const hasItem = this.excludedArticlesFromCategoryList.includes(id);
+
+    if (hasItem) {
+      this.excludedArticlesFromCategoryList =
+        this.excludedArticlesFromCategoryList.filter(item => item !== id);
+    } else {
+      this.excludedArticlesFromCategoryList.push(id);
+    }
+  };
 
   addVebinar = async (data: VebinarModel): Promise<void> =>
     this.firebase.addDocument(FirestoreCollection.Vebinars, data, data.id);
@@ -64,6 +77,35 @@ export class AdminStore {
 
   setEditingUserCategory = (id: string): void => {
     this.editingUserCategory = id;
+  };
+
+  addArticleToUserCategory = async (
+    data: CategoryArticle,
+    role: UserRole,
+    category: Category,
+  ): Promise<void> => {
+    if (!this.roles.length) {
+      await this.fetchRoles();
+    }
+
+    if (!this.categories.length) {
+      await this.getCategories();
+    }
+
+    const roleItem = this.roles.find(item => item.title === role);
+    const initialCategories = roleItem!.categories;
+    const newArr = initialCategories.map(item => {
+      if (item.id === category.id) {
+        const newArticles: CategoryArticle[] = [...item.articles, data];
+        return { ...item, articles: newArticles };
+      }
+
+      return item;
+    });
+
+    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
+      categories: newArr,
+    });
   };
 
   deleteUserCategory = async (
@@ -249,9 +291,13 @@ export class AdminStore {
     };
   };
 
-  editArticle = (data: ArticleModel): void => {
+  editArticle = (data: ArticleModel, url?: string): void => {
     this.editingArticle = data;
     this.saveArticleToStorage(data);
+
+    if (url) {
+      this.goBackToMainUrl = url;
+    }
   };
 
   getUsers = async (): Promise<void> => {
