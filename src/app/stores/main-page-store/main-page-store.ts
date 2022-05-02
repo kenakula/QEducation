@@ -133,10 +133,12 @@ export class MainPageStore {
     await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
-  getUserCategories = async (role: UserRole): Promise<void> => {
+  getUserCategories = async (role?: UserRole): Promise<void> => {
     await this.fetchRoles();
 
-    const currentRole = this.roles.find(item => item.title === role);
+    const currentRole = this.roles.find(
+      item => item.title === (role ?? this.selectedRole),
+    );
 
     if (currentRole) {
       const categories = currentRole.categories;
@@ -149,6 +151,7 @@ export class MainPageStore {
 
   getArticlesFromUserCategory = async (categoryId: string): Promise<void> => {
     const category = this.roleCategories.find(item => item.id === categoryId);
+    console.log('category:', category?.articles);
 
     if (category) {
       runInAction(() => {

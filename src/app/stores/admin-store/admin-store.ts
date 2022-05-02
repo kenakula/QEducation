@@ -16,7 +16,7 @@ export class AdminStore {
   private _isInited: boolean = false;
   private _autosaveTimeout: NodeJS.Timeout;
 
-  public goBackToMainUrl: string;
+  public _goBackToMainUrl: string;
   public roles: IRole[] = [];
   public articles: ArticleModel[] = [];
   public articlesLoading: boolean;
@@ -29,6 +29,14 @@ export class AdminStore {
 
   public editingArticle: ArticleModel;
   public articleAutoSave: boolean = false;
+
+  public get goBackToMainUrl(): string {
+    return this._goBackToMainUrl;
+  }
+
+  public set goBackToMainUrl(url: string) {
+    this._goBackToMainUrl = url;
+  }
 
   get bootState(): BootState {
     return this._bootState;

@@ -91,13 +91,13 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
         setValue('list', []);
         store.resetArticles();
         adminStore.setEditingUserCategory('');
-        store.getUserCategories(store.selectedRole);
       })
       .then(() => {
         setSnackbarState(prev => ({
           ...prev,
           openState: OpenState.Opened,
         }));
+        store.getUserCategories(store.selectedRole);
       });
   };
 
@@ -167,7 +167,7 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
       <DialogActions>
         <Button onClick={handleSubmit(onSubmit)}>Сохранить</Button>
         <Button color="error" onClick={onClose}>
-          Отмена
+          Закрыть
         </Button>
       </DialogActions>
       <SnackbarAlert {...snackbarState} setState={setSnackbarState} />

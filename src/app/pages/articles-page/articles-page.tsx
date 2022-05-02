@@ -52,6 +52,7 @@ const ArticlesPage = observer((): JSX.Element => {
 
   useEffect(() => {
     store.getCategoryById(params.categoryId);
+    store.getArticlesFromUserCategory(params.categoryId);
   }, []);
 
   useEffect(() => {
