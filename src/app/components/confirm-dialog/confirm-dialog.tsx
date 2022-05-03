@@ -27,12 +27,7 @@ const ConfirmDialog = (props: Props): JSX.Element => {
   };
 
   return (
-    <Dialog
-      open={open === OpenState.Opened}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
+    <Dialog open={open === OpenState.Opened} onClose={handleClose}>
       <DialogTitle id="alert-dialog-title">
         <Typography variant="h5" component="p">
           {title}

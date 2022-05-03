@@ -4,10 +4,8 @@ import { Routes } from 'app/routes/routes';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { stringToColor } from 'app/utils/color-helpers';
 import { observer } from 'mobx-react-lite';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-
-import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ProfileMenu from './profile-menu';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
@@ -22,6 +20,13 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
   const store = useMainPageStore();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    if (store.profileInfo) {
+      store.getUserImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.profileInfo]);
 
   const handleProfileMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
@@ -44,15 +49,6 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
     case AuthStates.Authorized:
       return (
         <Box sx={{ marginLeft: 'auto' }}>
-          <IconButton
-            size="small"
-            aria-label="show 4 new mails"
-            color="default"
-          >
-            <Badge badgeContent={0} color="error">
-              <MailIcon />
-            </Badge>
-          </IconButton>
           <IconButton
             size="small"
             aria-label="show 17 new notifications"
@@ -81,6 +77,7 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
                     backgroundColor: stringToColor(userInfo.firstName),
                     fontSize: 18,
                   }}
+                  src={store.profileImageUrl}
                 >
                   {userInfo.firstName[0]}
                 </Avatar>

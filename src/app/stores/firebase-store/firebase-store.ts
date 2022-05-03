@@ -15,19 +15,31 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import {
+  deleteObject,
+  FirebaseStorage,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  UploadResult,
+} from 'firebase/storage';
 import React from 'react';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
 import { firebaseProdConfig } from 'app/constants/firebase-config';
+import { StorageFolder } from 'app/constants/storage-folder';
 
 export class FirebaseStore {
   app: FirebaseApp;
   auth: Auth;
   store: Firestore;
+  storage: FirebaseStorage;
 
   constructor() {
     this.app = initializeApp(firebaseProdConfig);
     this.store = getFirestore();
     this.auth = getAuth(this.app);
+    this.storage = getStorage();
 
     makeAutoObservable(this);
   }
@@ -36,8 +48,8 @@ export class FirebaseStore {
     collName: FirestoreCollection,
     docId: string,
   ): Promise<void | DocumentData | undefined> => {
-    const ref = doc(this.store, collName, docId);
-    return getDoc(ref).catch((err: FirebaseError) => {
+    const reference = doc(this.store, collName, docId);
+    return getDoc(reference).catch((err: FirebaseError) => {
       console.error('error when getting document', err);
     });
   };
@@ -48,8 +60,8 @@ export class FirebaseStore {
     value: string,
   ): Promise<T[]> => {
     const result: T[] = [];
-    const ref = collection(this.store, collName);
-    const q = query(ref, where(field, 'array-contains', value));
+    const reference = collection(this.store, collName);
+    const q = query(reference, where(field, 'array-contains', value));
     const snapShot = await getDocs(q);
     snapShot.forEach(val => result.push(val.data() as T));
 
@@ -61,9 +73,9 @@ export class FirebaseStore {
     docId: string,
     data: any,
   ): Promise<void> => {
-    const ref = doc(this.store, collName, docId);
+    const reference = doc(this.store, collName, docId);
 
-    return updateDoc(ref, data).catch(err =>
+    return updateDoc(reference, data).catch(err =>
       console.error('document update error: ', err),
     );
   };
@@ -88,18 +100,48 @@ export class FirebaseStore {
     data: T,
     docId: string,
   ): Promise<void> => {
-    const ref = doc(this.store, collName, docId);
-    return setDoc(ref, data).catch((err: FirebaseError) => {
+    const reference = doc(this.store, collName, docId);
+    return setDoc(reference, data).catch((err: FirebaseError) => {
       console.error('error when adding document', err);
     });
   };
 
-  async deleteDocument(
+  deleteDocument = async (
     collName: FirestoreCollection,
     docId: string,
-  ): Promise<void> {
-    return deleteDoc(doc(this.store, collName, docId));
-  }
+  ): Promise<void> => deleteDoc(doc(this.store, collName, docId));
+
+  uploadFile = async (
+    folder: StorageFolder,
+    fileName: string,
+    file: File,
+  ): Promise<UploadResult | void> => {
+    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+
+    return uploadBytes(fileRef, file).catch(err => {
+      console.error(err);
+    });
+  };
+
+  deleteFile = async (
+    folder: StorageFolder,
+    fileName: string,
+  ): Promise<void> => {
+    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+
+    return deleteObject(fileRef).catch(err => {
+      console.error(err);
+    });
+  };
+
+  getFileUrl = async (
+    folder: StorageFolder,
+    fileName: string,
+  ): Promise<string> => {
+    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+
+    return getDownloadURL(fileRef);
+  };
 }
 
 export const FirebaseContext = React.createContext<FirebaseStore | undefined>(

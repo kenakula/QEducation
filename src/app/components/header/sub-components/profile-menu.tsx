@@ -49,16 +49,6 @@ const ProfileMenu = (props: Props): JSX.Element => {
         <AccountCircle sx={{ mr: 1 }} />
         Профиль
       </MenuItem>
-      <MenuItem
-        component={NavLink}
-        activeStyle={{ background: theme.palette.grey[300] }}
-        disabled
-        to={Routes.PROFILE}
-        onClick={handleClose}
-        sx={{ py: 2 }}
-      >
-        Настройки
-      </MenuItem>
       <Divider />
       <MenuItem
         sx={{ py: 2 }}

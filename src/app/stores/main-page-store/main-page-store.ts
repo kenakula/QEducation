@@ -11,6 +11,7 @@ import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { PageContentType } from 'app/pages/main-page/tabs';
+import { StorageFolder } from 'app/constants/storage-folder';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -37,6 +38,7 @@ export class MainPageStore {
   public selectedContentTab: PageContentType = PageContentType.Categories;
   public selectedRole: UserRole = UserRole.Doctor;
   public profileInfo: UserModel;
+  public profileImageUrl: string = '';
   public isSuperAdmin: boolean;
   public profileInfoUpdating: boolean = false;
   public selectedCategory: Category;
@@ -54,6 +56,10 @@ export class MainPageStore {
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
   }
+
+  setProfileImageUrl = (url: string): void => {
+    this.profileImageUrl = url;
+  };
 
   setSelectedRole = (role: UserRole): void => {
     this.selectedRole = role;
@@ -96,7 +102,19 @@ export class MainPageStore {
             });
           }
         });
+
+      await this.getUserImage();
     }
+  };
+
+  getUserImage = async (): Promise<void> => {
+    this.firebase
+      .getFileUrl(StorageFolder.UserAvatars, this.profileInfo.uid)
+      .then(url => {
+        runInAction(() => {
+          this.profileImageUrl = url;
+        });
+      });
   };
 
   updateUserInfo = async (id: string, data: UserModel): Promise<void> => {
@@ -151,7 +169,6 @@ export class MainPageStore {
 
   getArticlesFromUserCategory = async (categoryId: string): Promise<void> => {
     const category = this.roleCategories.find(item => item.id === categoryId);
-    console.log('category:', category?.articles);
 
     if (category) {
       runInAction(() => {
@@ -319,6 +336,7 @@ export class MainPageStore {
 
   dispose = (): void => {
     this.isSuperAdmin = false;
+    this.profileImageUrl = '';
   };
 }
 

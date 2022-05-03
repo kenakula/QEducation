@@ -12,4 +12,5 @@ export interface UserModel {
   birthDate?: Date;
   gender?: Gender;
   readArticles: string[];
+  image?: string;
 }

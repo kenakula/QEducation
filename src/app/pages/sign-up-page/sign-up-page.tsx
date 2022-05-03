@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Alert,
@@ -33,13 +34,20 @@ interface SignUpFormModel extends SignUpModel {
 const SignUpPage = observer((): JSX.Element => {
   const theme = useTheme();
   const history = useHistory();
-  const { signUp, authState, actionProcesing, errorMessage } = useAuthStore();
+  const { signUp, authState, actionProcesing, errorMessage, setErrorMessage } =
+    useAuthStore();
 
   useEffect(() => {
     if (authState === AuthStates.Authorized) {
       history.push(Routes.MAIN);
     }
   }, [authState, history]);
+
+  useEffect(() => {
+    if (setErrorMessage) {
+      setErrorMessage('');
+    }
+  }, []);
 
   const {
     control,
@@ -93,12 +101,7 @@ const SignUpPage = observer((): JSX.Element => {
         <Typography component="h1" variant="h5">
           Регистрация
         </Typography>
-        <Box
-          component="form"
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-          sx={{ mt: 3 }}
-        >
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
           <Grid container spacing={1}>
             <Grid item xs={12} sm={6}>
               <InputComponent

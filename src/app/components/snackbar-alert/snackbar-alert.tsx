@@ -25,7 +25,7 @@ const SnackbarAlert = (props: Props): JSX.Element => {
       open={openState === OpenState.Opened}
       autoHideDuration={4000}
       onClose={handleSnackBarClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >
       <Alert
         onClose={handleSnackBarClose}

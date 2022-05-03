@@ -38,3 +38,25 @@ export const StackItem = styled(Box)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
+
+export const CategoryProgress = styled(Box)(({ theme }) => ({
+  ...theme.typography.body1,
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  alignItems: 'center',
+  marginBottom: theme.spacing(2),
+  '& > .MuiBox-root': {
+    textAlign: 'center',
+    padding: `0 ${theme.spacing(1)}`,
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    '& .MuiTypography-body2': {
+      marginLeft: theme.spacing(2),
+    },
+  },
+  [theme.breakpoints.up('md')]: {
+    gridTemplateColumns: '1fr 2fr',
+  },
+}));

@@ -16,13 +16,9 @@ const ArticlesPage = lazy(
   () => import('app/pages/articles-page/articles-page'),
 );
 const ProfilePage = lazy(() => import('app/pages/profile-page/profile-page'));
-// const CategoryPage = lazy(
-//   () => import('app/pages/category-page/category-page'),
-// );
 const SingleArticlePage = lazy(
   () => import('app/pages/single-article-page/single-article-page'),
 );
-// const TestsPage = lazy(() => import('app/pages/tests-page/tests-page'));
 const AdminStaffPage = lazy(
   () => import('app/pages/admin-staff-page/admin-staff-page'),
 );
@@ -38,6 +34,12 @@ const AdminArticlesEditor = lazy(
 const AdminCategoriesPage = lazy(
   () => import('app/pages/admin-categories/admin-categories-page'),
 );
+const NotFoundPage = lazy(
+  () => import('app/pages/not-found-page/not-found-page'),
+);
+const RestorePassword = lazy(
+  () => import('app/pages/restore-password/restore-password'),
+);
 
 const RouterComponent = (): JSX.Element => (
   <Router>
@@ -48,6 +50,11 @@ const RouterComponent = (): JSX.Element => (
           <Route exact path={Routes.SIGN_IN} component={SignInPage} />
           <Route exact path={Routes.SIGN_UP} component={SignUpPage} />
           <Route exact path={Routes.LANDING} component={LandingPage} />
+          <Route
+            exact
+            path={Routes.RESTORE_PASSWORD}
+            component={RestorePassword}
+          />
 
           <PrivateRoute exact path={Routes.MAIN} component={MainPage} />
 
@@ -95,7 +102,7 @@ const RouterComponent = (): JSX.Element => (
             component={AdminCategoriesPage}
           />
 
-          {/* <Route exact path={Routes.NOT_FOUND} component={NotFoundPage} /> */}
+          <Route exact path={Routes.NOT_FOUND} component={NotFoundPage} />
         </Switch>
       </Suspense>
     </ErrorBoundary>

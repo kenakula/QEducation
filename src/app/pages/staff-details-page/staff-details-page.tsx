@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -12,6 +12,10 @@ import { observer } from 'mobx-react-lite';
 import Loader from 'app/components/loader/loader';
 import TechnicalIssues from 'app/components/technical-issues/technical-issues';
 import Main from 'app/components/main/main';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import UserProgress from './sub-components/user-progress';
+import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
+import { StorageFolder } from 'app/constants/storage-folder';
 
 interface PageParams {
   staffId: string;
@@ -19,15 +23,30 @@ interface PageParams {
 
 const StaffDetailsPage = observer((): JSX.Element => {
   const adminStore = useAdminStore();
+  const store = useMainPageStore();
+  const firebase = useFirebaseContext();
   const params = useParams<PageParams>();
   const { currentUser } = useAuthStore();
 
   const [profileDeleted, setProfileDeleted] = useState(false);
+  const [userImageUrl, setUserImageUrl] = useState('');
 
   useEffect(() => {
     adminStore.init();
     adminStore.getUserInfo(params.staffId);
   }, []);
+
+  useEffect(() => {
+    firebase.getFileUrl(StorageFolder.UserAvatars, params.staffId).then(url => {
+      setUserImageUrl(url);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (adminStore.userDetailsInfo) {
+      store.getUserCategories(adminStore.userDetailsInfo.role);
+    }
+  }, [adminStore.userDetailsInfo]);
 
   if (profileDeleted) {
     return <TechnicalIssues header="Профиль удален" message="" code="" />;
@@ -38,7 +57,7 @@ const StaffDetailsPage = observer((): JSX.Element => {
       {adminStore.userDetailsInfo ? (
         <Grid spacing={2} container rowSpacing={6}>
           <Grid item xs={12} sm={4}>
-            <UserPhoto variant="rounded">
+            <UserPhoto variant="rounded" src={userImageUrl}>
               <PersonIcon />
             </UserPhoto>
           </Grid>
@@ -46,6 +65,15 @@ const StaffDetailsPage = observer((): JSX.Element => {
             <UserDetailsInfo
               store={adminStore}
               data={adminStore.userDetailsInfo}
+            />
+          </Grid>
+          <Grid xs={12} item>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Прогресс пользователя
+            </Typography>
+            <UserProgress
+              userInfo={adminStore.userDetailsInfo}
+              categories={store.roleCategories}
             />
           </Grid>
           <Grid item xs={12}>

@@ -34,7 +34,7 @@ const LandingPage = (): JSX.Element => {
             ) : authState === AuthStates.NotAuthorized ? (
               <Typography color="text.secondary">
                 Чтобы получить доступ к материалам, пожалуйста,{' '}
-                <Link to={Routes.SIGN_IN}>войдите</Link> в свой профиль или
+                <Link to={Routes.SIGN_IN}>войдите</Link> в свой профиль или{' '}
                 <Link to={Routes.SIGN_UP}>зарегистрируйтесь</Link>.
               </Typography>
             ) : null}

@@ -18,6 +18,8 @@ import {
   updatePassword,
   User,
   UserCredential,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from 'firebase/auth';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useFirebaseContext } from '../firebase-store/firebase-store';
@@ -27,6 +29,7 @@ type ContextProps = {
   userInfo: UserModel | null;
   authError: AuthError | null;
   errorMessage: string;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
   authState: AuthStates;
   currentUser: User | null;
   actionProcesing: boolean;
@@ -34,9 +37,13 @@ type ContextProps = {
   signIn: (data: SignInModel) => Promise<void>;
   logOut: () => Promise<void>;
   deleteUserProfile: (user: User) => Promise<void>;
-  changeEmail: (email: string) => Promise<void>;
+  changeEmail: (email: string, cb: () => void) => Promise<void>;
   resetPassword: (email: string, cb: () => void) => Promise<void>;
-  changePassword: (password: string) => Promise<void>;
+  changePassword: (password: string, cb: () => void) => Promise<void>;
+  reauthenticateUser: (
+    email: string,
+    password: string,
+  ) => Promise<UserCredential | void>;
 };
 
 interface Props {
@@ -121,12 +128,33 @@ export function AuthStoreProvider(props: Props): JSX.Element {
       });
   };
 
-  const changeEmail = async (email: string): Promise<void> => {
+  const reauthenticateUser = async (
+    email: string,
+    password: string,
+  ): Promise<UserCredential | void> => {
+    const credentials = EmailAuthProvider.credential(email, password);
+
+    return reauthenticateWithCredential(currentUser!, credentials).catch(
+      (err: AuthError) => {
+        setAuthError(err);
+        setActionProcesing(false);
+        console.error('error while reauth:', err);
+      },
+    );
+  };
+
+  const changeEmail = async (email: string, cb: () => void): Promise<void> => {
     setAuthError(null);
     setActionProcesing(true);
     return updateEmail(currentUser!, email)
       .then(() => {
+        firebase.updateDocument(FirestoreCollection.Users, currentUser!.uid, {
+          email,
+        });
+      })
+      .then(() => {
         setActionProcesing(false);
+        cb();
       })
       .catch((err: AuthError) => {
         setAuthError(err);
@@ -135,17 +163,22 @@ export function AuthStoreProvider(props: Props): JSX.Element {
       });
   };
 
-  const changePassword = async (password: string): Promise<void> => {
+  const changePassword = async (
+    password: string,
+    cb: () => void,
+  ): Promise<void> => {
     setAuthError(null);
     setActionProcesing(true);
+
     return updatePassword(currentUser!, password)
       .then(() => {
         setActionProcesing(false);
+        cb();
       })
       .catch((err: AuthError) => {
         setAuthError(err);
         setActionProcesing(false);
-        console.error('error in changing password');
+        console.error('error in changing password: ', err);
       });
   };
 
@@ -188,6 +221,10 @@ export function AuthStoreProvider(props: Props): JSX.Element {
         return 'Пользователь с такой почтой не зарегистрирован';
       case 'auth/internal-error':
         return 'Внутренняя ошибка сервера. Попробуйте позже. Если проблема сохраняется, обратитесь в поддержку';
+      case 'auth/weak-password':
+        return 'Слишком слабый пароль. Введите не менее 6 символов';
+      case 'auth/user-mismatch':
+        return 'Неправильно введена почта';
       default:
         return 'Ошибка сервера. Попробуйте позже';
     }
@@ -222,6 +259,7 @@ export function AuthStoreProvider(props: Props): JSX.Element {
     authState,
     authError,
     errorMessage,
+    setErrorMessage,
     currentUser,
     signIn,
     signUp,
@@ -231,6 +269,7 @@ export function AuthStoreProvider(props: Props): JSX.Element {
     changePassword,
     actionProcesing,
     deleteUserProfile,
+    reauthenticateUser,
   };
 
   return (

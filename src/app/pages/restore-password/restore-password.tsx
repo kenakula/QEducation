@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Box,
@@ -10,33 +10,33 @@ import {
   Alert,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { observer } from 'mobx-react-lite';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signInSchema } from './sign-in-form';
+import { restorePasswordForm } from './restore-password-form';
 import { CopyrightElement, TextLink } from './sub-components/elements';
 import { Routes } from 'app/routes/routes';
 import InputComponent from 'app/components/input-component/input-component';
 import { InputType } from 'app/constants/input-type';
-import { useHistory } from 'react-router-dom';
 import { SignInModel } from 'app/constants/sign-in-model';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
-import { AuthStates } from 'app/constants/auth-state';
+import { ResetPasswordModel } from 'app/constants/reset-password-model';
+import LockResetIcon from '@mui/icons-material/LockReset';
+import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
+import { OpenState } from 'app/constants/open-state';
+import SnackBarAlert from 'app/components/snackbar-alert/snackbar-alert';
 
-const SignInPage = observer((): JSX.Element => {
+const RestorePasswordPage = observer((): JSX.Element => {
   const theme = useTheme();
-  const history = useHistory();
 
-  const { signIn, authState, errorMessage, actionProcesing, setErrorMessage } =
+  const { errorMessage, actionProcesing, resetPassword, setErrorMessage } =
     useAuthStore();
-
-  useEffect(() => {
-    if (authState === AuthStates.Authorized) {
-      history.push(Routes.MAIN);
-    }
-  }, [authState, history]);
+  const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
+    openState: OpenState.Closed,
+    message: 'Проверьте почту',
+    alert: 'success',
+  });
 
   useEffect(() => {
     if (setErrorMessage) {
@@ -50,15 +50,20 @@ const SignInPage = observer((): JSX.Element => {
     formState: { errors },
     reset,
   } = useForm<SignInModel>({
-    defaultValues: { email: '', password: '' },
-    resolver: yupResolver(signInSchema),
+    defaultValues: { email: '' },
+    resolver: yupResolver(restorePasswordForm),
   });
 
-  const onSubmit = (data: SignInModel): void => {
-    signIn!(data).then(() => {
+  const onSubmit = (data: ResetPasswordModel): void => {
+    if (resetPassword) {
+      resetPassword(data.email, () => {
+        setSnackbarState(prev => ({
+          ...prev,
+          openState: OpenState.Opened,
+        }));
+      });
       reset();
-      history.push(Routes.MAIN);
-    });
+    }
   };
 
   return (
@@ -83,7 +88,11 @@ const SignInPage = observer((): JSX.Element => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography sx={{ mb: 1 }} component="h1" variant="h5">
-          Войти
+          Сбросить пароль
+        </Typography>
+        <Typography sx={{ mb: 2 }} variant="caption" textAlign="center">
+          На указанную почту будет отправлено письмо с инструкцией к сбросу
+          пароля
         </Typography>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <InputComponent
@@ -92,34 +101,21 @@ const SignInPage = observer((): JSX.Element => {
             name="email"
             error={!!errors.email}
             errorMessage={errors.email && errors.email.message}
-            placeholder="Ваша почта"
+            placeholder="Введите почту"
             styles={{ marginBottom: theme.spacing(2) }}
-          />
-          <InputComponent
-            type={InputType.Password}
-            formControl={control}
-            name="password"
-            error={!!errors.password}
-            errorMessage={errors.password && errors.password.message}
-            placeholder="Введите пароль"
           />
           <LoadingButton
             type="submit"
             fullWidth
             variant="contained"
-            startIcon={<ExitToAppIcon />}
+            startIcon={<LockResetIcon />}
             loadingPosition="start"
             loading={actionProcesing}
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mb: 2 }}
           >
-            Войти
+            ОК
           </LoadingButton>
           <Grid container>
-            <Grid item xs>
-              <TextLink to={Routes.RESTORE_PASSWORD} sx={{ fontSize: 'small' }}>
-                Забыли пароль?
-              </TextLink>
-            </Grid>
             <Grid item>
               <TextLink to={Routes.SIGN_UP} sx={{ fontSize: 'small' }}>
                 Нет аккаунта? Зарегистрируйтесь.
@@ -129,8 +125,9 @@ const SignInPage = observer((): JSX.Element => {
         </Box>
       </Box>
       <CopyrightElement sx={{ mt: 8, mb: 4 }} />
+      <SnackBarAlert {...snackbarState} setState={setSnackbarState} />
     </Container>
   );
 });
 
-export default SignInPage;
+export default RestorePasswordPage;
