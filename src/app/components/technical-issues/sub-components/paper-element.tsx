@@ -8,7 +8,7 @@ export const PaperElement = styled(Paper)(({ theme }) => ({
   left: '50%',
   top: '50%',
   padding: '40px 10px 30px 10px',
-  width: '300px',
+  width: '400px',
   transform: 'translate(-50%, -50%)',
   '& .MuiSvgIcon-root': {
     position: 'absolute',

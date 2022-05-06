@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import TechnicalIssues from '../technical-issues/technical-issues';
 
 interface StateProps {
   error: null | any;
@@ -24,14 +25,10 @@ class ErrorBoundary extends React.Component<any, StateProps> {
     if (this.state.errorInfo) {
       // Error path
       return (
-        <div style={{ padding: '0 20px' }}>
-          <h2>Что-то не так</h2>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error && this.state.error.toString()}
-            <br />
-            {this.state.errorInfo.componentStack}
-          </details>
-        </div>
+        <TechnicalIssues
+          header="Что-то пошло не так"
+          message={this.state.error && this.state.error.toString()}
+        />
       );
     }
     // Normally, just render children

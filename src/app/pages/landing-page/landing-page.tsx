@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Main from 'app/components/main/main';
 import { Button, Grid, Typography } from '@mui/material';
 import { PromoBlock } from './sub-components/styled-elements';
-
+import { observer } from 'mobx-react-lite';
 import { ReactComponent as EducationIcon } from 'assets/images/education-image.svg';
 import { Link } from 'react-router-dom';
 import { Routes } from 'app/routes/routes';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { AuthStates } from 'app/constants/auth-state';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 
-const LandingPage = (): JSX.Element => {
+const LandingPage = observer((): JSX.Element => {
   const { authState } = useAuthStore();
+  const store = useMainPageStore();
+
+  useEffect(() => {
+    if (!store.isInited) {
+      store.init();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.isInited]);
+
+  useEffect(() => {
+    if (store.profileInfo) {
+      store.getUserImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.profileInfo]);
 
   return (
     <Main>
@@ -46,6 +62,6 @@ const LandingPage = (): JSX.Element => {
       </PromoBlock>
     </Main>
   );
-};
+});
 
 export default LandingPage;

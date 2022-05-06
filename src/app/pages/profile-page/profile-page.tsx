@@ -44,8 +44,10 @@ const ProfilePage = observer((): JSX.Element => {
   });
 
   useEffect(() => {
-    store.init();
-  }, [store]);
+    if (!store.isInited) {
+      store.init();
+    }
+  }, [store.isInited]);
 
   const handleDeleteImage = (): void => {
     setImageUploading(true);

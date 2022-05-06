@@ -17,6 +17,7 @@ import React, { useEffect } from 'react';
 import { ArticleContainer } from './styled-elements';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import ReadMoreArticles from './readmore-articles';
 
 interface Props {
   bootState: BootState;
@@ -38,8 +39,10 @@ const Article = observer((props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    store.init();
-  }, []);
+    if (!store.isInited) {
+      store.init();
+    }
+  }, [store.isInited]);
 
   const renderContent = (): JSX.Element => {
     switch (bootState) {
@@ -72,6 +75,7 @@ const Article = observer((props: Props): JSX.Element => {
               }
               label="Прочитано"
             />
+            <ReadMoreArticles list={article.readMore ?? []} />
           </>
         ) : (
           <p>no article</p>

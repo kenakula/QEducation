@@ -35,8 +35,10 @@ const MainPage = observer((): JSX.Element => {
   };
 
   useEffect(() => {
-    store.init();
-  }, []);
+    if (!store.isInited) {
+      store.init();
+    }
+  }, [store.isInited]);
 
   useEffect(() => {
     if (store.selectedContentTab && !location.search) {
