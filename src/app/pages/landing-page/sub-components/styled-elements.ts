@@ -1,6 +1,7 @@
 import { Box, styled } from '@mui/material';
 
 export const PromoBlock = styled(Box)(({ theme }) => ({
+  flexGrow: 1,
   display: 'flex',
   flexDirection: 'column',
   padding: `${theme.spacing(2)} 0`,
@@ -42,7 +43,6 @@ export const PromoBlock = styled(Box)(({ theme }) => ({
 
     [theme.breakpoints.up('md')]: {
       ...theme.typography.h5,
-      marginBottom: theme.spacing(4),
     },
   },
 

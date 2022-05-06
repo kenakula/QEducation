@@ -71,7 +71,6 @@ const ArticlesPage = observer((): JSX.Element => {
       } else if (!obj.role && obj.article) {
         history.push(
           generatePath(Routes.ARTICLE_PAGE, {
-            category: params.categoryId,
             articleId: obj.article,
           }),
         );
@@ -133,7 +132,6 @@ const ArticlesPage = observer((): JSX.Element => {
               onClick={() => {
                 history.push(
                   generatePath(Routes.ARTICLE_PAGE, {
-                    category: params.categoryId,
                     articleId: store.article!.id,
                   }),
                 );

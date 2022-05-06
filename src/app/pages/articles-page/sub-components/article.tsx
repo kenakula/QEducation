@@ -75,7 +75,9 @@ const Article = observer((props: Props): JSX.Element => {
               }
               label="Прочитано"
             />
-            <ReadMoreArticles list={article.readMore ?? []} />
+            {article.readMore && article.readMore.length ? (
+              <ReadMoreArticles list={article.readMore} />
+            ) : null}
           </>
         ) : (
           <p>no article</p>

@@ -51,10 +51,9 @@ const AdminArticlesPage = observer((): JSX.Element => {
     history.push(Routes.ADMIN_ARTICLES_EDITOR);
   };
 
-  const moveToArticle = (id: string, categoryId: string): void =>
+  const moveToArticle = (id: string): void =>
     history.push(
       generatePath(Routes.ARTICLE_PAGE, {
-        category: categoryId,
         articleId: id,
       }),
     );
@@ -159,7 +158,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
         <DataGridComponent<ArticleModel>
           columns={columns}
           rows={toJS(adminStore.articles)}
-          onClick={id => moveToArticle(id, 'all')}
+          onClick={id => moveToArticle(id)}
           toolbarFields={filterFields}
           filterParams={filterParams}
           initialState={gridInitialState}

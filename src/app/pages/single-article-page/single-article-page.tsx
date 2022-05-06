@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Grid, Skeleton, Typography } from '@mui/material';
+import { Fab, FormControlLabel, Grid, Switch, Typography } from '@mui/material';
 import { ArticleModel } from 'app/constants/article-model';
 import { BootState } from 'app/constants/boot-state';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
@@ -9,20 +9,39 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import Main from 'app/components/main/main';
+import Loader from 'app/components/loader/loader';
+import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import ScrollTop from 'app/components/scroll-to-top/scroll-to-top';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 interface PageParams {
   articleId: string;
-  categoryId: string;
 }
 
 const SingleArticlePage = observer((): JSX.Element => {
   const firebase = useFirebaseContext();
   const params = useParams<PageParams>();
+  const store = useMainPageStore();
 
   const [article, setArticle] = useState<ArticleModel>();
   const [mainContentLoading, setMainContentLoading] = useState<BootState>(
     BootState.None,
   );
+
+  useEffect(() => {
+    if (!store.isInited) {
+      store.init();
+    }
+  }, []);
+
+  const handleSwitchChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    newValue: boolean,
+  ): void => {
+    if (article) {
+      store.checkArticleRead(article.id, newValue);
+    }
+  };
 
   useEffect(() => {
     setMainContentLoading(BootState.Loading);
@@ -46,7 +65,7 @@ const SingleArticlePage = observer((): JSX.Element => {
     <Main>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
         {mainContentLoading === BootState.Success ? (
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12}>
             <Typography variant="h4" component="h1" textAlign="center" mb={1}>
               {article?.title}
             </Typography>
@@ -57,13 +76,35 @@ const SingleArticlePage = observer((): JSX.Element => {
               className="article-content"
               dangerouslySetInnerHTML={{ __html: article?.delta }}
             />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={
+                    store.profileInfo &&
+                    store.profileInfo.readArticles.includes(params.articleId)
+                  }
+                  disabled={store.profileInfoUpdating}
+                  onChange={handleSwitchChange}
+                />
+              }
+              label="Прочитано"
+            />
           </Grid>
         ) : (
-          <Grid item md={9}>
-            <Skeleton />
+          <Grid item xs={12}>
+            <Loader />
           </Grid>
         )}
       </Grid>
+      <ScrollTop>
+        <Fab
+          color="primary"
+          size="small"
+          aria-label="Прокрутить к началу страницы"
+        >
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </Main>
   );
 });

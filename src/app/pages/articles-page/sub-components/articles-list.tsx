@@ -1,5 +1,5 @@
 import { List, ListItemText } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { ArticleListItem } from './styled-elements';
@@ -20,6 +20,18 @@ const ArticlesList = observer((props: Props): JSX.Element => {
   const location = useLocation();
   const store = useMainPageStore();
 
+  const [currentArticle, setCurrentArticle] = useState('');
+
+  useEffect(() => {
+    if (location.search) {
+      const obj = qs.parse(location.search.slice(1));
+
+      if (obj.article) {
+        setCurrentArticle(obj.article as string);
+      }
+    }
+  }, [location.search]);
+
   const handleClick = (id: string): void => {
     if (location.search) {
       const obj = qs.parse(location.search.slice(1));
@@ -35,13 +47,14 @@ const ArticlesList = observer((props: Props): JSX.Element => {
     <List dense>
       {list.map(item => (
         <ArticleListItem
+          selected={currentArticle === item.id}
           onClick={() => handleClick(item.id)}
           sx={{ cursor: 'pointer' }}
           key={item.id}
           secondaryAction={
             store.profileInfo &&
             store.profileInfo.readArticles.includes(item.id) ? (
-              <CheckCircleOutlineIcon color="success" />
+              <CheckCircleOutlineIcon color="primary" />
             ) : undefined
           }
         >

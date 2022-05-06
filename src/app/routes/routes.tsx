@@ -12,8 +12,7 @@ export class Routes {
 
   public static readonly ARTICLES_VIEW = '/main/:categoryId';
   public static readonly PROFILE = '/profile';
-
-  public static readonly ARTICLE_PAGE = '/articles/:category/:articleId';
+  public static readonly ARTICLE_PAGE = '/articles/:articleId';
   public static readonly TESTS = '/tests';
 
   // admin

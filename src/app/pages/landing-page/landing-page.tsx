@@ -45,7 +45,7 @@ const LandingPage = observer((): JSX.Element => {
                 component={Link}
                 to={Routes.MAIN}
               >
-                Начать учиться
+                К материалам
               </Button>
             ) : authState === AuthStates.NotAuthorized ? (
               <Typography color="text.secondary">

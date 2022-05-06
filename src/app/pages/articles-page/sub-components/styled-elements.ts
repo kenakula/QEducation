@@ -49,7 +49,8 @@ export const AccordionElement = styled(Accordion)(({ theme }) => ({
     listStyle: 'none',
   },
   [theme.breakpoints.up('md')]: {
-    minWidth: '300px',
+    width: '280px',
+    minWidth: '280px',
     borderRight: `1px solid ${theme.palette.divider}`,
     '& .MuiAccordionDetails-root': {
       padding: 0,
