@@ -11,7 +11,7 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { OpenState } from 'app/constants/open-state';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';

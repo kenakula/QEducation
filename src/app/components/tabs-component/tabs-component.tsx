@@ -13,7 +13,7 @@ interface Props<T> {
   tabs: TabsItem<T>[];
 }
 
-const TabsComponent = <T,>(props: Props<T>): JSX.Element => {
+export const TabsComponent = <T,>(props: Props<T>): JSX.Element => {
   const { currentTab, handleChange, tabs } = props;
 
   const matches = useMediaQuery('(min-width:600px)');
@@ -36,5 +36,3 @@ const TabsComponent = <T,>(props: Props<T>): JSX.Element => {
     </TabsContainer>
   );
 };
-
-export default TabsComponent;

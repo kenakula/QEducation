@@ -9,26 +9,24 @@ interface Props {
   message?: string;
 }
 
-const TechnicalIssues = (props: Props): JSX.Element => {
+export const TechnicalIssues = (props: Props): JSX.Element => {
   const { code, header, message } = props;
 
   return (
     <PaperElement elevation={3}>
       <Stack spacing={1} alignItems="center" sx={{ position: 'relative' }}>
         <ErrorIcon />
-        {code && code.length && (
+        {code && code.length ? (
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
             {code}
           </Typography>
-        )}
+        ) : null}
         <Typography variant="h5" component="h1">
           {header}
         </Typography>
-        {message && message.length && (
-          <Typography variant="body2" textAlign="center">
-            {message}
-          </Typography>
-        )}
+        <Typography variant="body2" textAlign="center">
+          {message}
+        </Typography>
       </Stack>
     </PaperElement>
   );
@@ -39,5 +37,3 @@ TechnicalIssues.defaultProps = {
   header: 'Произошла ошибка',
   message: 'Попробуйте позже',
 };
-
-export default TechnicalIssues;

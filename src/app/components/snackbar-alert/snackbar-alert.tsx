@@ -4,14 +4,14 @@ import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import React from 'react';
 
 export interface Props {
-  openState: OpenState;
+  isOpen: boolean;
   message: string;
   alert: AlertColor | undefined;
   setState: React.Dispatch<React.SetStateAction<SnackBarStateProps>>;
 }
 
-const SnackbarAlert = (props: Props): JSX.Element => {
-  const { openState, message, alert, setState } = props;
+export const SnackbarAlert = (props: Props): JSX.Element => {
+  const { isOpen, message, alert, setState } = props;
 
   const handleSnackBarClose = (): void => {
     setState(prev => ({
@@ -22,7 +22,7 @@ const SnackbarAlert = (props: Props): JSX.Element => {
 
   return (
     <Snackbar
-      open={openState === OpenState.Opened}
+      open={isOpen}
       autoHideDuration={4000}
       onClose={handleSnackBarClose}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
@@ -37,5 +37,3 @@ const SnackbarAlert = (props: Props): JSX.Element => {
     </Snackbar>
   );
 };
-
-export default SnackbarAlert;

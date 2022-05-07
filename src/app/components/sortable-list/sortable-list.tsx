@@ -26,7 +26,7 @@ export interface SortableListItemProps {
   description?: string;
 }
 
-const SortableList = <T extends SortableListItemProps>(
+export const SortableList = <T extends SortableListItemProps>(
   props: Props<T>,
 ): JSX.Element => {
   const { list, onChange } = props;
@@ -97,5 +97,3 @@ const SortableList = <T extends SortableListItemProps>(
     </DndContext>
   );
 };
-
-export default SortableList;

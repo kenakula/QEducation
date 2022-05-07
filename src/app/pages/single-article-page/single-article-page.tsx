@@ -8,11 +8,11 @@ import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import Main from 'app/components/main/main';
-import Loader from 'app/components/loader/loader';
+import { Main } from 'app/components/main';
+import { Loader } from 'app/components/loader';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
-import ScrollTop from 'app/components/scroll-to-top/scroll-to-top';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { ScrollTop } from 'app/components/scroll-to-top';
 
 interface PageParams {
   articleId: string;

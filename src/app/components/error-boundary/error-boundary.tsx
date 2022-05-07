@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
-import TechnicalIssues from '../technical-issues/technical-issues';
+import { TechnicalIssues } from '../technical-issues';
 
 interface StateProps {
   error: null | any;
   errorInfo: null | any;
 }
 
-class ErrorBoundary extends React.Component<any, StateProps> {
+export class ErrorBoundary extends React.Component<any, StateProps> {
   constructor(props: any) {
     super(props);
     this.state = { error: null, errorInfo: null };
@@ -35,5 +35,3 @@ class ErrorBoundary extends React.Component<any, StateProps> {
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;

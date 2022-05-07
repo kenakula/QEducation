@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
-import { TextEditor } from 'app/components/text-editor/text-editor';
 import { ArticleModel } from 'app/constants/article-model';
 import { OpenState } from 'app/constants/open-state';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
@@ -9,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { editorFormSchema } from './sub-components/editor-form';
 import { nanoid } from 'nanoid';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { Timestamp } from 'firebase/firestore';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
@@ -19,16 +18,16 @@ import {
   InputContainer,
   MainInfoBox,
 } from './sub-components/elements';
-import InputComponent from 'app/components/input-component/input-component';
-import SelectComponent from 'app/components/select-component/select-component';
+import { InputComponent, SelectComponent } from 'app/components/form-controls';
 import AddIcon from '@mui/icons-material/Add';
 import { InputType } from 'app/constants/input-type';
 import { userRolesOptions } from 'app/constants/user-roles';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import SaveArticleDialog from './sub-components/save-article-dialog';
 import { Category } from 'app/constants/category-model';
-import Main from 'app/components/main/main';
+import { Main } from 'app/components/main';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import { TextEditor } from 'app/components/text-editor';
 
 const AdminArticlesEditor = observer((): JSX.Element => {
   const adminStore = useAdminStore();
@@ -43,7 +42,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
     OpenState.Closed,
   );
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Статья сохранена',
     alert: 'success',
   });
@@ -100,7 +99,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
     setValue('readMore', []);
     setSnackbarState(prev => ({
       ...prev,
-      openState: OpenState.Opened,
+      isOpen: true,
       message: 'Форма сброшена',
       alert: 'warning',
     }));
@@ -163,7 +162,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
         setArticleLoading(false);
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
           message: `ОШИБКА: ${error}`,
           alert: 'error',
         }));

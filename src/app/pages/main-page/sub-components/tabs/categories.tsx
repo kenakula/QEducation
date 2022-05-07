@@ -14,18 +14,20 @@ import UserCategoriesDialog from '../user-categories-dialog';
 import { ReactComponent as ArticleImage } from 'assets/images/article-image.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import { observer } from 'mobx-react-lite';
 import { OpenState } from 'app/constants/open-state';
-import { DeleteConfirmProps } from 'app/pages/admin-articles-page/admin-articles-page';
-import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { generatePath, useHistory } from 'react-router-dom';
 import { Routes } from 'app/routes/routes';
 import { BootState } from 'app/constants/boot-state';
-import Loader from 'app/components/loader/loader';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
+import { Loader } from 'app/components/loader';
+import { TechnicalIssues } from 'app/components/technical-issues';
+import {
+  ModalDialogConfirm,
+  ModalDialogConfirmStateProps,
+} from 'app/components/modal-dialog';
+import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 
 const Articles = observer((): JSX.Element => {
   const store = useMainPageStore();
@@ -38,12 +40,13 @@ const Articles = observer((): JSX.Element => {
   const [sortedList, setSortedList] = useState<CategoryArticle[] | undefined>(
     undefined,
   );
-  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
-    id: '',
-    openState: OpenState.Closed,
-  });
+  const [deleteAction, setDeleteAction] =
+    useState<ModalDialogConfirmStateProps>({
+      id: '',
+      isOpen: false,
+    });
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: true,
     message: 'Категория сохранена',
     alert: 'success',
   });
@@ -62,7 +65,7 @@ const Articles = observer((): JSX.Element => {
     setDeleteAction(prev => ({
       ...prev,
       id,
-      openState: OpenState.Opened,
+      isOpen: true,
     }));
   };
 
@@ -157,14 +160,13 @@ const Articles = observer((): JSX.Element => {
             store={store}
             onClose={handleCategoriesDialogClose}
           />
-          <ConfirmDialog
-            open={deleteAction.openState}
+          <ModalDialogConfirm
+            isOpen={deleteAction.isOpen}
             title="Уверены что хотите удалить категорию?"
-            message="Это действие необратимо"
             handleClose={() =>
               setDeleteAction(prev => ({
                 ...prev,
-                openState: OpenState.Closed,
+                isOpen: false,
               }))
             }
             handleAgree={() => {
@@ -175,7 +177,7 @@ const Articles = observer((): JSX.Element => {
                 .then(() =>
                   setSnackbarState(prev => ({
                     ...prev,
-                    openState: OpenState.Opened,
+                    isOpen: true,
                     message: 'Категория удалена',
                     alert: 'error',
                   })),

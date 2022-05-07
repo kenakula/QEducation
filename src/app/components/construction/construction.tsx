@@ -1,32 +1,21 @@
 import React from 'react';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { ComponentContainer } from './sub-components/styled-elements';
 
 interface Props {
   text?: string;
 }
 
-const Construction = (props: Props): JSX.Element => (
-  <Box
-    sx={{
-      width: '250px',
-      height: '250px',
-      margin: '0 auto',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    <EngineeringIcon sx={{ fontSize: '120px' }} color="primary" />
+export const Construction = (props: Props): JSX.Element => (
+  <ComponentContainer>
+    <EngineeringIcon color="primary" />
     <Typography variant="h5" textAlign="center">
       {props.text}
     </Typography>
-  </Box>
+  </ComponentContainer>
 );
 
 Construction.defaultProps = {
-  text: 'Under construction',
+  text: 'Я работаю над этим',
 };
-
-export default Construction;

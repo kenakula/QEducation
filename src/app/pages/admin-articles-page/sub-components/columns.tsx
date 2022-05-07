@@ -13,11 +13,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { getShortRoleText } from 'app/utils/text-helpers';
 import { GridColumn } from 'app/constants/table-constants';
-import { DeleteConfirmProps } from '../admin-articles-page';
 import { ArticleModel } from 'app/constants/article-model';
 import { copyToClipboard } from 'app/utils/copy-to-clipboard';
-import { OpenState } from 'app/constants/open-state';
 import { UserRole } from 'app/constants/user-roles';
+import { ModalDialogConfirmStateProps } from 'app/components/modal-dialog';
 
 const CellElement = styled(Box)(({ theme }) => ({
   ...theme.typography.body1,
@@ -33,7 +32,7 @@ const CellElement = styled(Box)(({ theme }) => ({
 interface Props {
   edit: (data: ArticleModel) => void;
   view: (id: string, categoryId: string) => void;
-  setDelete: React.Dispatch<React.SetStateAction<DeleteConfirmProps>>;
+  setDelete: React.Dispatch<React.SetStateAction<ModalDialogConfirmStateProps>>;
   copyLinkCb: () => void;
   matchTablet: boolean;
 }
@@ -158,7 +157,7 @@ export const getColumns = (props: Props): GridColumn[] => {
             setDelete(prev => ({
               ...prev,
               id: params.row.id,
-              openState: OpenState.Opened,
+              isOpen: true,
             }));
             // adminStore.deleteArticle(params.row.id);
           }}

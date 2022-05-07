@@ -18,7 +18,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { signInSchema } from './sign-in-form';
 import { CopyrightElement, TextLink } from './sub-components/elements';
 import { Routes } from 'app/routes/routes';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { useHistory } from 'react-router-dom';
 import { SignInModel } from 'app/constants/sign-in-model';

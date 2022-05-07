@@ -31,7 +31,7 @@ interface Props {
   group?: (option: any) => string;
 }
 
-const SelectComponent = (props: Props): JSX.Element => {
+export const SelectComponent = (props: Props): JSX.Element => {
   const {
     id,
     error,
@@ -122,5 +122,3 @@ const SelectComponent = (props: Props): JSX.Element => {
     </FormControl>
   );
 };
-
-export default SelectComponent;

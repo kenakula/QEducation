@@ -17,14 +17,13 @@ import { CopyrightElement, TextLink } from './sub-components/elements';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Routes } from 'app/routes/routes';
 import { InputType } from 'app/constants/input-type';
-import InputComponent from 'app/components/input-component/input-component';
 import { LoadingButton } from '@mui/lab';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { SignUpModel } from 'app/constants/sign-up-model';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { useHistory } from 'react-router-dom';
 import { AuthStates } from 'app/constants/auth-state';
-import SelectComponent from 'app/components/select-component/select-component';
+import { SelectComponent, InputComponent } from 'app/components/form-controls';
 import { UserRole, userRolesOptions } from 'app/constants/user-roles';
 
 interface SignUpFormModel extends SignUpModel {

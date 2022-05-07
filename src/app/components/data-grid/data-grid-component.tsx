@@ -18,9 +18,10 @@ interface Props<T> {
   filterParams?: any;
   loading?: boolean;
   initialState?: GridInitialStateCommunity;
+  pageSize?: number;
 }
 
-const DataGridComponent = <T,>(props: Props<T>): JSX.Element => {
+export const DataGridComponent = <T,>(props: Props<T>): JSX.Element => {
   const {
     columns,
     rows,
@@ -31,6 +32,7 @@ const DataGridComponent = <T,>(props: Props<T>): JSX.Element => {
     filterParams,
     loading,
     initialState,
+    pageSize,
   } = props;
   const [rowsArr, setRowsArr] = useState<T[]>(rows);
 
@@ -73,7 +75,7 @@ const DataGridComponent = <T,>(props: Props<T>): JSX.Element => {
           filterParamsModel: filterParams,
         },
       }}
-      pageSize={20}
+      pageSize={pageSize}
       disableSelectionOnClick
       getRowId={row => (rowIdField ? row[rowIdField] : row.id)}
       hideFooterSelectedRowCount
@@ -82,4 +84,6 @@ const DataGridComponent = <T,>(props: Props<T>): JSX.Element => {
   );
 };
 
-export default DataGridComponent;
+DataGridComponent.defaultProps = {
+  pageSize: 20,
+};

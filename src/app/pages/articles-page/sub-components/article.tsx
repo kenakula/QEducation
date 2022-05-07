@@ -7,9 +7,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import Loader from 'app/components/loader/loader';
-import ScrollTop from 'app/components/scroll-to-top/scroll-to-top';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
+import { Loader } from 'app/components/loader';
+import { ScrollTop } from 'app/components/scroll-to-top';
+import { TechnicalIssues } from 'app/components/technical-issues';
 import { ArticleModel } from 'app/constants/article-model';
 import { BootState } from 'app/constants/boot-state';
 import { observer } from 'mobx-react-lite';

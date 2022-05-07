@@ -4,7 +4,7 @@ import { Routes } from 'app/routes/routes';
 import { observer } from 'mobx-react-lite';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { AuthStates } from 'app/constants/auth-state';
-import Loader from 'app/components/loader/loader';
+import { Loader } from 'app/components/loader';
 
 interface Props {
   exact: boolean;

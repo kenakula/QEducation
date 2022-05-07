@@ -80,6 +80,34 @@ export class FirebaseStore {
     );
   };
 
+  updateDeepDocument = async (
+    collName: FirestoreCollection,
+    pathSegements: string[],
+    docId: string,
+    data: any,
+  ): Promise<void> => {
+    const reference = doc(this.store, collName, ...pathSegements, docId);
+
+    return updateDoc(reference, data).catch(err =>
+      console.error('document update error: ', err),
+    );
+  };
+
+  getDocumentsFromDeepCollection = async <T>(
+    collName: FirestoreCollection,
+    pathSegments: string[],
+  ): Promise<T[]> => {
+    const result: T[] = [];
+    const collRef = collection(this.store, collName, ...pathSegments);
+    const snapShot = await getDocs(collRef);
+
+    snapShot.forEach((document: DocumentData) => {
+      result.push(document.data());
+    });
+
+    return result;
+  };
+
   getDocumentsFormCollection = async <T>(
     collName: FirestoreCollection,
   ): Promise<T[]> => {
@@ -106,10 +134,33 @@ export class FirebaseStore {
     });
   };
 
+  addDocToDeepCollection = async <T>(
+    collName: FirestoreCollection,
+    pathSegements: string[],
+    docId: string,
+    data: T,
+  ): Promise<void> => {
+    const reference = doc(this.store, collName, ...pathSegements, docId);
+
+    return setDoc(reference, data).catch((err: FirebaseError) => {
+      console.error('error when adding document', err);
+    });
+  };
+
   deleteDocument = async (
     collName: FirestoreCollection,
     docId: string,
   ): Promise<void> => deleteDoc(doc(this.store, collName, docId));
+
+  deleteDeepDocument = async (
+    collName: FirestoreCollection,
+    pathSegements: string[],
+    docId: string,
+  ): Promise<void> => {
+    const reference = doc(this.store, collName, ...pathSegements, docId);
+
+    return deleteDoc(reference);
+  };
 
   uploadFile = async (
     folder: StorageFolder,

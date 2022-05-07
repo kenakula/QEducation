@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Loader from 'app/components/loader/loader';
-import Main from 'app/components/main/main';
-import PageTitle from 'app/components/page-title/page-title';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
+import { Loader } from 'app/components/loader';
+import { Main } from 'app/components/main';
+import { PageTitle } from 'app/components/typography';
+import { TechnicalIssues } from 'app/components/technical-issues';
 import { BootState } from 'app/constants/boot-state';
 import { Category } from 'app/constants/category-model';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';

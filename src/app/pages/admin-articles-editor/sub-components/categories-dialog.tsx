@@ -21,7 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { InputType } from 'app/constants/input-type';
 import { AdminStore } from 'app/stores/admin-store/admin-store';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { nanoid } from 'nanoid';
 

@@ -1,4 +1,4 @@
-import { AppBar, IconButton, Switch } from '@mui/material';
+import { AppBar, IconButton, List, MenuItem, Switch } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 
@@ -77,4 +77,43 @@ export const ColorModeSwitch = styled(Switch)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
     borderRadius: 20 / 2,
   },
+}));
+
+export const NotificationElement = styled(MenuItem)(({ theme }) => ({
+  ...theme.typography.body1,
+  position: 'relative',
+
+  '&:hover': {
+    '& .MuiIconButton-root': {
+      opacity: 1,
+    },
+  },
+
+  '& ul': {
+    ...theme.typography.caption,
+    paddingLeft: theme.spacing(2),
+    listStyle: 'none',
+  },
+
+  '& a': {
+    color: 'inherit',
+    textDecoration: 'none',
+
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
+
+  '& .MuiIconButton-root': {
+    marginLeft: 'auto',
+    opacity: 0,
+    transition: theme.transitions.create('opacity', {
+      duration: 200,
+      easing: 'ease',
+    }),
+  },
+}));
+
+export const NotificationAttachmentList = styled(List)(({ theme }) => ({
+  ...theme.typography.caption,
 }));

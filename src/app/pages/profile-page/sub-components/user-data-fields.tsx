@@ -6,9 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Alert, Box, Typography } from '@mui/material';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { InputRow, InputContainer } from './styled-elements';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { LoadingButton } from '@mui/lab';
@@ -49,7 +49,7 @@ const UserDataFields = (): JSX.Element => {
     handleClose: () => {},
   });
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: '',
     alert: 'success',
   });
@@ -91,7 +91,7 @@ const UserDataFields = (): JSX.Element => {
       changeEmail(data.email, () => {
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
           message: 'Почта изменена',
         }));
         emailReset();
@@ -115,7 +115,7 @@ const UserDataFields = (): JSX.Element => {
         changePassword(data.password, () => {
           setSnackbarState(prev => ({
             ...prev,
-            openState: OpenState.Opened,
+            isOpen: true,
             message: 'Пароль изменен',
           }));
           passReset();

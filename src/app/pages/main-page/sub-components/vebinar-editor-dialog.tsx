@@ -8,8 +8,7 @@ import {
   DialogContent,
   Typography,
 } from '@mui/material';
-import InputComponent from 'app/components/input-component/input-component';
-import SelectComponent from 'app/components/select-component/select-component';
+import { InputComponent, SelectComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { OpenState } from 'app/constants/open-state';
 import { UserRole, userRolesOptions } from 'app/constants/user-roles';
