@@ -23,7 +23,7 @@ const NotificationItem = (props: Props): JSX.Element => {
     <ul>
       {attachment.links.map(item => (
         <li key={item.link}>
-          <Link component={NavLink} to={item.link}>
+          <Link component={NavLink} to={item.link} target="_blank">
             {item.title}
           </Link>
         </li>

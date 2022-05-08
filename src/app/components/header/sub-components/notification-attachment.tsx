@@ -12,7 +12,7 @@ export const NotificationAttachmentComponent = (props: Props): JSX.Element => (
   <NotificationAttachmentList dense>
     {props.attachment.links.map(item => (
       <ListItem key={item.link}>
-        <Link component={NavLink} to={item.link}>
+        <Link component={NavLink} to={item.link} target="_blank">
           {item.title}
         </Link>
       </ListItem>

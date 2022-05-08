@@ -46,7 +46,7 @@ const Articles = observer((): JSX.Element => {
       isOpen: false,
     });
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    isOpen: true,
+    isOpen: false,
     message: 'Категория сохранена',
     alert: 'success',
   });

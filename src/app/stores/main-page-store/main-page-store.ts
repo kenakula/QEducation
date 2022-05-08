@@ -7,7 +7,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import React from 'react';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
-import { DocumentData, Timestamp } from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { PageContentType } from 'app/pages/main-page/tabs';
@@ -349,27 +349,6 @@ export class MainPageStore {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  writeDoc = (): void => {
-    const arr: NotificationModel[] = [
-      {
-        id: '0008',
-        message: 'test test4',
-        read: false,
-        sentDate: Timestamp.now(),
-        severety: 'error',
-      },
-    ];
-
-    arr.forEach(note => {
-      this.firebase.addDocToDeepCollection<NotificationModel>(
-        FirestoreCollection.Users,
-        [this.profileInfo.uid, FirestoreCollection.Notifications],
-        note.id,
-        note,
-      );
-    });
   };
 
   init = async (): Promise<void> => {

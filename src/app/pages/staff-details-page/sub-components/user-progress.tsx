@@ -2,7 +2,7 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { UserModel } from 'app/constants/user-model';
 import React from 'react';
-import { CategoryProgress } from './elements';
+import { CategoryProgress } from './styled-elements';
 
 interface Props {
   categories: Category[];

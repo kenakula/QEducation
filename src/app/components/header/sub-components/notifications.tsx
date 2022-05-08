@@ -93,7 +93,7 @@ const Notifications = observer((props: Props): JSX.Element => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: '250px',
+            width: '30з0px',
             overflow: 'visible',
             mt: 1.5,
           },

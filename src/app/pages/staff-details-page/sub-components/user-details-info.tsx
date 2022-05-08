@@ -1,7 +1,7 @@
 import { UserModel } from 'app/constants/user-model';
 import React, { useState } from 'react';
 import { Link, List, Switch, Typography } from '@mui/material';
-import { InfoContainer, InfoListItem, InfoListLabel } from './elements';
+import { InfoContainer, InfoListItem, InfoListLabel } from './styled-elements';
 import { observer } from 'mobx-react-lite';
 import { AdminStore } from 'app/stores/admin-store/admin-store';
 

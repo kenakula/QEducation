@@ -1,5 +1,4 @@
 import { Alert, AlertColor, Snackbar } from '@mui/material';
-import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import React from 'react';
 
@@ -16,7 +15,7 @@ export const SnackbarAlert = (props: Props): JSX.Element => {
   const handleSnackBarClose = (): void => {
     setState(prev => ({
       ...prev,
-      openState: OpenState.Closed,
+      isOpen: false,
     }));
   };
 

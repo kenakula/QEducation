@@ -82,6 +82,12 @@ export const ColorModeSwitch = styled(Switch)(({ theme }) => ({
 export const NotificationElement = styled(MenuItem)(({ theme }) => ({
   ...theme.typography.body1,
   position: 'relative',
+  maxWidth: '100%',
+  whiteSpace: 'initial',
+
+  '& p': {
+    fontSize: '16px',
+  },
 
   '&:hover': {
     '& .MuiIconButton-root': {
@@ -91,8 +97,8 @@ export const NotificationElement = styled(MenuItem)(({ theme }) => ({
 
   '& ul': {
     ...theme.typography.caption,
+    margin: 0,
     paddingLeft: theme.spacing(2),
-    listStyle: 'none',
   },
 
   '& a': {

@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserPhoto } from './sub-components/elements';
+import { UserPhoto } from './sub-components/styled-elements';
 import PersonIcon from '@mui/icons-material/Person';
 import UserDetailsInfo from './sub-components/user-details-info';
 import UserDetailsActions from './sub-components/user-details-actions';
