@@ -1,10 +1,10 @@
 import { Button, Divider, Stack } from '@mui/material';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import { OpenState } from 'app/constants/open-state';
 import { UserModel } from 'app/constants/user-model';
 import { AdminStore } from 'app/stores/admin-store/admin-store';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { StackItem } from './elements';
+import { StackItem } from './styled-elements';
+import { ModalDialogConfirm } from 'app/components/modal-dialog';
+import { AssignModal } from './assign-modal';
 
 interface Props {
   data: UserModel;
@@ -16,7 +16,24 @@ interface Props {
 const UserDetailsActions = (props: Props): JSX.Element => {
   const { data, currentUserId, store, setDeleted } = props;
 
-  const [confirmOpen, setConfirmOpen] = useState<OpenState>(OpenState.Closed);
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+
+  const handleCloseAssignModal = (): void => {
+    setAssignModalOpen(false);
+  };
+
+  const handleOpenAssignModal = (): void => {
+    setAssignModalOpen(true);
+  };
+
+  const handleCloseConfirm = (): void => {
+    setConfirmOpen(false);
+  };
+
+  const handleConfirmOpen = (): void => {
+    setConfirmOpen(true);
+  };
 
   const handleDeleteProfile = (): void => {
     store.deleteUserProfile(data.uid).then(() => {
@@ -34,29 +51,37 @@ const UserDetailsActions = (props: Props): JSX.Element => {
         divider={<Divider orientation="vertical" flexItem />}
       >
         <StackItem>
-          <Button>Назначить статью</Button>
-        </StackItem>
-        <StackItem>
-          <Button>Назначить тест</Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleOpenAssignModal}
+          >
+            Назначить материал
+          </Button>
         </StackItem>
         {currentUserId !== data.uid ? (
           <StackItem>
             <Button
               variant="outlined"
               color="error"
-              onClick={() => setConfirmOpen(OpenState.Opened)}
+              onClick={handleConfirmOpen}
             >
               Удалить профиль
             </Button>
           </StackItem>
         ) : null}
       </Stack>
-      <ConfirmDialog
+      <ModalDialogConfirm
         title="Подтвердите удаление"
         message="Профиль пользователя нельзя будет восстановить"
-        open={confirmOpen}
-        handleClose={() => setConfirmOpen(OpenState.Closed)}
+        isOpen={confirmOpen}
+        handleClose={handleCloseConfirm}
         handleAgree={handleDeleteProfile}
+      />
+      <AssignModal
+        isOpen={assignModalOpen}
+        handleClose={handleCloseAssignModal}
+        userId={currentUserId ?? ''}
       />
     </>
   );

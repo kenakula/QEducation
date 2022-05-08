@@ -1,6 +1,4 @@
 import { Button, Skeleton, useMediaQuery, useTheme } from '@mui/material';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import DataGridComponent from 'app/components/data-grid/data-grid-component';
 import { IToolbarFields } from 'app/components/data-grid/sub-components/custom-toolbar';
 import { ArticleModel } from 'app/constants/article-model';
 import { BootState } from 'app/constants/boot-state';
@@ -13,20 +11,20 @@ import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
 import { generatePath, useHistory } from 'react-router-dom';
 import { getColumns } from './sub-components/columns';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { GridInitialStateCommunity } from '@mui/x-data-grid/models/gridStateCommunity';
 import AddIcon from '@mui/icons-material/Add';
 import CategoriesDialog from '../admin-articles-editor/sub-components/categories-dialog';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Category } from 'app/constants/category-model';
-import Main from 'app/components/main/main';
-import PageTitle from 'app/components/page-title/page-title';
+import { Main } from 'app/components/main';
+import { PageTitle } from 'app/components/typography';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
-
-export interface DeleteConfirmProps {
-  id: string;
-  openState: OpenState;
-}
+import {
+  ModalDialogConfirm,
+  ModalDialogConfirmStateProps,
+} from 'app/components/modal-dialog';
+import { DataGridComponent } from 'app/components/data-grid';
 
 const AdminArticlesPage = observer((): JSX.Element => {
   const adminStore = useAdminStore();
@@ -36,12 +34,13 @@ const AdminArticlesPage = observer((): JSX.Element => {
   const [categoriesOpenState, setCategoriesOpenState] = useState<OpenState>(
     OpenState.Closed,
   );
-  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
-    id: '',
-    openState: OpenState.Closed,
-  });
+  const [deleteAction, setDeleteAction] =
+    useState<ModalDialogConfirmStateProps>({
+      id: '',
+      isOpen: false,
+    });
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Статья сохранена',
     alert: 'success',
   });
@@ -61,7 +60,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
   const onLinkCopy = (): void => {
     setSnackbarState(prev => ({
       ...prev,
-      openState: OpenState.Opened,
+      isOpen: true,
       message: 'Ссылка скопирована',
       alert: 'success',
     }));
@@ -167,12 +166,11 @@ const AdminArticlesPage = observer((): JSX.Element => {
       ) : (
         <Skeleton width="100%" height="100%" />
       )}
-      <ConfirmDialog
-        open={deleteAction.openState}
+      <ModalDialogConfirm
+        isOpen={deleteAction.isOpen}
         title="Уверены что хотите удалить статью?"
-        message="Это действие необратимо"
         handleClose={() =>
-          setDeleteAction(prev => ({ ...prev, openState: OpenState.Closed }))
+          setDeleteAction(prev => ({ ...prev, isOpen: false }))
         }
         handleAgree={() => {
           adminStore
@@ -180,7 +178,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
             .then(() =>
               setSnackbarState(prev => ({
                 ...prev,
-                openState: OpenState.Opened,
+                isOpen: true,
                 message: 'Статья удалена',
                 alert: 'error',
               })),

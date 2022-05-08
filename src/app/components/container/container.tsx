@@ -7,10 +7,8 @@ interface Props {
   sx?: SxProps;
 }
 
-const Container = (props: Props): JSX.Element => (
+export const Container = (props: Props): JSX.Element => (
   <ContainerElement sx={props.sx} maxWidth="xl">
     {props.children}
   </ContainerElement>
 );
-
-export default Container;

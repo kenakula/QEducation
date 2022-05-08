@@ -44,7 +44,9 @@ export const CategoryProgress = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   alignItems: 'center',
+  padding: `${theme.spacing(1)} 0`,
   marginBottom: theme.spacing(2),
+  borderBottom: `1px solid ${theme.palette.divider}`,
   '& > .MuiBox-root': {
     textAlign: 'center',
     padding: `0 ${theme.spacing(1)}`,

@@ -1,4 +1,4 @@
-import Main from 'app/components/main/main';
+import { Main } from 'app/components/main';
 import React from 'react';
 import { ReactComponent as NotFoundImage } from 'assets/images/not-found-image.svg';
 import { Banner } from './styled-elements';

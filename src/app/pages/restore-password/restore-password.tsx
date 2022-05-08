@@ -17,7 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { restorePasswordForm } from './restore-password-form';
 import { CopyrightElement, TextLink } from './sub-components/elements';
 import { Routes } from 'app/routes/routes';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { SignInModel } from 'app/constants/sign-in-model';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
@@ -25,7 +25,7 @@ import { ResetPasswordModel } from 'app/constants/reset-password-model';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { OpenState } from 'app/constants/open-state';
-import SnackBarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 
 const RestorePasswordPage = observer((): JSX.Element => {
   const theme = useTheme();
@@ -33,7 +33,7 @@ const RestorePasswordPage = observer((): JSX.Element => {
   const { errorMessage, actionProcesing, resetPassword, setErrorMessage } =
     useAuthStore();
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Проверьте почту',
     alert: 'success',
   });
@@ -125,7 +125,7 @@ const RestorePasswordPage = observer((): JSX.Element => {
         </Box>
       </Box>
       <CopyrightElement sx={{ mt: 8, mb: 4 }} />
-      <SnackBarAlert {...snackbarState} setState={setSnackbarState} />
+      <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
     </Container>
   );
 });

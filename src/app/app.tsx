@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Loader from './components/loader/loader';
-import TechnicalIssues from './components/technical-issues/technical-issues';
+import { Loader } from './components/loader';
+import { TechnicalIssues } from './components/technical-issues';
 import { BootState } from './constants/boot-state';
 import RouterComponent from './routes/router-component';
 import {

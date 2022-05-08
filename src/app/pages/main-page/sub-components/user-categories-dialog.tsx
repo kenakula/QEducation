@@ -7,7 +7,6 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import SelectComponent from 'app/components/select-component/select-component';
 import { OpenState } from 'app/constants/open-state';
 import {
   CustomInputLabel,
@@ -21,10 +20,11 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { observer } from 'mobx-react-lite';
-import SortableList from 'app/components/sortable-list/sortable-list';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
+import { SelectComponent } from 'app/components/form-controls';
+import { SortableList } from 'app/components/sortable-list';
 
 const schema = yup.object({
   category: yup.string().required('Это поле обязательно'),
@@ -49,7 +49,7 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
   const adminStore = useAdminStore();
 
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Категория сохранена',
     alert: 'success',
   });
@@ -95,7 +95,7 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
       .then(() => {
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
         }));
         store.getUserCategories(store.selectedRole);
       });

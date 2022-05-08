@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Grid, Typography } from '@mui/material';
-import Loader from 'app/components/loader/loader';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
+import { Loader } from 'app/components/loader';
+import { TechnicalIssues } from 'app/components/technical-issues';
 import { BootState } from 'app/constants/boot-state';
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { Routes } from 'app/routes/routes';
@@ -13,14 +13,16 @@ import qs from 'qs';
 
 import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import { DeleteConfirmProps } from 'app/pages/admin-articles-page/admin-articles-page';
 import VideoThumbnailElement from '../video-thumbnail-element';
 import VideoView from '../video-view';
 import AdminToolbar from '../admin-toolbar';
 import VebinarEditorDialog from '../vebinar-editor-dialog';
+import {
+  ModalDialogConfirm,
+  ModalDialogConfirmStateProps,
+} from 'app/components/modal-dialog';
 
 const Vebinars = observer((): JSX.Element => {
   const store = useMainPageStore();
@@ -37,14 +39,15 @@ const Vebinars = observer((): JSX.Element => {
   );
   const [editingVebinar, setEditingVebinar] = useState<VebinarModel>();
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Вебинар сохранен',
     alert: 'success',
   });
-  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
-    id: '',
-    openState: OpenState.Closed,
-  });
+  const [deleteAction, setDeleteAction] =
+    useState<ModalDialogConfirmStateProps>({
+      id: '',
+      isOpen: false,
+    });
 
   useEffect(() => {
     if (store.vebinarsLoadState !== BootState.Success) {
@@ -90,7 +93,7 @@ const Vebinars = observer((): JSX.Element => {
     setDeleteAction(prev => ({
       ...prev,
       id,
-      openState: OpenState.Opened,
+      isOpen: true,
     }));
   };
 
@@ -100,7 +103,7 @@ const Vebinars = observer((): JSX.Element => {
     navigator.clipboard.writeText(url);
     setSnackbarState(prev => ({
       ...prev,
-      openState: OpenState.Opened,
+      isOpen: true,
       message: 'Ссылка скопирована',
       alert: 'success',
     }));
@@ -161,14 +164,13 @@ const Vebinars = observer((): JSX.Element => {
             vebinar={editingVebinar}
             onClose={handleVebinarsDialogClose}
           />
-          <ConfirmDialog
-            open={deleteAction.openState}
+          <ModalDialogConfirm
+            isOpen={deleteAction.isOpen}
             title="Уверены что хотите удалить вебинар?"
-            message="Это действие необратимо"
             handleClose={() =>
               setDeleteAction(prev => ({
                 ...prev,
-                openState: OpenState.Closed,
+                isOpen: false,
               }))
             }
             handleAgree={() => {
@@ -176,7 +178,7 @@ const Vebinars = observer((): JSX.Element => {
                 store.fetchVebinars();
                 setSnackbarState(prev => ({
                   ...prev,
-                  openState: OpenState.Opened,
+                  isOpen: true,
                   message: 'Вебинар удален',
                   alert: 'error',
                 }));

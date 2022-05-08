@@ -17,7 +17,7 @@ interface Props {
   onBlurAction?: () => void;
 }
 
-const InputComponent = (props: Props): JSX.Element => {
+export const InputComponent = (props: Props): JSX.Element => {
   const {
     type,
     error,
@@ -46,7 +46,7 @@ const InputComponent = (props: Props): JSX.Element => {
           helperText={errorMessage}
           label={placeholder}
           fullWidth
-          variant={variant ?? 'outlined'}
+          variant={variant}
           type={type}
           onBlur={onBlurAction}
         />
@@ -55,4 +55,7 @@ const InputComponent = (props: Props): JSX.Element => {
   );
 };
 
-export default InputComponent;
+InputComponent.defaultProps = {
+  variant: 'outlined',
+  small: false,
+};

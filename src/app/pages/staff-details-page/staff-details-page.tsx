@@ -3,19 +3,19 @@ import { Grid, Typography } from '@mui/material';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserPhoto } from './sub-components/elements';
+import { UserPhoto } from './sub-components/styled-elements';
 import PersonIcon from '@mui/icons-material/Person';
 import UserDetailsInfo from './sub-components/user-details-info';
 import UserDetailsActions from './sub-components/user-details-actions';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { observer } from 'mobx-react-lite';
-import Loader from 'app/components/loader/loader';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
-import Main from 'app/components/main/main';
+import { Loader } from 'app/components/loader';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import UserProgress from './sub-components/user-progress';
 import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
 import { StorageFolder } from 'app/constants/storage-folder';
+import { Main } from 'app/components/main';
+import { TechnicalIssues } from 'app/components/technical-issues';
 
 interface PageParams {
   staffId: string;

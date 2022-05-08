@@ -1,16 +1,9 @@
-import { Box, styled } from '@mui/material';
 import React from 'react';
 import './style.scss';
+import { LoaderContaiener } from './sub-components/styled-elements';
 
-const LoaderContaienr = styled(Box)(({ theme }) => ({
-  ...theme.typography.body1,
-  '& div::after': {
-    background: theme.palette.text.primary,
-  },
-}));
-
-const Loader = (): JSX.Element => (
-  <LoaderContaienr className="lds-spinner">
+export const Loader = (): JSX.Element => (
+  <LoaderContaiener className="loader">
     <div />
     <div />
     <div />
@@ -23,7 +16,5 @@ const Loader = (): JSX.Element => (
     <div />
     <div />
     <div />
-  </LoaderContaienr>
+  </LoaderContaiener>
 );
-
-export default Loader;

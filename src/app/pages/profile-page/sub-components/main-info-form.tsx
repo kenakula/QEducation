@@ -1,8 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Typography } from '@mui/material';
-import InputComponent from 'app/components/input-component/input-component';
-import SelectComponent from 'app/components/select-component/select-component';
+import { InputComponent, SelectComponent } from 'app/components/form-controls';
 import { genderOptions } from 'app/constants/gender';
 import { InputType } from 'app/constants/input-type';
 import { UserModel } from 'app/constants/user-model';
@@ -10,8 +9,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import SaveIcon from '@mui/icons-material/Save';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
-import { OpenState } from 'app/constants/open-state';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { InfoBox } from './styled-elements';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 
@@ -34,7 +32,7 @@ const MainInfoForm = (props: Props): JSX.Element => {
   const { data, uploadState, updateFunction } = props;
 
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Данные сохранены',
     alert: 'success',
   });
@@ -49,7 +47,7 @@ const MainInfoForm = (props: Props): JSX.Element => {
       .then(() => {
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
         }));
       })
       .finally(() => reset(user));

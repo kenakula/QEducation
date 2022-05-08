@@ -7,7 +7,7 @@ interface Props {
   children: React.ReactElement;
 }
 
-const ScrollTop = (props: Props): JSX.Element => {
+export const ScrollTop = (props: Props): JSX.Element => {
   const { children } = props;
 
   const trigger = useScrollTrigger({
@@ -40,5 +40,3 @@ const ScrollTop = (props: Props): JSX.Element => {
     </Zoom>
   );
 };
-
-export default ScrollTop;

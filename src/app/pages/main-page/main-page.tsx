@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Main from 'app/components/main/main';
+import { Main } from 'app/components/main';
 import { BootState } from 'app/constants/boot-state';
 import { UserRole } from 'app/constants/user-roles';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { TabItemPanel } from './sub-components/styled-elements';
-import TabsComponent from 'app/components/tabs-component/tabs-component';
 import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
 import { useLocation, useHistory } from 'react-router-dom';
 import qs from 'qs';
 import { contentTabs, PageContentType, roleTabs } from './tabs';
-import TechnicalIssues from 'app/components/technical-issues/technical-issues';
-import Loader from 'app/components/loader/loader';
+import { TechnicalIssues } from 'app/components/technical-issues';
+import { Loader } from 'app/components/loader';
 import Vebinars from './sub-components/tabs/vebinars';
 import Categories from './sub-components/tabs/categories';
-import Construction from 'app/components/construction/construction';
+import { Construction } from 'app/components/construction';
+import { TabsComponent } from 'app/components/tabs-component';
 
 interface PageParams {
   tab?: string;

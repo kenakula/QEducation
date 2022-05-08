@@ -20,12 +20,11 @@ import {
   UserPhoto,
 } from './sub-components/styled-elements';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
-import Main from 'app/components/main/main';
-import Loader from 'app/components/loader/loader';
+import { Main } from 'app/components/main';
+import { Loader } from 'app/components/loader';
 import UserDataFields from './sub-components/user-data-fields';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import { OpenState } from 'app/constants/open-state';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
 import { StorageFolder } from 'app/constants/storage-folder';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -38,7 +37,7 @@ const ProfilePage = observer((): JSX.Element => {
 
   const [imageUploading, setImageUploading] = useState(false);
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Аватар обновлен',
     alert: 'success',
   });
@@ -73,7 +72,7 @@ const ProfilePage = observer((): JSX.Element => {
     if (file.size >= MAX_IMAGE_SIZE) {
       setSnackbarState(prev => ({
         ...prev,
-        openState: OpenState.Opened,
+        isOpen: true,
         alert: 'error',
         message: 'Изображение слишком большого размера',
       }));
@@ -88,14 +87,14 @@ const ProfilePage = observer((): JSX.Element => {
         store.getUserImage();
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
         }));
         setImageUploading(false);
       })
       .catch(() => {
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
           alert: 'error',
           message: 'Неизвестная ошибка, попробуйте позже',
         }));

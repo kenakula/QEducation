@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Main from 'app/components/main/main';
+import { Main } from 'app/components/main';
 import { Button, Grid, Typography } from '@mui/material';
 import { PromoBlock } from './sub-components/styled-elements';
 import { observer } from 'mobx-react-lite';

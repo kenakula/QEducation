@@ -12,6 +12,7 @@ import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { PageContentType } from 'app/pages/main-page/tabs';
 import { StorageFolder } from 'app/constants/storage-folder';
+import { NotificationModel } from 'app/constants/notification-model';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -38,6 +39,7 @@ export class MainPageStore {
   public selectedContentTab: PageContentType = PageContentType.Categories;
   public selectedRole: UserRole = UserRole.Doctor;
   public profileInfo: UserModel;
+  public notifications: NotificationModel[] = [];
   public profileImageUrl: string = '';
   public isSuperAdmin: boolean;
   public profileInfoUpdating: boolean = false;
@@ -96,6 +98,7 @@ export class MainPageStore {
           if (val) {
             runInAction(() => {
               this.profileInfo = val.data();
+              this.fetchUserNotifications(this.profileInfo.uid);
               if (this.profileInfo.isSuperAdmin) {
                 this.isSuperAdmin = true;
               }
@@ -105,6 +108,43 @@ export class MainPageStore {
 
       await this.getUserImage();
     }
+  };
+
+  fetchUserNotifications = async (uid: string): Promise<void> => {
+    const notifications =
+      await this.firebase.getDocumentsFromDeepCollection<NotificationModel>(
+        FirestoreCollection.Users,
+        [uid, FirestoreCollection.Notifications],
+      );
+
+    runInAction(() => {
+      this.notifications = notifications;
+    });
+  };
+
+  readNotification = async (id: string): Promise<void> => {
+    this.firebase
+      .updateDeepDocument(
+        FirestoreCollection.Users,
+        [this.profileInfo.uid, FirestoreCollection.Notifications],
+        id,
+        { read: true },
+      )
+      .then(() => {
+        this.fetchUserNotifications(this.profileInfo.uid);
+      });
+  };
+
+  removeNotification = async (id: string): Promise<void> => {
+    this.firebase
+      .deleteDeepDocument(
+        FirestoreCollection.Users,
+        [this.profileInfo.uid, FirestoreCollection.Notifications],
+        id,
+      )
+      .then(() => {
+        this.fetchUserNotifications(this.profileInfo.uid);
+      });
   };
 
   getUserImage = async (): Promise<void> => {
@@ -322,6 +362,8 @@ export class MainPageStore {
       await this.getUserCategories(
         this.isSuperAdmin ? this.selectedRole : this.profileInfo.role,
       );
+
+      // await this.writeDoc();
 
       runInAction(() => {
         this._bootState = BootState.Success;

@@ -10,6 +10,7 @@ import { Category, CategoryArticle } from 'app/constants/category-model';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { UserCategoriesFormModel } from 'app/pages/main-page/sub-components/user-categories-dialog';
 import { VebinarModel } from 'app/constants/vebinar-model';
+import { NotificationModel } from 'app/constants/notification-model';
 
 export class AdminStore {
   private _bootState: BootState = BootState.None;
@@ -349,6 +350,19 @@ export class AdminStore {
       .deleteDocument(FirestoreCollection.Users, id)
       .then(() => this.getUsers());
   };
+
+  sendNotification = async (
+    data: NotificationModel,
+    userId: string,
+  ): Promise<void> =>
+    this.firebase
+      .addDocToDeepCollection(
+        FirestoreCollection.Users,
+        [userId, FirestoreCollection.Notifications],
+        data.id,
+        data,
+      )
+      .catch(err => console.error('error when sending notification', err));
 
   init = async (): Promise<void> => {
     this._bootState = BootState.Loading;

@@ -1,12 +1,10 @@
-import ErrorBoundary from 'app/components/error-boundary/error-boundary';
-import Header from 'app/components/header/header';
-import Loader from 'app/components/loader/loader';
-// import Loader from 'app/components/loader/loader';
-// import Header from 'app/containers/header/header';
 import React, { lazy, Suspense } from 'react';
+import { ErrorBoundary } from 'app/components/error-boundary';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import PrivateRoute from './private-route';
 import { Routes } from './routes';
+import { Header } from 'app/components/header';
+import { Loader } from 'app/components/loader';
 
 const LandingPage = lazy(() => import('app/pages/landing-page/landing-page'));
 const SignInPage = lazy(() => import('app/pages/sign-in-page/sign-in-page'));

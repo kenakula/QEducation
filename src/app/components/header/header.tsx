@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
-import Container from '../container/container';
 import {
   Burger,
   HeaderElement,
@@ -14,8 +13,9 @@ import { observer } from 'mobx-react-lite';
 import HeaderControls from './sub-components/header-controls';
 import { drawerWidth } from './sub-components/main-nav';
 import DrawerContent from './sub-components/drawer-content';
+import { Container } from '../container';
 
-const Header = observer((): JSX.Element => {
+export const Header = observer((): JSX.Element => {
   const { authState, userInfo } = useAuthStore();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -24,7 +24,6 @@ const Header = observer((): JSX.Element => {
     setMobileOpen(!mobileOpen);
   };
 
-  const menuId = 'account-menu';
   const container =
     window !== undefined ? () => window.document.body : undefined;
 
@@ -44,12 +43,12 @@ const Header = observer((): JSX.Element => {
               <MenuIcon />
             </Burger>
             <LogoElement to={Routes.MAIN}>QEducation</LogoElement>
-            <HeaderControls menuId={menuId} />
+            <HeaderControls />
           </>
         ) : (
           <>
             <LogoElement to={Routes.MAIN}>QEducation</LogoElement>
-            <HeaderControls menuId={menuId} />
+            <HeaderControls />
           </>
         )}
         <SwipeableDrawer
@@ -78,5 +77,3 @@ const Header = observer((): JSX.Element => {
     </HeaderElement>
   );
 });
-
-export default Header;

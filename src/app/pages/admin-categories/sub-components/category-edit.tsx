@@ -3,24 +3,20 @@ import { Category } from 'app/constants/category-model';
 import React, { useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import { OpenState } from 'app/constants/open-state';
-import SnackbarAlert from 'app/components/snackbar-alert/snackbar-alert';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { InfoBox } from './styled-elements';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import InputComponent from 'app/components/input-component/input-component';
+import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
-import ConfirmDialog from 'app/components/confirm-dialog/confirm-dialog';
-import { DeleteConfirmProps } from 'app/pages/admin-articles-page/admin-articles-page';
-
-export const categoryFormModel = yup.object({
-  title: yup.string().required('Это поле обязательное'),
-  description: yup.string(),
-});
+import {
+  ModalDialogConfirm,
+  ModalDialogConfirmStateProps,
+} from 'app/components/modal-dialog';
+import { categoryFormModel } from './category-form';
 
 interface Props {
   category: Category | null;
@@ -33,14 +29,15 @@ const CategoryEdit = (props: Props): JSX.Element => {
 
   const [updateState, setUpdateState] = useState(false);
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    openState: OpenState.Closed,
+    isOpen: false,
     message: 'Категория сохранена',
     alert: 'success',
   });
-  const [deleteAction, setDeleteAction] = useState<DeleteConfirmProps>({
-    id: '',
-    openState: OpenState.Closed,
-  });
+  const [deleteAction, setDeleteAction] =
+    useState<ModalDialogConfirmStateProps>({
+      id: '',
+      isOpen: false,
+    });
 
   const handleDelete = (): void => {
     if (!category) return;
@@ -48,7 +45,7 @@ const CategoryEdit = (props: Props): JSX.Element => {
     setDeleteAction(prev => ({
       ...prev,
       id: category.id,
-      openState: OpenState.Opened,
+      isOpen: true,
     }));
   };
 
@@ -60,7 +57,7 @@ const CategoryEdit = (props: Props): JSX.Element => {
       setUpdateState(false);
       setSnackbarState(prev => ({
         ...prev,
-        openState: OpenState.Opened,
+        isOpen: true,
       }));
     });
   };
@@ -144,14 +141,13 @@ const CategoryEdit = (props: Props): JSX.Element => {
           </Button>
         </InfoBox>
       </Container>
-      <ConfirmDialog
-        open={deleteAction.openState}
+      <ModalDialogConfirm
+        isOpen={deleteAction.isOpen}
         title="Уверены что хотите удалить категорию?"
-        message="Это действие необратимо"
         handleClose={() =>
           setDeleteAction(prev => ({
             ...prev,
-            openState: OpenState.Closed,
+            isOpen: false,
           }))
         }
         handleAgree={() => {

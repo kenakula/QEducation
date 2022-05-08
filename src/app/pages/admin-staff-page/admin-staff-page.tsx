@@ -1,9 +1,9 @@
 import { Skeleton, useMediaQuery, useTheme } from '@mui/material';
 import { GridInitialStateCommunity } from '@mui/x-data-grid/models/gridStateCommunity';
-import DataGridComponent from 'app/components/data-grid/data-grid-component';
+import { DataGridComponent } from 'app/components/data-grid';
 import { IToolbarFields } from 'app/components/data-grid/sub-components/custom-toolbar';
-import Main from 'app/components/main/main';
-import PageTitle from 'app/components/page-title/page-title';
+import { Main } from 'app/components/main';
+import { PageTitle } from 'app/components/typography';
 import { BootState } from 'app/constants/boot-state';
 import { UserModel } from 'app/constants/user-model';
 import { Routes } from 'app/routes/routes';

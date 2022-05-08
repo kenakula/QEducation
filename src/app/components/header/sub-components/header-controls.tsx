@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Avatar, Badge, Box, Button, IconButton } from '@mui/material';
 import { AuthStates } from 'app/constants/auth-state';
 import { Routes } from 'app/routes/routes';
@@ -9,33 +10,40 @@ import { NavLink } from 'react-router-dom';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ProfileMenu from './profile-menu';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
+import Notifications from './notifications';
 
-interface Props {
-  menuId: string;
-}
-
-const HeaderControls = observer((props: Props): JSX.Element | null => {
-  const { menuId } = props;
+const HeaderControls = observer((): JSX.Element | null => {
   const { authState, userInfo, logOut } = useAuthStore();
   const store = useMainPageStore();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
+  const [anchorNotifications, setAnchorNotifications] =
+    useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (store.profileInfo) {
       store.getUserImage();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.profileInfo]);
 
-  const handleProfileMenuOpen = (
-    event: React.MouseEvent<HTMLElement>,
-  ): void => {
-    setAnchorEl(event.currentTarget);
+  const handleProfileMenuOpen = ({
+    currentTarget,
+  }: React.MouseEvent<HTMLElement>): void => {
+    setAnchorMenu(currentTarget);
   };
 
   const handleProfileMenuClose = (): void => {
-    setAnchorEl(null);
+    setAnchorMenu(null);
+  };
+
+  const handleNotificationsOpen = ({
+    currentTarget,
+  }: React.MouseEvent<HTMLElement>): void => {
+    setAnchorNotifications(currentTarget);
+  };
+
+  const handleNotificationsClose = (): void => {
+    setAnchorNotifications(null);
   };
 
   const handleLogout = (): void => {
@@ -45,51 +53,61 @@ const HeaderControls = observer((props: Props): JSX.Element | null => {
     }
   };
 
+  const getNotReadNotificationsCount = (): number =>
+    store.notifications.filter(item => !item.read).length;
+
   switch (authState) {
     case AuthStates.Authorized:
       return (
         <Box sx={{ marginLeft: 'auto' }}>
           <IconButton
             size="small"
-            aria-label="show 17 new notifications"
             color="default"
             sx={{ mr: 2 }}
+            onClick={handleNotificationsOpen}
           >
-            <Badge badgeContent={0} color="error">
+            <Badge
+              variant="dot"
+              badgeContent={getNotReadNotificationsCount()}
+              color="error"
+            >
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          {userInfo ? (
-            <>
-              <IconButton
-                size="small"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="default"
+          <IconButton
+            size="small"
+            edge="end"
+            onClick={handleProfileMenuOpen}
+            color="default"
+          >
+            {userInfo && (
+              <Avatar
+                sx={{
+                  width: 30,
+                  height: 30,
+                  backgroundColor: stringToColor(userInfo.firstName),
+                  fontSize: 18,
+                }}
+                src={store.profileImageUrl}
               >
-                <Avatar
-                  sx={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: stringToColor(userInfo.firstName),
-                    fontSize: 18,
-                  }}
-                  src={store.profileImageUrl}
-                >
-                  {userInfo.firstName[0]}
-                </Avatar>
-              </IconButton>
-              <ProfileMenu
-                anchor={anchorEl}
-                id={menuId}
-                handleClose={handleProfileMenuClose}
-                logOut={handleLogout}
-              />
-            </>
-          ) : null}
+                {userInfo.firstName[0]}
+              </Avatar>
+            )}
+          </IconButton>
+          <ProfileMenu
+            anchor={anchorMenu}
+            id="profile-menu"
+            handleClose={handleProfileMenuClose}
+            logOut={handleLogout}
+          />
+          {store.notifications && (
+            <Notifications
+              anchor={anchorNotifications}
+              id="notifications"
+              handleClose={handleNotificationsClose}
+              notifications={store.notifications}
+            />
+          )}
         </Box>
       );
     case AuthStates.NotAuthorized:

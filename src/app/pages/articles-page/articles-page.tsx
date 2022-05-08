@@ -8,8 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import Main from 'app/components/main/main';
-import PageTitle from 'app/components/page-title/page-title';
+import { Main } from 'app/components/main';
 import {
   ArtilcesPageParams,
   useMainPageStore,
@@ -41,6 +40,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import { nanoid } from 'nanoid';
 import { Category } from 'app/constants/category-model';
+import { PageTitle } from 'app/components/typography';
 
 const ArticlesPage = observer((): JSX.Element => {
   const params = useParams<{ categoryId: string }>();
