@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import { InputType } from 'app/constants/input-type';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller } from 'react-hook-form';
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   small?: boolean;
   styles?: React.CSSProperties;
   onBlurAction?: () => void;
+  color?: string;
 }
 
 export const InputComponent = (props: Props): JSX.Element => {
@@ -30,7 +31,40 @@ export const InputComponent = (props: Props): JSX.Element => {
     small,
     styles,
     onBlurAction,
+    color,
   } = props;
+
+  const [severetyColor, setSeveretyColor] = useState<
+    | 'error'
+    | 'primary'
+    | 'secondary'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | undefined
+  >('primary');
+
+  useEffect(() => {
+    switch (color) {
+      case 'error':
+        setSeveretyColor('error');
+        break;
+      case 'secondary':
+        setSeveretyColor('secondary');
+        break;
+      case 'success':
+        setSeveretyColor('success');
+        break;
+      case 'info':
+        setSeveretyColor('info');
+        break;
+      case 'warning':
+        setSeveretyColor('warning');
+        break;
+      default:
+        setSeveretyColor('primary');
+    }
+  }, [color]);
 
   return (
     <Controller
@@ -49,6 +83,7 @@ export const InputComponent = (props: Props): JSX.Element => {
           variant={variant}
           type={type}
           onBlur={onBlurAction}
+          color={severetyColor}
         />
       )}
     />

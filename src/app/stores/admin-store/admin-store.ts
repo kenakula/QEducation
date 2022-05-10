@@ -355,17 +355,16 @@ export class AdminStore {
     data: NotificationModel,
     userId: string,
   ): Promise<void> =>
-    this.firebase
-      .addDocToDeepCollection(
-        FirestoreCollection.Users,
-        [userId, FirestoreCollection.Notifications],
-        data.id,
-        data,
-      )
-      .catch(err => console.error('error when sending notification', err));
+    this.firebase.addDocToDeepCollection(
+      FirestoreCollection.Users,
+      [userId, FirestoreCollection.Notifications],
+      data.id,
+      data,
+    );
 
   init = async (): Promise<void> => {
     this._bootState = BootState.Loading;
+    this._isInited = false;
 
     try {
       await this.getArticles();
@@ -374,12 +373,11 @@ export class AdminStore {
 
       runInAction(() => {
         this._bootState = BootState.Success;
+        this._isInited = true;
       });
     } catch (err) {
       this._bootState = BootState.Error;
     }
-
-    this._isInited = true;
   };
 }
 

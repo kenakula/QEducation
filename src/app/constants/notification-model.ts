@@ -35,6 +35,6 @@ export interface NotificationModel {
   severety: NotificationSeverety;
   message: string;
   read: boolean;
-  attachment?: NotificationAttachment;
+  attachment?: NotificationAttachment | null;
   sentDate: Timestamp;
 }

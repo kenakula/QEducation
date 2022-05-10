@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 import { SelectOption } from 'app/constants/select-option';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
@@ -29,6 +29,7 @@ interface Props {
   disabled?: boolean;
   small?: boolean;
   group?: (option: any) => string;
+  color?: string;
 }
 
 export const SelectComponent = (props: Props): JSX.Element => {
@@ -49,7 +50,41 @@ export const SelectComponent = (props: Props): JSX.Element => {
     valueRenderer,
     small,
     group,
+    color,
   } = props;
+
+  // TODO вынести в отдельный файл
+  const [severetyColor, setSeveretyColor] = useState<
+    | 'error'
+    | 'primary'
+    | 'secondary'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | undefined
+  >('primary');
+
+  useEffect(() => {
+    switch (color) {
+      case 'error':
+        setSeveretyColor('error');
+        break;
+      case 'secondary':
+        setSeveretyColor('secondary');
+        break;
+      case 'success':
+        setSeveretyColor('success');
+        break;
+      case 'info':
+        setSeveretyColor('info');
+        break;
+      case 'warning':
+        setSeveretyColor('warning');
+        break;
+      default:
+        setSeveretyColor('primary');
+    }
+  }, [color]);
 
   if (autocomplete) {
     return (
@@ -73,6 +108,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
             renderInput={params => (
               <TextField
                 {...params}
+                color={severetyColor}
                 label={placeholder}
                 variant={variant}
                 size={small ? 'small' : undefined}
@@ -90,7 +126,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
 
   return (
     <FormControl fullWidth size={small ? 'small' : undefined}>
-      <InputLabel id={`${id}-label`} htmlFor={id}>
+      <InputLabel color={severetyColor} id={`${id}-label`} htmlFor={id}>
         {placeholder}
       </InputLabel>
       <Controller
@@ -109,6 +145,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
             onBlur={onBlurAction}
             multiple={multipleChoice}
             renderValue={valueRenderer}
+            color={severetyColor}
           >
             {options.map((option: SelectOption) => (
               <MenuItem key={option.label} value={option.value}>

@@ -9,10 +9,9 @@ export class Routes {
 
   // private
   public static readonly MAIN = '/main';
-
-  public static readonly ARTICLES_VIEW = '/main/:categoryId';
+  public static readonly CATEGORY_ARTICLES = '/main/:categoryId';
   public static readonly PROFILE = '/profile';
-  public static readonly ARTICLE_PAGE = '/articles/:articleId';
+  public static readonly SINGLE_ARTICLE = '/articles/:articleId';
   public static readonly TESTS = '/tests';
 
   // admin
@@ -23,4 +22,5 @@ export class Routes {
   public static readonly ADMIN_STAFF_DETAILS = '/admin/staff/:staffId';
   public static readonly ADMIN_TESTS = '/admin/tests';
   public static readonly ADMIN_CATEGORIES = '/admin/categories';
+  public static readonly ADMIN_MAILING = '/admin/mailing';
 }

@@ -52,7 +52,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
 
   const moveToArticle = (id: string): void =>
     history.push(
-      generatePath(Routes.ARTICLE_PAGE, {
+      generatePath(Routes.SINGLE_ARTICLE, {
         articleId: id,
       }),
     );

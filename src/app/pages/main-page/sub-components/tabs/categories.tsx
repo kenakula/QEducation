@@ -79,7 +79,7 @@ const Articles = observer((): JSX.Element => {
 
   const handleCategoryChoose = (id: string): void => {
     history.push({
-      pathname: generatePath(Routes.ARTICLES_VIEW, { categoryId: id }),
+      pathname: generatePath(Routes.CATEGORY_ARTICLES, { categoryId: id }),
       search: `?role=${
         store.profileInfo.isSuperAdmin
           ? store.selectedRole
