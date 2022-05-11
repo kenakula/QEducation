@@ -29,7 +29,7 @@ import {
 } from 'app/components/modal-dialog';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 
-const Articles = observer((): JSX.Element => {
+export const Categories = observer((): JSX.Element => {
   const store = useMainPageStore();
   const adminStore = useAdminStore();
   const history = useHistory();
@@ -193,5 +193,3 @@ const Articles = observer((): JSX.Element => {
       return <Loader />;
   }
 });
-
-export default Articles;

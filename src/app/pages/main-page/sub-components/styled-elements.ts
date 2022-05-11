@@ -114,3 +114,54 @@ export const VideoContainer = styled(Box)(({ theme }) => ({
     maxWidth: '100%',
   },
 }));
+
+export const DocumentsContainer = styled(Box)(({ theme }) => ({
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: theme.spacing(2),
+  padding: theme.spacing(2),
+}));
+
+export const DocumentsFolder = styled(Paper)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: theme.spacing(2),
+  boxShadow: 'none',
+  backgroundColor: theme.palette.background.default,
+}));
+
+export const FolderHeader = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  display: 'flex',
+  paddingRight: theme.spacing(4),
+  '& .MuiIconButton-root': {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+}));
+
+export const FolderItems = styled(List)(({ theme }) => ({
+  '& .MuiListItem-root': {
+    position: 'relative',
+    paddingRight: '70px',
+    cursor: 'pointer',
+    '&:hover': {
+      background: theme.palette.divider,
+
+      '& .MuiBox-root': {
+        opacity: 1,
+      },
+    },
+    '& .MuiListItemIcon-root': {
+      minWidth: '40px',
+    },
+    '& .MuiBox-root': {
+      position: 'absolute',
+      right: 0,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      opacity: 0,
+    },
+  },
+}));

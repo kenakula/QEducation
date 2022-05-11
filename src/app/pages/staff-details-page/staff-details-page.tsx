@@ -37,9 +37,11 @@ const StaffDetailsPage = observer((): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    firebase.getFileUrl(StorageFolder.UserAvatars, params.staffId).then(url => {
-      setUserImageUrl(url);
-    });
+    firebase
+      .getFileUrl(`${StorageFolder.UserAvatars}/${params.staffId}`)
+      .then(url => {
+        setUserImageUrl(url);
+      });
   }, []);
 
   useEffect(() => {

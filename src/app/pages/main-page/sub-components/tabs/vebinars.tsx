@@ -24,7 +24,7 @@ import {
   ModalDialogConfirmStateProps,
 } from 'app/components/modal-dialog';
 
-const Vebinars = observer((): JSX.Element => {
+export const Vebinars = observer((): JSX.Element => {
   const store = useMainPageStore();
   const adminStore = useAdminStore();
 
@@ -194,5 +194,3 @@ const Vebinars = observer((): JSX.Element => {
       return <Loader />;
   }
 });
-
-export default Vebinars;

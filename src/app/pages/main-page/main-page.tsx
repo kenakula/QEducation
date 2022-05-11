@@ -10,13 +10,13 @@ import { Routes } from 'app/routes/routes';
 import { TabContext } from '@mui/lab';
 import { useLocation, useHistory } from 'react-router-dom';
 import qs from 'qs';
-import { contentTabs, PageContentType, roleTabs } from './tabs';
 import { TechnicalIssues } from 'app/components/technical-issues';
 import { Loader } from 'app/components/loader';
-import Vebinars from './sub-components/tabs/vebinars';
-import Categories from './sub-components/tabs/categories';
 import { Construction } from 'app/components/construction';
 import { TabsComponent } from 'app/components/tabs-component';
+import { PageContentType } from 'app/constants/page-content-type';
+import { contentTabs, roleTabs } from './assets';
+import { Categories, Documents, Vebinars } from './sub-components/tabs';
 
 interface PageParams {
   tab?: string;
@@ -98,6 +98,9 @@ const MainPage = observer((): JSX.Element => {
           <TabContext value={store.selectedContentTab}>
             <TabItemPanel value={PageContentType.Categories}>
               <Categories />
+            </TabItemPanel>
+            <TabItemPanel value={PageContentType.Documents}>
+              <Documents />
             </TabItemPanel>
             <TabItemPanel value={PageContentType.Vebinars}>
               <Vebinars />

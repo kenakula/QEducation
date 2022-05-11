@@ -10,9 +10,14 @@ import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
-import { PageContentType } from 'app/pages/main-page/tabs';
 import { StorageFolder } from 'app/constants/storage-folder';
 import { NotificationModel } from 'app/constants/notification-model';
+import { PageContentType } from 'app/constants/page-content-type';
+import {
+  DocumentsFolderModel,
+  FolderItem,
+} from 'app/constants/documents-folder-model';
+import { StorageReference } from 'firebase/storage';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -54,6 +59,8 @@ export class MainPageStore {
   public articleLoadState: BootState = BootState.None;
   public vebinars: VebinarModel[] = [];
   public vebinarsLoadState: BootState = BootState.None;
+  public documents: DocumentsFolderModel[] = [];
+  public documentsLoadState: BootState = BootState.None;
 
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
@@ -69,6 +76,61 @@ export class MainPageStore {
 
   setSelectedContentTab = (tab: PageContentType): void => {
     this.selectedContentTab = tab;
+  };
+
+  fetchDocumentsFolders = async (): Promise<void> => {
+    this.documentsLoadState = BootState.Loading;
+
+    try {
+      const list = await this.firebase.getFolderContents(
+        StorageFolder.Documents,
+      );
+
+      const result: DocumentsFolderModel[] = list.prefixes.map(
+        (prefix: StorageReference) => ({
+          name: prefix.name,
+          ref: prefix,
+          items: [],
+        }),
+      );
+
+      runInAction(() => {
+        this.documents = result;
+      });
+
+      this.fetchFolderDocuments();
+    } catch (err) {
+      runInAction(() => {
+        this.documentsLoadState = BootState.Error;
+      });
+    }
+  };
+
+  fetchFolderDocuments = async (): Promise<void> => {
+    try {
+      for (let i = 0; i < this.documents.length; i++) {
+        const list = await this.firebase.getFolderContents(
+          this.documents[i].ref.fullPath,
+        );
+
+        const result: FolderItem[] = list.items.map(item => ({
+          name: item.name,
+          fullPath: item.fullPath,
+        }));
+
+        runInAction(() => {
+          this.documents[i].items = result;
+        });
+      }
+
+      runInAction(() => {
+        this.documentsLoadState = BootState.Success;
+      });
+    } catch (err) {
+      runInAction(() => {
+        this.documentsLoadState = BootState.Error;
+      });
+    }
   };
 
   fetchVebinars = async (): Promise<void> => {
@@ -149,7 +211,7 @@ export class MainPageStore {
 
   getUserImage = async (): Promise<void> => {
     this.firebase
-      .getFileUrl(StorageFolder.UserAvatars, this.profileInfo.uid)
+      .getFileUrl(`${StorageFolder.UserAvatars}/${this.profileInfo.uid}`)
       .then(url => {
         runInAction(() => {
           this.profileImageUrl = url;

@@ -68,6 +68,9 @@ export class AdminStore {
   deleteVebinar = async (id: string): Promise<void> =>
     this.firebase.deleteDocument(FirestoreCollection.Vebinars, id);
 
+  deleteDocument = async (path: string): Promise<void> =>
+    this.firebase.deleteFile(path);
+
   startArticleAutosave = (cb: () => void, timeout: number): void => {
     this.articleAutoSave = true;
     this._autosaveTimeout = setTimeout(() => {

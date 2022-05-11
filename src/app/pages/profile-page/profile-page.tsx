@@ -51,7 +51,7 @@ const ProfilePage = observer((): JSX.Element => {
   const handleDeleteImage = (): void => {
     setImageUploading(true);
     firebase
-      .deleteFile(StorageFolder.UserAvatars, store.profileInfo.uid)
+      .deleteFile(`${StorageFolder.Documents}/${store.profileInfo.uid}`)
       .then(() => {
         setImageUploading(false);
         store.setProfileImageUrl('');
@@ -82,7 +82,7 @@ const ProfilePage = observer((): JSX.Element => {
     setImageUploading(true);
 
     firebase
-      .uploadFile(StorageFolder.UserAvatars, store.profileInfo.uid, file)
+      .uploadFile(`${StorageFolder.UserAvatars}/${store.profileInfo.uid}`, file)
       .then(() => {
         store.getUserImage();
         setSnackbarState(prev => ({
