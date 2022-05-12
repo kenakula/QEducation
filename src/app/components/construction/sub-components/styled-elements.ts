@@ -9,8 +9,4 @@ export const ComponentContainer = styled(Box)(() => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-
-  '.svg': {
-    fontSize: '120px',
-  },
 }));

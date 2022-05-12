@@ -9,7 +9,7 @@ interface Props {
 
 export const Construction = (props: Props): JSX.Element => (
   <ComponentContainer>
-    <EngineeringIcon color="primary" />
+    <EngineeringIcon color="primary" sx={{ fontSize: '120px' }} />
     <Typography variant="h5" textAlign="center">
       {props.text}
     </Typography>

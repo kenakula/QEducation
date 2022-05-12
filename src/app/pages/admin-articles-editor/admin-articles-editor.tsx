@@ -28,6 +28,7 @@ import { Category } from 'app/constants/category-model';
 import { Main } from 'app/components/main';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { TextEditor } from 'app/components/text-editor';
+import { PageTitle } from 'app/components/typography';
 
 const AdminArticlesEditor = observer((): JSX.Element => {
   const adminStore = useAdminStore();
@@ -171,6 +172,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
 
   return (
     <Main>
+      <PageTitle>Редактор статей</PageTitle>
       <Box
         component="form"
         onSubmit={handleSubmit(onSubmit)}
