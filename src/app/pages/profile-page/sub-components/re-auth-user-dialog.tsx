@@ -1,24 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, DialogContentText } from '@mui/material';
 import { InputComponent } from 'app/components/form-controls';
 import { InputType } from 'app/constants/input-type';
-import { OpenState } from 'app/constants/open-state';
 import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { ModalDialog } from 'app/components/modal-dialog';
 
 export const reAuthSchema = yup.object({
   email: yup
@@ -43,7 +34,7 @@ export interface ReAuthModel {
 }
 
 export interface ReAuthStateProps {
-  open: OpenState;
+  open: boolean;
   handleClose: () => void;
   successCb: () => void;
 }
@@ -86,40 +77,9 @@ const ReAuthUserDialog = (props: ReAuthStateProps): JSX.Element => {
     });
   };
 
-  return (
-    <Dialog open={open === OpenState.Opened} onClose={handleClose}>
-      <DialogTitle id="alert-dialog-title">
-        <Typography variant="h5" component="p">
-          Введите свои данные для входа
-        </Typography>
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText sx={{ mb: 2 }} id="alert-dialog-description">
-          Введите ваши данные снова, пожалуйста. Это необходимо в целях
-          безопасности.
-        </DialogContentText>
-        {errorMessage && (
-          <Alert sx={{ mb: 2 }} severity="error">
-            {errorMessage}
-          </Alert>
-        )}
-        <InputComponent
-          type={InputType.Email}
-          formControl={control}
-          name="email"
-          error={!!errors.email}
-          errorMessage={errors.email && errors.email.message}
-          placeholder="Ваша почта"
-          styles={{ marginBottom: '20px' }}
-        />
-        <InputComponent
-          type={InputType.Password}
-          formControl={control}
-          name="password"
-          error={!!errors.password}
-          errorMessage={errors.password && errors.password.message}
-          placeholder="Введите пароль"
-        />
+  const ModalActions = React.memo(
+    (): JSX.Element => (
+      <>
         <LoadingButton
           variant="contained"
           startIcon={<ExitToAppIcon />}
@@ -130,13 +90,49 @@ const ReAuthUserDialog = (props: ReAuthStateProps): JSX.Element => {
         >
           ОК
         </LoadingButton>
-      </DialogContent>
-      <DialogActions sx={{ mb: 2, px: 2 }}>
         <Button color="error" variant="outlined" onClick={handleClose}>
           Отменить
         </Button>
-      </DialogActions>
-    </Dialog>
+      </>
+    ),
+  );
+
+  return (
+    <ModalDialog
+      isOpen={open}
+      handleClose={handleClose}
+      title="Введите свои данные для входа"
+      actions={<ModalActions />}
+    >
+      <DialogContentText sx={{ mb: 2 }} id="alert-dialog-description">
+        Введите ваши данные снова, пожалуйста. Это необходимо в целях
+        безопасности.
+      </DialogContentText>
+      <Box>
+        {errorMessage && (
+          <Alert sx={{ mb: 2 }} severity="error">
+            {errorMessage}
+          </Alert>
+        )}
+      </Box>
+      <InputComponent
+        type={InputType.Email}
+        formControl={control}
+        name="email"
+        error={!!errors.email}
+        errorMessage={errors.email && errors.email.message}
+        placeholder="Ваша почта"
+        styles={{ marginBottom: '20px' }}
+      />
+      <InputComponent
+        type={InputType.Password}
+        formControl={control}
+        name="password"
+        error={!!errors.password}
+        errorMessage={errors.password && errors.password.message}
+        placeholder="Введите пароль"
+      />
+    </ModalDialog>
   );
 };
 

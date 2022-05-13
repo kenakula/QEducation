@@ -1,13 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Typography,
-  Box,
-} from '@mui/material';
-import { OpenState } from 'app/constants/open-state';
+import { Button, Typography, Box } from '@mui/material';
 import {
   CustomInputLabel,
   InputContainer,
@@ -15,16 +7,16 @@ import {
 import { MainPageStore } from 'app/stores/main-page-store/main-page-store';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import DialogTitleContainer from './dialog-title-container';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { observer } from 'mobx-react-lite';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
-import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { SelectComponent } from 'app/components/form-controls';
 import { SortableList } from 'app/components/sortable-list';
+import { ModalDialog } from 'app/components/modal-dialog';
+import { SnackbarAlert } from 'app/components/snackbar-alert';
 
 const schema = yup.object({
   category: yup.string().required('Это поле обязательно'),
@@ -33,7 +25,7 @@ const schema = yup.object({
 
 interface Props {
   store: MainPageStore;
-  openState: OpenState;
+  open: boolean;
   onClose: () => void;
   list?: CategoryArticle[];
 }
@@ -44,7 +36,7 @@ export interface UserCategoriesFormModel {
 }
 
 const UserCategoriesDialog = observer((props: Props): JSX.Element => {
-  const { store, openState, onClose, list } = props;
+  const { store, open, onClose, list } = props;
 
   const adminStore = useAdminStore();
 
@@ -106,26 +98,24 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
     setValue('list', []);
   }, [watchCategory]);
 
+  const ModalActions = (): JSX.Element => (
+    <>
+      <Button onClick={handleSubmit(onSubmit)}>Сохранить</Button>
+      <Button color="error" onClick={onClose}>
+        Закрыть
+      </Button>
+    </>
+  );
+
   return (
-    <Dialog
-      open={openState === OpenState.Opened}
-      onClose={onClose}
-      fullWidth
-      maxWidth="md"
-    >
-      <DialogTitleContainer onClose={onClose}>
-        <Typography sx={{ fontSize: '24px', paddingRight: '40px' }}>
-          Выберите и наполните категорию для роли:{' '}
-          <Typography
-            sx={{ fontSize: '24px' }}
-            variant="caption"
-            color="primary"
-          >
-            {store.selectedRole}
-          </Typography>
-        </Typography>
-      </DialogTitleContainer>
-      <DialogContent>
+    <>
+      <ModalDialog
+        maxWidth="md"
+        isOpen={open}
+        handleClose={onClose}
+        title={`Выберите и наполните категорию для роли: ${store.selectedRole}`}
+        actions={<ModalActions />}
+      >
         <InputContainer sx={{ pt: 2 }}>
           <CustomInputLabel>Категория</CustomInputLabel>
           <SelectComponent
@@ -163,15 +153,9 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
             </Typography>
           )}
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit(onSubmit)}>Сохранить</Button>
-        <Button color="error" onClick={onClose}>
-          Закрыть
-        </Button>
-      </DialogActions>
+      </ModalDialog>
       <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
-    </Dialog>
+    </>
   );
 });
 

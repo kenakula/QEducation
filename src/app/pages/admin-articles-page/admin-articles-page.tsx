@@ -14,7 +14,6 @@ import { getColumns } from './sub-components/columns';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { GridInitialStateCommunity } from '@mui/x-data-grid/models/gridStateCommunity';
 import AddIcon from '@mui/icons-material/Add';
-import CategoriesDialog from '../admin-articles-editor/sub-components/categories-dialog';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Category } from 'app/constants/category-model';
 import { Main } from 'app/components/main';
@@ -25,15 +24,20 @@ import {
   ModalDialogConfirmStateProps,
 } from 'app/components/modal-dialog';
 import { DataGridComponent } from 'app/components/data-grid';
+import { CategoriesDialog } from './sub-components/categories-dialog';
 
 const AdminArticlesPage = observer((): JSX.Element => {
   const adminStore = useAdminStore();
   const store = useMainPageStore();
   const history = useHistory();
 
-  const [categoriesOpenState, setCategoriesOpenState] = useState<OpenState>(
-    OpenState.Closed,
-  );
+  useEffect(() => {
+    if (!adminStore.isInited) {
+      adminStore.init();
+    }
+  }, [adminStore]);
+
+  const [categoriesOpenState, setCategoriesOpenState] = useState(false);
   const [deleteAction, setDeleteAction] =
     useState<ModalDialogConfirmStateProps>({
       id: '',
@@ -44,6 +48,10 @@ const AdminArticlesPage = observer((): JSX.Element => {
     message: 'Статья сохранена',
     alert: 'success',
   });
+
+  const handleCategoriesDaialogClose = (): void => {
+    setCategoriesOpenState(false);
+  };
 
   const editArticle = (data: ArticleModel): void => {
     adminStore.editArticle(data);
@@ -123,7 +131,7 @@ const AdminArticlesPage = observer((): JSX.Element => {
           color="primary"
           fullWidth
           variant="outlined"
-          onClick={() => setCategoriesOpenState(OpenState.Opened)}
+          onClick={() => setCategoriesOpenState(true)}
           endIcon={<AddIcon />}
         >
           Категории
@@ -143,12 +151,6 @@ const AdminArticlesPage = observer((): JSX.Element => {
     roles: [],
     categories: [],
   };
-
-  useEffect(() => {
-    if (!adminStore.isInited) {
-      adminStore.init();
-    }
-  }, [adminStore]);
 
   return (
     <Main>
@@ -189,8 +191,8 @@ const AdminArticlesPage = observer((): JSX.Element => {
       <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
       <CategoriesDialog
         store={adminStore}
-        openState={categoriesOpenState}
-        handleClose={() => setCategoriesOpenState(OpenState.Closed)}
+        isOpen={categoriesOpenState}
+        handleClose={handleCategoriesDaialogClose}
       />
     </Main>
   );

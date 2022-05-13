@@ -51,7 +51,7 @@ const StaffDetailsPage = observer((): JSX.Element => {
   }, [adminStore.userDetailsInfo]);
 
   if (profileDeleted) {
-    return <TechnicalIssues header="Профиль удален" message="" code="" />;
+    return <TechnicalIssues header="Профиль удален" message="" />;
   }
 
   return (

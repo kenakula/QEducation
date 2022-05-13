@@ -115,7 +115,7 @@ const MainPage = observer((): JSX.Element => {
         </Main>
       );
     case BootState.Error:
-      return <TechnicalIssues />;
+      return <TechnicalIssues message="При загрузке произошла ошибка" />;
     default:
       return <Loader />;
   }

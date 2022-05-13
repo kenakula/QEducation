@@ -11,7 +11,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import qs from 'qs';
 
-import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
@@ -34,9 +33,7 @@ export const Vebinars = observer((): JSX.Element => {
   const [selectedVebinar, setSelectedVebinar] = useState<VebinarModel | null>(
     null,
   );
-  const [vebinarsDialogOpenState, setVebinarsDialogOpenState] = useState(
-    OpenState.Closed,
-  );
+  const [vebinarsDialogOpenState, setVebinarsDialogOpenState] = useState(false);
   const [editingVebinar, setEditingVebinar] = useState<VebinarModel>();
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
     isOpen: false,
@@ -76,17 +73,17 @@ export const Vebinars = observer((): JSX.Element => {
   };
 
   const handleVebinarsDialogOpen = (): void => {
-    setVebinarsDialogOpenState(OpenState.Opened);
+    setVebinarsDialogOpenState(true);
   };
 
   const handleVebinarsDialogClose = (): void => {
-    setVebinarsDialogOpenState(OpenState.Closed);
+    setVebinarsDialogOpenState(false);
     setEditingVebinar(undefined);
   };
 
   const handleEditVebinar = (video: VebinarModel): void => {
     setEditingVebinar(video);
-    setVebinarsDialogOpenState(OpenState.Opened);
+    setVebinarsDialogOpenState(true);
   };
 
   const handleDeleteVebinar = (id: string): void => {
@@ -189,7 +186,7 @@ export const Vebinars = observer((): JSX.Element => {
         </>
       );
     case BootState.Error:
-      return <TechnicalIssues />;
+      return <TechnicalIssues message="При загрузке произошла ошибка" />;
     default:
       return <Loader />;
   }

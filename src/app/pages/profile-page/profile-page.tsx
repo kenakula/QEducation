@@ -121,7 +121,6 @@ const ProfilePage = observer((): JSX.Element => {
                         onChange={onInputFileSelect}
                       />
                       <Button
-                        variant="contained"
                         component="span"
                         size="small"
                         disabled={imageUploading}

@@ -41,9 +41,19 @@ export const Documents = observer((): JSX.Element => {
   };
 
   const handleDocumentDelete = (path: string): void => {
-    adminStore.deleteDocument(path).then(() => {
-      store.fetchFolderDocuments();
-    });
+    adminStore
+      .deleteDocument(path)
+      .then(() => {
+        store.fetchFolderDocuments();
+      })
+      .then(() => {
+        setSnackbarState(prev => ({
+          ...prev,
+          isOpen: true,
+          message: 'Файл удален',
+          alert: 'error',
+        }));
+      });
   };
 
   const handleDownloadDocument = (path: string): void => {
@@ -133,7 +143,7 @@ export const Documents = observer((): JSX.Element => {
           </DocumentsContainer>
         );
       case BootState.Error:
-        return <TechnicalIssues />;
+        return <TechnicalIssues message="При загрузке произошла ошибка" />;
       default:
         return <Loader />;
     }

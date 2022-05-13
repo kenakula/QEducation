@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { OpenState } from 'app/constants/open-state';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Alert, Box, Typography } from '@mui/material';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
@@ -44,7 +43,7 @@ const UserDataFields = (): JSX.Element => {
   } = useAuthStore();
 
   const [reAuthState, setReAuthState] = useState<ReAuthStateProps>({
-    open: OpenState.Closed,
+    open: false,
     successCb: () => {},
     handleClose: () => {},
   });
@@ -63,14 +62,14 @@ const UserDataFields = (): JSX.Element => {
   const handleReAuthClose = (): void => {
     setReAuthState(prev => ({
       ...prev,
-      open: OpenState.Closed,
+      open: false,
     }));
   };
 
   const setReauthStateProps = (cb: () => void): void => {
     setReAuthState(prev => ({
       ...prev,
-      open: OpenState.Opened,
+      open: true,
       handleClose: handleReAuthClose,
       successCb: cb,
     }));

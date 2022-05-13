@@ -1,19 +1,11 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from '@mui/material';
-import { OpenState } from 'app/constants/open-state';
+import { Button, DialogContentText } from '@mui/material';
+import { ModalDialog } from 'app/components/modal-dialog';
 import { Routes } from 'app/routes/routes';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 interface Props {
-  open: OpenState;
+  open: boolean;
   handleClose: () => void;
   resetFunc: () => void;
   goBack?: string;
@@ -22,26 +14,11 @@ interface Props {
 const SaveArticleDialog = (props: Props): JSX.Element => {
   const { open, goBack, handleClose, resetFunc } = props;
 
-  const history = useHistory();
+  const ModalActions = React.memo((): JSX.Element => {
+    const history = useHistory();
 
-  return (
-    <Dialog
-      open={open === OpenState.Opened}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        <Typography variant="h5" component="p">
-          Статья сохранена
-        </Typography>
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Что дальше?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions sx={{ mb: 2, px: 2 }}>
+    return (
+      <>
         <Button
           color="error"
           variant="outlined"
@@ -77,8 +54,19 @@ const SaveArticleDialog = (props: Props): JSX.Element => {
             К категории
           </Button>
         )}
-      </DialogActions>
-    </Dialog>
+      </>
+    );
+  });
+
+  return (
+    <ModalDialog
+      isOpen={open}
+      handleClose={handleClose}
+      title="Статья сохранена"
+      actions={<ModalActions />}
+    >
+      <DialogContentText>Что дальше?</DialogContentText>
+    </ModalDialog>
   );
 };
 

@@ -18,8 +18,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { FileInput } from 'app/pages/profile-page/sub-components/styled-elements';
-import { SnackbarAlert } from 'app/components/snackbar-alert';
-import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { StorageFolder } from 'app/constants/storage-folder';
 import {
   NextObserverType,
@@ -53,11 +51,6 @@ export const DocumentUploadDialog = observer((props: Props): JSX.Element => {
   const store = useMainPageStore();
   const firebase = useFirebaseContext();
 
-  const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
-    isOpen: false,
-    message: '',
-    alert: 'success',
-  });
   const [fileUploading, setFileUploading] = useState(false);
   const [fileProgress, setFileProgress] = useState(0);
 
@@ -130,6 +123,27 @@ export const DocumentUploadDialog = observer((props: Props): JSX.Element => {
     );
   };
 
+  const ModalActions = (): JSX.Element => (
+    <>
+      <Button
+        type="button"
+        onClick={handleSubmit(onSubmit)}
+        color="primary"
+        disabled={fileUploading}
+      >
+        Загрузить
+      </Button>
+      <Button
+        onClick={() => {
+          reset();
+          handleClose();
+        }}
+      >
+        Отмена
+      </Button>
+    </>
+  );
+
   return (
     <ModalDialog
       isOpen={open}
@@ -139,6 +153,7 @@ export const DocumentUploadDialog = observer((props: Props): JSX.Element => {
         reset();
         handleClose();
       }}
+      actions={<ModalActions />}
     >
       <Box
         component="form"
@@ -206,16 +221,6 @@ export const DocumentUploadDialog = observer((props: Props): JSX.Element => {
             {errors.file.message}
           </Typography>
         )}
-        <Box>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={fileUploading}
-          >
-            Загрузить
-          </Button>
-        </Box>
 
         {fileUploading ? (
           <LinearProgress
@@ -230,7 +235,6 @@ export const DocumentUploadDialog = observer((props: Props): JSX.Element => {
           />
         ) : null}
       </Box>
-      <SnackbarAlert {...snackbarState} setState={setSnackbarState} />
     </ModalDialog>
   );
 });

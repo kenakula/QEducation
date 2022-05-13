@@ -14,6 +14,7 @@ interface Props {
   isOpen: boolean;
   handleClose: () => void;
   children: JSX.Element | JSX.Element[];
+  showActions?: boolean;
   actions?: JSX.Element | JSX.Element[];
   title: string;
   subtitle?: string;
@@ -31,6 +32,7 @@ export const ModalDialog = (props: Props): JSX.Element => {
     maxWidth,
     closeText,
     subtitle,
+    showActions = true,
   } = props;
 
   return (
@@ -56,9 +58,11 @@ export const ModalDialog = (props: Props): JSX.Element => {
         ) : null}
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
-      <DialogActions>
-        {actions ?? <Button onClick={handleClose}>{closeText}</Button>}
-      </DialogActions>
+      {showActions && (
+        <DialogActions>
+          {actions ?? <Button onClick={handleClose}>{closeText}</Button>}
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

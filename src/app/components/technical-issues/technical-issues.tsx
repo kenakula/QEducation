@@ -33,7 +33,7 @@ export const TechnicalIssues = (props: Props): JSX.Element => {
 };
 
 TechnicalIssues.defaultProps = {
-  code: '404',
+  code: '',
   header: 'Произошла ошибка',
   message: 'Попробуйте позже',
 };

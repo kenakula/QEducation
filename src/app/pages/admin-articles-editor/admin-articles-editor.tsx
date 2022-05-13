@@ -1,7 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
 import { ArticleModel } from 'app/constants/article-model';
-import { OpenState } from 'app/constants/open-state';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +11,6 @@ import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { Timestamp } from 'firebase/firestore';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
-import CategoriesDialog from './sub-components/categories-dialog';
 import {
   CustomInputLabel,
   InputContainer,
@@ -29,19 +27,16 @@ import { Main } from 'app/components/main';
 import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import { TextEditor } from 'app/components/text-editor';
 import { PageTitle } from 'app/components/typography';
+import { CategoriesDialog } from './sub-components/categories-dialog';
 
 const AdminArticlesEditor = observer((): JSX.Element => {
   const adminStore = useAdminStore();
   const store = useMainPageStore();
 
-  const [categoriesOpenState, setCategoriesOpenState] = useState<OpenState>(
-    OpenState.Closed,
-  );
+  const [categoriesOpenState, setCategoriesOpenState] = useState(false);
   const [article, setArticle] = useState<ArticleModel | null>(null);
   const [articleLoading, setArticleLoading] = useState(false);
-  const [saveArticleDialog, setSaveArticleDialog] = useState<OpenState>(
-    OpenState.Closed,
-  );
+  const [saveArticleDialog, setSaveArticleDialog] = useState(false);
   const [snackbarState, setSnackbarState] = useState<SnackBarStateProps>({
     isOpen: false,
     message: 'Статья сохранена',
@@ -61,7 +56,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
   }, [adminStore]);
 
   const handleSaveArticleDialogClose = (): void => {
-    setSaveArticleDialog(OpenState.Closed);
+    setSaveArticleDialog(false);
   };
 
   const getArticle = (): ArticleModel => {
@@ -157,7 +152,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
             });
         }
 
-        setSaveArticleDialog(OpenState.Opened);
+        setSaveArticleDialog(true);
       })
       .catch(error => {
         setArticleLoading(false);
@@ -252,7 +247,7 @@ const AdminArticlesEditor = observer((): JSX.Element => {
                   <IconButton
                     color="primary"
                     sx={{ width: '50px', height: '50px', marginLeft: '10px' }}
-                    onClick={() => setCategoriesOpenState(OpenState.Opened)}
+                    onClick={() => setCategoriesOpenState(true)}
                   >
                     <AddIcon fontSize="large" />
                   </IconButton>
@@ -309,8 +304,8 @@ const AdminArticlesEditor = observer((): JSX.Element => {
       </Box>
       <CategoriesDialog
         store={adminStore}
-        openState={categoriesOpenState}
-        handleClose={() => setCategoriesOpenState(OpenState.Closed)}
+        isOpen={categoriesOpenState}
+        handleClose={() => setCategoriesOpenState(false)}
       />
       <SaveArticleDialog
         open={saveArticleDialog}
