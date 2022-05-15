@@ -26,7 +26,7 @@ export class ErrorBoundary extends React.Component<any, StateProps> {
       // Error path
       return (
         <TechnicalIssues
-          header="Что-то пошло не так"
+          header="Что-то пошло не так. Обратитесь в поддержку"
           message={this.state.error && this.state.error.toString()}
         />
       );

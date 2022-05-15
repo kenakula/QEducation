@@ -70,7 +70,7 @@ const ArticlesPage = observer((): JSX.Element => {
         });
       } else if (!obj.role && obj.article) {
         history.push(
-          generatePath(Routes.ARTICLE_PAGE, {
+          generatePath(Routes.SINGLE_ARTICLE, {
             articleId: obj.article,
           }),
         );
@@ -87,7 +87,7 @@ const ArticlesPage = observer((): JSX.Element => {
   };
 
   const handleNewArticle = (): void => {
-    const url = location.pathname;
+    const url = `${location.pathname}?role=${store.selectedRole}`;
 
     adminStore.editArticle(
       {
@@ -131,7 +131,7 @@ const ArticlesPage = observer((): JSX.Element => {
               size="small"
               onClick={() => {
                 history.push(
-                  generatePath(Routes.ARTICLE_PAGE, {
+                  generatePath(Routes.SINGLE_ARTICLE, {
                     articleId: store.article!.id,
                   }),
                 );

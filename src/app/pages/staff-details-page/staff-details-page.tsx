@@ -37,9 +37,11 @@ const StaffDetailsPage = observer((): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    firebase.getFileUrl(StorageFolder.UserAvatars, params.staffId).then(url => {
-      setUserImageUrl(url);
-    });
+    firebase
+      .getFileUrl(`${StorageFolder.UserAvatars}/${params.staffId}`)
+      .then(url => {
+        setUserImageUrl(url);
+      });
   }, []);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const StaffDetailsPage = observer((): JSX.Element => {
   }, [adminStore.userDetailsInfo]);
 
   if (profileDeleted) {
-    return <TechnicalIssues header="Профиль удален" message="" code="" />;
+    return <TechnicalIssues header="Профиль удален" message="" />;
   }
 
   return (
@@ -67,15 +69,17 @@ const StaffDetailsPage = observer((): JSX.Element => {
               data={adminStore.userDetailsInfo}
             />
           </Grid>
-          <Grid xs={12} item>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Прогресс пользователя
-            </Typography>
-            <UserProgress
-              userInfo={adminStore.userDetailsInfo}
-              categories={store.roleCategories}
-            />
-          </Grid>
+          {store.roleCategories.length ? (
+            <Grid xs={12} item>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Прогресс пользователя
+              </Typography>
+              <UserProgress
+                userInfo={adminStore.userDetailsInfo}
+                categories={store.roleCategories}
+              />
+            </Grid>
+          ) : null}
           <Grid item xs={12}>
             <UserDetailsActions
               setDeleted={setProfileDeleted}

@@ -83,7 +83,6 @@ export const NotificationElement = styled(MenuItem)(({ theme }) => ({
   ...theme.typography.body1,
   position: 'relative',
   maxWidth: '100%',
-  whiteSpace: 'initial',
 
   '& p': {
     fontSize: '16px',

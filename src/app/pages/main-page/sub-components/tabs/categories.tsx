@@ -17,7 +17,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
 import { observer } from 'mobx-react-lite';
-import { OpenState } from 'app/constants/open-state';
 import { generatePath, useHistory } from 'react-router-dom';
 import { Routes } from 'app/routes/routes';
 import { BootState } from 'app/constants/boot-state';
@@ -29,14 +28,13 @@ import {
 } from 'app/components/modal-dialog';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 
-const Articles = observer((): JSX.Element => {
+export const Categories = observer((): JSX.Element => {
   const store = useMainPageStore();
   const adminStore = useAdminStore();
   const history = useHistory();
 
-  const [categoriesDialogOpenState, setCategoriesDialogOpenState] = useState(
-    OpenState.Closed,
-  );
+  const [categoriesDialogOpenState, setCategoriesDialogOpenState] =
+    useState(false);
   const [sortedList, setSortedList] = useState<CategoryArticle[] | undefined>(
     undefined,
   );
@@ -52,11 +50,11 @@ const Articles = observer((): JSX.Element => {
   });
 
   const handleCategoriesDialogOpen = (): void => {
-    setCategoriesDialogOpenState(OpenState.Opened);
+    setCategoriesDialogOpenState(true);
   };
 
   const handleCategoriesDialogClose = (): void => {
-    setCategoriesDialogOpenState(OpenState.Closed);
+    setCategoriesDialogOpenState(false);
   };
 
   const handleCategoryDelete = (e: React.MouseEvent, id: string): void => {
@@ -79,7 +77,7 @@ const Articles = observer((): JSX.Element => {
 
   const handleCategoryChoose = (id: string): void => {
     history.push({
-      pathname: generatePath(Routes.ARTICLES_VIEW, { categoryId: id }),
+      pathname: generatePath(Routes.CATEGORY_ARTICLES, { categoryId: id }),
       search: `?role=${
         store.profileInfo.isSuperAdmin
           ? store.selectedRole
@@ -156,7 +154,7 @@ const Articles = observer((): JSX.Element => {
           </CategoriesSection>
           <UserCategoriesDialog
             list={sortedList ?? undefined}
-            openState={categoriesDialogOpenState}
+            open={categoriesDialogOpenState}
             store={store}
             onClose={handleCategoriesDialogClose}
           />
@@ -188,10 +186,8 @@ const Articles = observer((): JSX.Element => {
         </>
       );
     case BootState.Error:
-      return <TechnicalIssues />;
+      return <TechnicalIssues message="При загрузке произошла ошибка" />;
     default:
       return <Loader />;
   }
 });
-
-export default Articles;

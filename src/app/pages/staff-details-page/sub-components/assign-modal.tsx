@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import {
+  attachmentEntityOptions,
   NotificationAttachmentEntity,
   NotificationAttachmentLink,
   NotificationModel,
@@ -10,7 +11,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ModalDialog } from 'app/components/modal-dialog';
-import { RadioButtonGroupOption } from 'app/constants/radio-button-group-option';
 import { Button, Grid } from '@mui/material';
 import { RadioButtonGroup } from 'app/components/form-controls/radio-button-group';
 import { InputComponent, SelectComponent } from 'app/components/form-controls';
@@ -28,58 +28,15 @@ import { generatePath } from 'react-router-dom';
 import { Routes } from 'app/routes/routes';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-
-const entityOptions: RadioButtonGroupOption[] = [
-  {
-    value: NotificationAttachmentEntity.Article,
-    label: 'Статья',
-  },
-  {
-    value: NotificationAttachmentEntity.Test,
-    label: 'Тест',
-    disabled: true,
-  },
-  {
-    value: NotificationAttachmentEntity.Checklist,
-    label: 'Чеклист',
-    disabled: true,
-  },
-  {
-    value: NotificationAttachmentEntity.Script,
-    label: 'Скрипты',
-    disabled: true,
-  },
-];
-
-const severetyOptions: RadioButtonGroupOption[] = [
-  {
-    value: 'primary',
-    label: 'Обычная',
-  },
-  {
-    value: 'info',
-    label: 'Информационная',
-  },
-  {
-    value: 'warning',
-    label: 'Предупредительная',
-  },
-  {
-    value: 'error',
-    label: 'Суперважная',
-  },
-];
-
-interface AutocompleteOption {
-  id: string;
-  title: string;
-}
+import { severetyOptions } from 'app/constants/severety-options';
+import { AutocompleteOption } from 'app/constants/autocomplete-option';
+import { getButtonSeveretyColor } from 'app/utils/color-helpers';
 
 export interface AssignFormModel {
   entity: NotificationAttachmentEntity;
   list: string[];
   message: string;
-  severety: string;
+  severety: NotificationSeverety;
 }
 
 const assignFormSchema = yup.object({
@@ -151,32 +108,10 @@ export const AssignModal = (props: Props): JSX.Element => {
     setMessage(value);
   }, [watch('entity')]);
 
-  const getSeveretyColor = ():
-    | 'primary'
-    | 'inherit'
-    | 'secondary'
-    | 'success'
-    | 'error'
-    | 'info'
-    | 'warning' => {
-    const severety = watch('severety');
-
-    switch (severety) {
-      case 'info':
-        return 'info';
-      case 'warning':
-        return 'warning';
-      case 'error':
-        return 'error';
-      default:
-        return 'primary';
-    }
-  };
-
   const generateNotification = (data: AssignFormModel): NotificationModel => {
     const list: NotificationAttachmentLink[] = data.list.map(item => ({
       title: (item as unknown as AutocompleteOption).title,
-      link: generatePath(Routes.ARTICLE_PAGE, {
+      link: generatePath(Routes.SINGLE_ARTICLE, {
         articleId: (item as unknown as AutocompleteOption).id,
       }),
     }));
@@ -225,11 +160,12 @@ export const AssignModal = (props: Props): JSX.Element => {
         <Grid xs={12} sx={{ display: 'flex' }} justifyContent="center" item>
           <RadioButtonGroup
             horizontal
-            options={entityOptions}
+            options={attachmentEntityOptions}
             formControl={control}
             error={!!errors.entity}
             errorMessage={errors.entity && errors.entity.message}
             name="entity"
+            color={watch('severety')}
           />
         </Grid>
         <Grid
@@ -266,6 +202,7 @@ export const AssignModal = (props: Props): JSX.Element => {
             error={!!errors.severety}
             errorMessage={errors.severety && errors.severety.message}
             name="severety"
+            color={watch('severety')}
           />
         </Grid>
         <Grid xs={12} sx={{ display: 'flex' }} justifyContent="center" item>
@@ -289,7 +226,7 @@ export const AssignModal = (props: Props): JSX.Element => {
         <Grid xs={12} sx={{ display: 'flex' }} justifyContent="center" item>
           <Button
             disabled={notificationSending}
-            color={getSeveretyColor()}
+            color={getButtonSeveretyColor(watch('severety'))}
             type="submit"
             variant="contained"
           >

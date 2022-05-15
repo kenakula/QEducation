@@ -67,7 +67,7 @@ const ReadMoreArticles = (props: Props): JSX.Element => {
                 variant="text"
                 color="inherit"
                 component={Link}
-                to={generatePath(Routes.ARTICLE_PAGE, {
+                to={generatePath(Routes.SINGLE_ARTICLE, {
                   articleId: item.id,
                 })}
                 target="_blank"

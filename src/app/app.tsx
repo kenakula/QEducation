@@ -61,11 +61,7 @@ const App = (): JSX.Element | null => {
       return <Loader />;
     case BootState.Error:
       return (
-        <TechnicalIssues
-          code=""
-          header="Ошибка"
-          message="При рендере приложения возникла ошибка, перезагрузите"
-        />
+        <TechnicalIssues message="При рендере приложения возникла ошибка, перезагрузите" />
       );
     default:
       return null;

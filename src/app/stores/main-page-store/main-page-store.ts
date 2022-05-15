@@ -10,9 +10,14 @@ import { ArticleModel } from 'app/constants/article-model';
 import { DocumentData } from 'firebase/firestore';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { VebinarModel } from 'app/constants/vebinar-model';
-import { PageContentType } from 'app/pages/main-page/tabs';
 import { StorageFolder } from 'app/constants/storage-folder';
 import { NotificationModel } from 'app/constants/notification-model';
+import { PageContentType } from 'app/constants/page-content-type';
+import {
+  DocumentsFolderModel,
+  FolderItem,
+} from 'app/constants/documents-folder-model';
+import { StorageReference } from 'firebase/storage';
 
 export interface MainPageParams {
   role?: UserRole;
@@ -54,6 +59,8 @@ export class MainPageStore {
   public articleLoadState: BootState = BootState.None;
   public vebinars: VebinarModel[] = [];
   public vebinarsLoadState: BootState = BootState.None;
+  public documents: DocumentsFolderModel[] = [];
+  public documentsLoadState: BootState = BootState.None;
 
   constructor(private firebase: FirebaseStore, private auth: Auth = getAuth()) {
     makeAutoObservable(this);
@@ -69,6 +76,61 @@ export class MainPageStore {
 
   setSelectedContentTab = (tab: PageContentType): void => {
     this.selectedContentTab = tab;
+  };
+
+  fetchDocumentsFolders = async (): Promise<void> => {
+    this.documentsLoadState = BootState.Loading;
+
+    try {
+      const list = await this.firebase.getFolderContents(
+        StorageFolder.Documents,
+      );
+
+      const result: DocumentsFolderModel[] = list.prefixes.map(
+        (prefix: StorageReference) => ({
+          name: prefix.name,
+          ref: prefix,
+          items: [],
+        }),
+      );
+
+      runInAction(() => {
+        this.documents = result;
+      });
+
+      this.fetchFolderDocuments();
+    } catch (err) {
+      runInAction(() => {
+        this.documentsLoadState = BootState.Error;
+      });
+    }
+  };
+
+  fetchFolderDocuments = async (): Promise<void> => {
+    try {
+      for (let i = 0; i < this.documents.length; i++) {
+        const list = await this.firebase.getFolderContents(
+          this.documents[i].ref.fullPath,
+        );
+
+        const result: FolderItem[] = list.items.map(item => ({
+          name: item.name,
+          fullPath: item.fullPath,
+        }));
+
+        runInAction(() => {
+          this.documents[i].items = result;
+        });
+      }
+
+      runInAction(() => {
+        this.documentsLoadState = BootState.Success;
+      });
+    } catch (err) {
+      runInAction(() => {
+        this.documentsLoadState = BootState.Error;
+      });
+    }
   };
 
   fetchVebinars = async (): Promise<void> => {
@@ -98,7 +160,9 @@ export class MainPageStore {
           if (val) {
             runInAction(() => {
               this.profileInfo = val.data();
+
               this.fetchUserNotifications(this.profileInfo.uid);
+
               if (this.profileInfo.isSuperAdmin) {
                 this.isSuperAdmin = true;
               }
@@ -149,7 +213,7 @@ export class MainPageStore {
 
   getUserImage = async (): Promise<void> => {
     this.firebase
-      .getFileUrl(StorageFolder.UserAvatars, this.profileInfo.uid)
+      .getFileUrl(`${StorageFolder.UserAvatars}/${this.profileInfo.uid}`)
       .then(url => {
         runInAction(() => {
           this.profileImageUrl = url;
@@ -191,55 +255,36 @@ export class MainPageStore {
     await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
-  getUserCategories = async (role?: UserRole): Promise<void> => {
+  getUserCategories = async (role: UserRole): Promise<void> => {
     await this.fetchRoles();
 
     const currentRole = this.roles.find(
       item => item.title === (role ?? this.selectedRole),
     );
 
-    if (currentRole) {
-      const categories = currentRole.categories;
-
-      runInAction(() => {
-        this.roleCategories = categories;
-      });
+    if (!currentRole) {
+      return;
     }
+
+    const arr = await this.firebase.getDocumentsFromDeepCollection<Category>(
+      FirestoreCollection.Roles,
+      [currentRole.title, FirestoreCollection.RoleCategories],
+    );
+
+    runInAction(() => {
+      this.roleCategories = arr;
+    });
   };
 
   getArticlesFromUserCategory = async (categoryId: string): Promise<void> => {
     const category = this.roleCategories.find(item => item.id === categoryId);
 
-    if (category) {
-      runInAction(() => {
-        this.userCategoryArticles = category.articles;
-      });
-    }
-  };
-
-  deleteArticleFromUserCategory = async (articleId: string): Promise<void> => {
-    if (!this.roles.length) {
-      await this.fetchRoles();
+    if (!category) {
+      return;
     }
 
-    this.roles.forEach(role => {
-      const categories = role.categories;
-
-      if (!categories.length) return;
-
-      const newCategoriesArr: Category[] = [];
-
-      categories.forEach(category => {
-        const newArticlesArr = category.articles.filter(
-          article => article.id !== articleId,
-        );
-
-        newCategoriesArr.push({ ...category, articles: newArticlesArr });
-      });
-
-      this.firebase.updateDocument(FirestoreCollection.Roles, role.title, {
-        categories: newCategoriesArr,
-      });
+    runInAction(() => {
+      this.userCategoryArticles = category.articles;
     });
   };
 
@@ -362,8 +407,6 @@ export class MainPageStore {
       await this.getUserCategories(
         this.isSuperAdmin ? this.selectedRole : this.profileInfo.role,
       );
-
-      // await this.writeDoc();
 
       runInAction(() => {
         this._bootState = BootState.Success;

@@ -17,3 +17,26 @@ export const stringToColor = (string: string): string => {
 
   return color;
 };
+
+export const getButtonSeveretyColor = (
+  color: string | undefined,
+):
+  | 'inherit'
+  | 'primary'
+  | 'error'
+  | 'secondary'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | undefined => {
+  switch (color) {
+    case 'info':
+      return 'info';
+    case 'warning':
+      return 'warning';
+    case 'error':
+      return 'error';
+    default:
+      return 'primary';
+  }
+};

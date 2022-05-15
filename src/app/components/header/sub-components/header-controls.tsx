@@ -62,7 +62,7 @@ const HeaderControls = observer((): JSX.Element | null => {
         <Box sx={{ marginLeft: 'auto' }}>
           <IconButton
             size="small"
-            color="default"
+            color="primary"
             sx={{ mr: 2 }}
             onClick={handleNotificationsOpen}
           >

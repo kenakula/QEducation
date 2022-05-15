@@ -12,7 +12,7 @@ import {
 } from 'app/constants/notification-model';
 
 export const getNotificationIcon = (
-  attachment: NotificationAttachment | undefined,
+  attachment: NotificationAttachment | null | undefined,
   severety: NotificationSeverety,
   size: 'small' | 'large' | 'medium' = 'small',
 ): JSX.Element => {

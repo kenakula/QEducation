@@ -12,6 +12,7 @@ import {
   getFirestore,
   query,
   setDoc,
+  Unsubscribe,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -20,14 +21,32 @@ import {
   FirebaseStorage,
   getDownloadURL,
   getStorage,
+  listAll,
+  ListResult,
   ref,
+  StorageError,
+  StorageObserver,
   uploadBytes,
+  uploadBytesResumable,
   UploadResult,
+  UploadTaskSnapshot,
 } from 'firebase/storage';
 import React from 'react';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
 import { firebaseProdConfig } from 'app/constants/firebase-config';
-import { StorageFolder } from 'app/constants/storage-folder';
+
+export type NextObserverType =
+  | StorageObserver<UploadTaskSnapshot>
+  | ((snapshot: UploadTaskSnapshot) => unknown)
+  | null
+  | undefined;
+
+export type ErrorObserverType =
+  | ((a: StorageError) => unknown)
+  | null
+  | undefined;
+
+export type CompleteObserverType = Unsubscribe | null | undefined;
 
 export class FirebaseStore {
   app: FirebaseApp;
@@ -49,6 +68,17 @@ export class FirebaseStore {
     docId: string,
   ): Promise<void | DocumentData | undefined> => {
     const reference = doc(this.store, collName, docId);
+    return getDoc(reference).catch((err: FirebaseError) => {
+      console.error('error when getting document', err);
+    });
+  };
+
+  readDeepDocument = async (
+    collName: FirestoreCollection,
+    pathSegments: string[],
+    docId: string,
+  ): Promise<void | DocumentData | undefined> => {
+    const reference = doc(this.store, collName, ...pathSegments, docId);
     return getDoc(reference).catch((err: FirebaseError) => {
       console.error('error when getting document', err);
     });
@@ -162,34 +192,47 @@ export class FirebaseStore {
     return deleteDoc(reference);
   };
 
+  getFolderContents = async (folder: string): Promise<ListResult> => {
+    const reference = ref(this.storage, folder);
+
+    return listAll(reference);
+  };
+
   uploadFile = async (
-    folder: StorageFolder,
-    fileName: string,
+    path: string,
     file: File,
   ): Promise<UploadResult | void> => {
-    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+    const fileRef = ref(this.storage, path);
 
     return uploadBytes(fileRef, file).catch(err => {
       console.error(err);
     });
   };
 
-  deleteFile = async (
-    folder: StorageFolder,
-    fileName: string,
-  ): Promise<void> => {
-    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+  uploadFileWithProgress = (
+    path: string,
+    file: File,
+    next: NextObserverType,
+    error?: ErrorObserverType,
+    complete?: CompleteObserverType,
+  ): void => {
+    const fileRef = ref(this.storage, path);
+
+    const uploadTask = uploadBytesResumable(fileRef, file);
+
+    uploadTask.on('state_changed', next, error, complete);
+  };
+
+  deleteFile = async (path: string): Promise<void> => {
+    const fileRef = ref(this.storage, path);
 
     return deleteObject(fileRef).catch(err => {
       console.error(err);
     });
   };
 
-  getFileUrl = async (
-    folder: StorageFolder,
-    fileName: string,
-  ): Promise<string> => {
-    const fileRef = ref(this.storage, `${folder}/${fileName}`);
+  getFileUrl = async (path: string): Promise<string> => {
+    const fileRef = ref(this.storage, path);
 
     return getDownloadURL(fileRef);
   };

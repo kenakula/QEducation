@@ -29,6 +29,7 @@ interface Props {
   disabled?: boolean;
   small?: boolean;
   group?: (option: any) => string;
+  color?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
 }
 
 export const SelectComponent = (props: Props): JSX.Element => {
@@ -49,6 +50,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
     valueRenderer,
     small,
     group,
+    color = 'primary',
   } = props;
 
   if (autocomplete) {
@@ -73,6 +75,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
             renderInput={params => (
               <TextField
                 {...params}
+                color={color}
                 label={placeholder}
                 variant={variant}
                 size={small ? 'small' : undefined}
@@ -90,7 +93,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
 
   return (
     <FormControl fullWidth size={small ? 'small' : undefined}>
-      <InputLabel id={`${id}-label`} htmlFor={id}>
+      <InputLabel color={color} id={`${id}-label`} htmlFor={id}>
         {placeholder}
       </InputLabel>
       <Controller
@@ -109,6 +112,7 @@ export const SelectComponent = (props: Props): JSX.Element => {
             onBlur={onBlurAction}
             multiple={multipleChoice}
             renderValue={valueRenderer}
+            color={color}
           >
             {options.map((option: SelectOption) => (
               <MenuItem key={option.label} value={option.value}>

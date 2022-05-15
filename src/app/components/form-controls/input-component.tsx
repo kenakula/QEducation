@@ -15,6 +15,7 @@ interface Props {
   small?: boolean;
   styles?: React.CSSProperties;
   onBlurAction?: () => void;
+  color?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
 }
 
 export const InputComponent = (props: Props): JSX.Element => {
@@ -30,6 +31,7 @@ export const InputComponent = (props: Props): JSX.Element => {
     small,
     styles,
     onBlurAction,
+    color = 'primary',
   } = props;
 
   return (
@@ -49,6 +51,7 @@ export const InputComponent = (props: Props): JSX.Element => {
           variant={variant}
           type={type}
           onBlur={onBlurAction}
+          color={color}
         />
       )}
     />

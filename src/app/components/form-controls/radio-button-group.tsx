@@ -19,7 +19,7 @@ interface Props {
   styles?: React.CSSProperties;
   options: RadioButtonGroupOption[];
   horizontal?: boolean;
-  color?: string;
+  color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 }
 
 export const RadioButtonGroup = (props: Props): JSX.Element => {
@@ -32,23 +32,23 @@ export const RadioButtonGroup = (props: Props): JSX.Element => {
     styles,
     options,
     horizontal,
-    color,
+    color = 'primary',
   } = props;
 
   return (
     <FormControl component="fieldset" sx={styles ?? undefined} error={!!error}>
-      {label ? <FormLabel>{label}</FormLabel> : null}
+      {label ? <FormLabel color={color}>{label}</FormLabel> : null}
       <Controller
         control={formControl}
         name={name}
         render={({ field }) => (
-          <RadioGroup {...field} row={horizontal} color={color}>
+          <RadioGroup {...field} row={horizontal}>
             {options.map(item => (
               <FormControlLabel
                 key={item.value}
                 value={item.value}
                 label={item.label}
-                control={<Radio />}
+                control={<Radio color={color} />}
                 disabled={item.disabled}
               />
             ))}
