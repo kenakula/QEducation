@@ -87,7 +87,7 @@ const ArticlesPage = observer((): JSX.Element => {
   };
 
   const handleNewArticle = (): void => {
-    const url = location.pathname;
+    const url = `${location.pathname}?role=${store.selectedRole}`;
 
     adminStore.editArticle(
       {

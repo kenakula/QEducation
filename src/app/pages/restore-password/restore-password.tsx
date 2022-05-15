@@ -24,7 +24,6 @@ import { useAuthStore } from 'app/stores/auth-store/auth-store';
 import { ResetPasswordModel } from 'app/constants/reset-password-model';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
-import { OpenState } from 'app/constants/open-state';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 
 const RestorePasswordPage = observer((): JSX.Element => {
@@ -59,7 +58,7 @@ const RestorePasswordPage = observer((): JSX.Element => {
       resetPassword(data.email, () => {
         setSnackbarState(prev => ({
           ...prev,
-          openState: OpenState.Opened,
+          isOpen: true,
         }));
       });
       reset();

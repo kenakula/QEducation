@@ -1,9 +1,9 @@
 import React from 'react';
 import './style.scss';
-import { LoaderContaiener } from './sub-components/styled-elements';
+import { LoaderContainer } from './sub-components/styled-elements';
 
 export const Loader = (): JSX.Element => (
-  <LoaderContaiener className="loader">
+  <LoaderContainer className="loader">
     <div />
     <div />
     <div />
@@ -12,9 +12,5 @@ export const Loader = (): JSX.Element => (
     <div />
     <div />
     <div />
-    <div />
-    <div />
-    <div />
-    <div />
-  </LoaderContaiener>
+  </LoaderContainer>
 );

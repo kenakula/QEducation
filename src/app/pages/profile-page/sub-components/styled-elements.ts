@@ -48,7 +48,7 @@ export const InfoBox = styled(Box)(({ theme }) => ({
       flexGrow: 1,
     },
     [theme.breakpoints.up('md')]: {
-      gridTemplateColumns: '1fr 4fr',
+      gridTemplateColumns: '1fr 5fr',
     },
   },
   '& .MuiTypography-h6': {

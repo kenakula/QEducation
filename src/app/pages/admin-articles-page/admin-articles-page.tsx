@@ -2,7 +2,6 @@ import { Button, Skeleton, useMediaQuery, useTheme } from '@mui/material';
 import { IToolbarFields } from 'app/components/data-grid/sub-components/custom-toolbar';
 import { ArticleModel } from 'app/constants/article-model';
 import { BootState } from 'app/constants/boot-state';
-import { OpenState } from 'app/constants/open-state';
 import { userRolesOptions } from 'app/constants/user-roles';
 import { Routes } from 'app/routes/routes';
 import { useAdminStore } from 'app/stores/admin-store/admin-store';
@@ -18,7 +17,6 @@ import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { Category } from 'app/constants/category-model';
 import { Main } from 'app/components/main';
 import { PageTitle } from 'app/components/typography';
-import { useMainPageStore } from 'app/stores/main-page-store/main-page-store';
 import {
   ModalDialogConfirm,
   ModalDialogConfirmStateProps,
@@ -28,7 +26,6 @@ import { CategoriesDialog } from './sub-components/categories-dialog';
 
 const AdminArticlesPage = observer((): JSX.Element => {
   const adminStore = useAdminStore();
-  const store = useMainPageStore();
   const history = useHistory();
 
   useEffect(() => {
@@ -175,17 +172,14 @@ const AdminArticlesPage = observer((): JSX.Element => {
           setDeleteAction(prev => ({ ...prev, isOpen: false }))
         }
         handleAgree={() => {
-          adminStore
-            .deleteArticle(deleteAction.id)
-            .then(() =>
-              setSnackbarState(prev => ({
-                ...prev,
-                isOpen: true,
-                message: 'Статья удалена',
-                alert: 'error',
-              })),
-            )
-            .then(() => store.deleteArticleFromUserCategory(deleteAction.id));
+          adminStore.deleteArticle(deleteAction.id).then(() =>
+            setSnackbarState(prev => ({
+              ...prev,
+              isOpen: true,
+              message: 'Статья удалена',
+              alert: 'error',
+            })),
+          );
         }}
       />
       <SnackbarAlert {...snackbarState} setState={setSnackbarState} />

@@ -96,96 +96,99 @@ export class AdminStore {
     role: UserRole,
     category: Category,
   ): Promise<void> => {
+    await this.firebase
+      .readDeepDocument(
+        FirestoreCollection.Roles,
+        [role, FirestoreCollection.RoleCategories],
+        category.id,
+      )
+      .then(value => {
+        if (!value) {
+          return;
+        }
+
+        const obj = value.data();
+        obj.articles.push(data);
+        this.firebase.addDocToDeepCollection(
+          FirestoreCollection.Roles,
+          [role, FirestoreCollection.RoleCategories],
+          obj.id,
+          obj,
+        );
+      });
+  };
+
+  deleteArticleFromUserCategory = async (articleId: string): Promise<void> => {
     if (!this.roles.length) {
       await this.fetchRoles();
     }
 
-    if (!this.categories.length) {
-      await this.getCategories();
-    }
+    const removeArticleFromCategory = async (
+      category: Category,
+      role: string,
+    ): Promise<void> => {
+      const hasArticle = category.articles.find(item => item.id === articleId);
 
-    const roleItem = this.roles.find(item => item.title === role);
-    const initialCategories = roleItem!.categories;
-    const newArr = initialCategories.map(item => {
-      if (item.id === category.id) {
-        const newArticles: CategoryArticle[] = [...item.articles, data];
-        return { ...item, articles: newArticles };
+      if (hasArticle) {
+        const newArr: CategoryArticle[] = category.articles.filter(
+          item => item.id !== articleId,
+        );
+        this.firebase.updateDeepDocument(
+          FirestoreCollection.Roles,
+          [role, FirestoreCollection.RoleCategories],
+          category.id,
+          { articles: newArr },
+        );
       }
+    };
 
-      return item;
-    });
-
-    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
-      categories: newArr,
+    this.roles.forEach(({ title }) => {
+      this.firebase
+        .getDocumentsFromDeepCollection<Category>(FirestoreCollection.Roles, [
+          title,
+          FirestoreCollection.RoleCategories,
+        ])
+        .then(categories => {
+          categories.forEach(item => removeArticleFromCategory(item, title));
+        });
     });
   };
 
   deleteUserCategory = async (
     categoryId: string,
     role: UserRole,
-  ): Promise<void> => {
-    if (!this.roles.length) {
-      await this.fetchRoles();
-    }
-
-    if (!this.categories.length) {
-      await this.getCategories();
-    }
-
-    const roleItem = this.roles.find(item => item.title === role);
-    const roleCategories = roleItem!.categories;
-
-    const newArr = roleCategories.filter(item => item.id !== categoryId);
-
-    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
-      categories: newArr,
-    });
-  };
+  ): Promise<void> =>
+    this.firebase.deleteDeepDocument(
+      FirestoreCollection.Roles,
+      [role, FirestoreCollection.RoleCategories],
+      categoryId,
+    );
 
   setUserCategory = async (
-    categoryId: string,
     role: UserRole,
     data: UserCategoriesFormModel,
   ): Promise<void> => {
-    if (!this.roles.length) {
-      await this.fetchRoles();
-    }
-
     if (!this.categories.length) {
       await this.getCategories();
     }
 
-    const roleItem = this.roles.find(item => item.title === role);
-    const roleCategories = roleItem!.categories;
-    const hasCurrentCategory = roleCategories?.some(
-      item => item.id === categoryId,
-    );
-    const categoryObj = this.categories.find(item => item.id === categoryId);
+    const category = this.categories.find(item => item.id === data.categoryId);
 
-    if (!categoryObj) {
+    if (!category) {
       return;
     }
 
-    const listOfArticles: CategoryArticle[] = data.list.map(item => ({
-      id: item.id,
-      title: item.title,
-      description: item.description,
-    }));
+    const obj: Category = {
+      ...category,
+      articles: data.list,
+    };
 
-    let newArr: Category[] = [];
-
-    if (hasCurrentCategory) {
-      newArr = roleCategories!.filter(item => item.id !== categoryId);
-
-      newArr.push({ ...categoryObj, articles: listOfArticles });
-    } else {
-      roleCategories!.push({ ...categoryObj, articles: listOfArticles });
-      newArr = roleCategories;
-    }
-
-    this.firebase.updateDocument(FirestoreCollection.Roles, role, {
-      categories: newArr,
-    });
+    this.firebase.addDocToDeepCollection(
+      FirestoreCollection.Roles,
+      [role, FirestoreCollection.RoleCategories],
+      obj.id,
+      obj,
+    );
   };
 
   fetchRoles = async (): Promise<void> => {
@@ -284,10 +287,13 @@ export class AdminStore {
       });
 
   deleteArticle = async (id: string): Promise<void> => {
-    await this.firebase
+    this.firebase
       .deleteDocument(FirestoreCollection.Articles, id)
       .then(() => {
         this.getArticles();
+      })
+      .then(() => {
+        this.deleteArticleFromUserCategory(id);
       });
   };
 

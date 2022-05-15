@@ -51,7 +51,7 @@ const ProfilePage = observer((): JSX.Element => {
   const handleDeleteImage = (): void => {
     setImageUploading(true);
     firebase
-      .deleteFile(`${StorageFolder.Documents}/${store.profileInfo.uid}`)
+      .deleteFile(`${StorageFolder.UserAvatars}/${store.profileInfo.uid}`)
       .then(() => {
         setImageUploading(false);
         store.setProfileImageUrl('');

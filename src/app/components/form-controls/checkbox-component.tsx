@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Controller } from 'react-hook-form';
 
 interface Props {
@@ -7,44 +7,12 @@ interface Props {
   errorMessage?: string;
   formControl: any;
   name: string;
-  color?: string;
   label?: string;
+  color?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning';
 }
-// TODO errors
+
 export const CheckboxComponent = (props: Props): JSX.Element => {
-  const { formControl, name, color, label } = props;
-
-  const [severetyColor, setSeveretyColor] = useState<
-    | 'error'
-    | 'primary'
-    | 'secondary'
-    | 'info'
-    | 'success'
-    | 'warning'
-    | undefined
-  >('primary');
-
-  useEffect(() => {
-    switch (color) {
-      case 'error':
-        setSeveretyColor('error');
-        break;
-      case 'secondary':
-        setSeveretyColor('secondary');
-        break;
-      case 'success':
-        setSeveretyColor('success');
-        break;
-      case 'info':
-        setSeveretyColor('info');
-        break;
-      case 'warning':
-        setSeveretyColor('warning');
-        break;
-      default:
-        setSeveretyColor('primary');
-    }
-  }, [color]);
+  const { formControl, name, color = 'primary', label } = props;
 
   return (
     <FormControlLabel
@@ -54,7 +22,7 @@ export const CheckboxComponent = (props: Props): JSX.Element => {
           control={formControl}
           render={({ field }) => (
             <Checkbox
-              color={severetyColor}
+              color={color}
               {...field}
               checked={field.value}
               onChange={e => field.onChange(e.target.checked)}

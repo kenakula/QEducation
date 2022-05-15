@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import {
+  attachmentEntityOptions,
   NotificationAttachmentEntity,
   NotificationAttachmentLink,
   NotificationModel,
@@ -10,7 +11,6 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ModalDialog } from 'app/components/modal-dialog';
-import { attachmentEntityOptions } from 'app/constants/attachment-entity-options';
 import { Button, Grid } from '@mui/material';
 import { RadioButtonGroup } from 'app/components/form-controls/radio-button-group';
 import { InputComponent, SelectComponent } from 'app/components/form-controls';
@@ -36,7 +36,7 @@ export interface AssignFormModel {
   entity: NotificationAttachmentEntity;
   list: string[];
   message: string;
-  severety: string;
+  severety: NotificationSeverety;
 }
 
 const assignFormSchema = yup.object({

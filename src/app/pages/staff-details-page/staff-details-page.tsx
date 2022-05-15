@@ -69,15 +69,17 @@ const StaffDetailsPage = observer((): JSX.Element => {
               data={adminStore.userDetailsInfo}
             />
           </Grid>
-          <Grid xs={12} item>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Прогресс пользователя
-            </Typography>
-            <UserProgress
-              userInfo={adminStore.userDetailsInfo}
-              categories={store.roleCategories}
-            />
-          </Grid>
+          {store.roleCategories.length ? (
+            <Grid xs={12} item>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                Прогресс пользователя
+              </Typography>
+              <UserProgress
+                userInfo={adminStore.userDetailsInfo}
+                categories={store.roleCategories}
+              />
+            </Grid>
+          ) : null}
           <Grid item xs={12}>
             <UserDetailsActions
               setDeleted={setProfileDeleted}

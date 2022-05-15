@@ -160,7 +160,9 @@ export class MainPageStore {
           if (val) {
             runInAction(() => {
               this.profileInfo = val.data();
+
               this.fetchUserNotifications(this.profileInfo.uid);
+
               if (this.profileInfo.isSuperAdmin) {
                 this.isSuperAdmin = true;
               }
@@ -253,55 +255,36 @@ export class MainPageStore {
     await this.updateUserInfo(this.profileInfo.uid, data);
   };
 
-  getUserCategories = async (role?: UserRole): Promise<void> => {
+  getUserCategories = async (role: UserRole): Promise<void> => {
     await this.fetchRoles();
 
     const currentRole = this.roles.find(
       item => item.title === (role ?? this.selectedRole),
     );
 
-    if (currentRole) {
-      const categories = currentRole.categories;
-
-      runInAction(() => {
-        this.roleCategories = categories;
-      });
+    if (!currentRole) {
+      return;
     }
+
+    const arr = await this.firebase.getDocumentsFromDeepCollection<Category>(
+      FirestoreCollection.Roles,
+      [currentRole.title, FirestoreCollection.RoleCategories],
+    );
+
+    runInAction(() => {
+      this.roleCategories = arr;
+    });
   };
 
   getArticlesFromUserCategory = async (categoryId: string): Promise<void> => {
     const category = this.roleCategories.find(item => item.id === categoryId);
 
-    if (category) {
-      runInAction(() => {
-        this.userCategoryArticles = category.articles;
-      });
-    }
-  };
-
-  deleteArticleFromUserCategory = async (articleId: string): Promise<void> => {
-    if (!this.roles.length) {
-      await this.fetchRoles();
+    if (!category) {
+      return;
     }
 
-    this.roles.forEach(role => {
-      const categories = role.categories;
-
-      if (!categories.length) return;
-
-      const newCategoriesArr: Category[] = [];
-
-      categories.forEach(category => {
-        const newArticlesArr = category.articles.filter(
-          article => article.id !== articleId,
-        );
-
-        newCategoriesArr.push({ ...category, articles: newArticlesArr });
-      });
-
-      this.firebase.updateDocument(FirestoreCollection.Roles, role.title, {
-        categories: newCategoriesArr,
-      });
+    runInAction(() => {
+      this.userCategoryArticles = category.articles;
     });
   };
 
@@ -424,8 +407,6 @@ export class MainPageStore {
       await this.getUserCategories(
         this.isSuperAdmin ? this.selectedRole : this.profileInfo.role,
       );
-
-      // await this.writeDoc();
 
       runInAction(() => {
         this._bootState = BootState.Success;

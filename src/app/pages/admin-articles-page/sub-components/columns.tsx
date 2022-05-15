@@ -45,7 +45,7 @@ export const getColumns = (props: Props): GridColumn[] => {
       field: 'title',
       headerName: 'Название',
       width: 200,
-      flex: 1,
+      flex: matchTablet ? 1 : 0,
       disableColumnMenu: true,
       renderCell: (params: GridRenderCellParams) => (
         <Tooltip title={params.value}>
@@ -81,7 +81,6 @@ export const getColumns = (props: Props): GridColumn[] => {
       field: 'categories',
       headerName: 'Категории',
       width: 210,
-      flex: 1,
       headerAlign: 'center',
       sortable: false,
       filterable: false,
@@ -159,7 +158,6 @@ export const getColumns = (props: Props): GridColumn[] => {
               id: params.row.id,
               isOpen: true,
             }));
-            // adminStore.deleteArticle(params.row.id);
           }}
           showInMenu
         />,

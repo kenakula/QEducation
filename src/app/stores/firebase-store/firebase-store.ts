@@ -26,7 +26,6 @@ import {
   ref,
   StorageError,
   StorageObserver,
-  StorageReference,
   uploadBytes,
   uploadBytesResumable,
   UploadResult,
@@ -35,7 +34,6 @@ import {
 import React from 'react';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
 import { firebaseProdConfig } from 'app/constants/firebase-config';
-import { StorageFolder } from 'app/constants/storage-folder';
 
 export type NextObserverType =
   | StorageObserver<UploadTaskSnapshot>
@@ -70,6 +68,17 @@ export class FirebaseStore {
     docId: string,
   ): Promise<void | DocumentData | undefined> => {
     const reference = doc(this.store, collName, docId);
+    return getDoc(reference).catch((err: FirebaseError) => {
+      console.error('error when getting document', err);
+    });
+  };
+
+  readDeepDocument = async (
+    collName: FirestoreCollection,
+    pathSegments: string[],
+    docId: string,
+  ): Promise<void | DocumentData | undefined> => {
+    const reference = doc(this.store, collName, ...pathSegments, docId);
     return getDoc(reference).catch((err: FirebaseError) => {
       console.error('error when getting document', err);
     });

@@ -8,6 +8,7 @@ import { Main } from 'app/components/main';
 import { PageTitle } from 'app/components/typography';
 import { InputType } from 'app/constants/input-type';
 import {
+  attachmentEntityOptions,
   NotificationAttachmentEntity,
   NotificationModel,
 } from 'app/constants/notification-model';
@@ -20,7 +21,6 @@ import { useForm } from 'react-hook-form';
 import { CenteredContentBox } from './sub-components/styled-elements';
 import SendIcon from '@mui/icons-material/Send';
 import { CheckboxComponent } from 'app/components/form-controls/checkbox-component';
-import { attachmentEntityOptions } from 'app/constants/attachment-entity-options';
 import { SnackBarStateProps } from 'app/constants/snackbar-state-props';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
 import {
@@ -133,6 +133,7 @@ const AdminMailingPage = (): JSX.Element => {
           formControl={control}
           name="list"
           id="list"
+          color={watch('severety')}
           options={adminStore.articles
             .map(item => ({
               title: item.title,

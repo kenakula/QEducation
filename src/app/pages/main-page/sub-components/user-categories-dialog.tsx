@@ -17,9 +17,10 @@ import { SelectComponent } from 'app/components/form-controls';
 import { SortableList } from 'app/components/sortable-list';
 import { ModalDialog } from 'app/components/modal-dialog';
 import { SnackbarAlert } from 'app/components/snackbar-alert';
+import { ArticleModel } from 'app/constants/article-model';
 
 const schema = yup.object({
-  category: yup.string().required('Это поле обязательно'),
+  categoryId: yup.string().required('Это поле обязательно'),
   list: yup.array(),
 });
 
@@ -31,7 +32,7 @@ interface Props {
 }
 
 export interface UserCategoriesFormModel {
-  category: string;
+  categoryId: string;
   list: CategoryArticle[];
 }
 
@@ -49,17 +50,17 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
   const { formState, control, watch, handleSubmit, setValue, reset } =
     useForm<UserCategoriesFormModel>({
       defaultValues: {
-        category: '',
+        categoryId: '',
         list: list ?? store.articles,
       },
       resolver: yupResolver(schema),
     });
 
-  const watchCategory = watch('category', '');
+  const watchCategory = watch('categoryId', '');
 
   useEffect(() => {
     if (adminStore.editingUserCategory) {
-      setValue('category', adminStore.editingUserCategory);
+      setValue('categoryId', adminStore.editingUserCategory);
     }
   }, [adminStore.editingUserCategory]);
 
@@ -67,18 +68,28 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
     setValue('list', newList);
   };
 
+  const getCategoryArticles = (
+    arr: ArticleModel[] | CategoryArticle[],
+  ): CategoryArticle[] =>
+    arr.map(item => ({
+      id: item.id,
+      description: item.description,
+      title: item.title,
+    }));
+
   const onSubmit = (data: UserCategoriesFormModel): void => {
-    const finalArr = data.list.filter(
+    const filteredArticles = data.list.filter(
       item => !adminStore.excludedArticlesFromCategoryList.includes(item.id),
     );
 
+    const resultArr = getCategoryArticles(filteredArticles);
+
     adminStore
-      .setUserCategory(data.category, store.selectedRole, {
+      .setUserCategory(store.selectedRole, {
         ...data,
-        list: finalArr,
+        list: resultArr,
       })
       .then(() => {
-        store.fetchRoles();
         reset();
         setValue('list', []);
         store.resetArticles();
@@ -121,16 +132,16 @@ const UserCategoriesDialog = observer((props: Props): JSX.Element => {
           <SelectComponent
             id="user-categories-category-select"
             formControl={control}
-            name="category"
+            name="categoryId"
             options={store.categories.map((item: Category) => ({
               label: item.title,
               value: item.id,
             }))}
             placeholder="Категория"
-            error={!!formState.errors.category}
+            error={!!formState.errors.categoryId}
             errorMessage={
-              formState.errors.category
-                ? formState.errors.category.message
+              formState.errors.categoryId
+                ? formState.errors.categoryId.message
                 : undefined
             }
           />
