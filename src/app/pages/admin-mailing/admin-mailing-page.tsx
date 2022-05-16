@@ -9,7 +9,7 @@ import { PageTitle } from 'app/components/typography';
 import { InputType } from 'app/constants/input-type';
 import {
   attachmentEntityOptions,
-  NotificationAttachmentEntity,
+  EntityModel,
   NotificationModel,
 } from 'app/constants/notification-model';
 import { severetyOptions } from 'app/constants/severety-options';
@@ -59,7 +59,7 @@ const AdminMailingPage = (): JSX.Element => {
     defaultValues: {
       target: MailingTarget.All,
       severety: 'primary',
-      entity: NotificationAttachmentEntity.Article,
+      entity: EntityModel.Article,
       message: '',
       list: [],
       roles: [],

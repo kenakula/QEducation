@@ -28,6 +28,7 @@ import { SnackbarAlert } from 'app/components/snackbar-alert';
 import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
 import { StorageFolder } from 'app/constants/storage-folder';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { UserAssignments } from './sub-components/user-assignments';
 
 const MAX_IMAGE_SIZE = 2e6;
 
@@ -154,6 +155,14 @@ const ProfilePage = observer((): JSX.Element => {
                   updateFunction={store.updateUserInfo}
                 />
               ) : null}
+            </Grid>
+            <Grid item xs={12}>
+              <Typography mb={2} mt={2} variant="h5" component="h2">
+                Назначенные материалы:
+              </Typography>
+              <UserAssignments />
+            </Grid>
+            <Grid item xs={12}>
               <Typography mb={2} mt={2} variant="h5" component="h2">
                 Пользовательские данные:
               </Typography>

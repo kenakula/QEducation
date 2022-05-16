@@ -1,5 +1,5 @@
 import {
-  NotificationAttachmentEntity,
+  EntityModel,
   NotificationSeverety,
 } from 'app/constants/notification-model';
 import { RadioButtonGroupOption } from 'app/constants/radio-button-group-option';
@@ -15,7 +15,7 @@ export interface MailingFormModel {
   target: MailingTarget;
   message: string;
   severety: NotificationSeverety;
-  entity?: NotificationAttachmentEntity;
+  entity?: EntityModel;
   roles?: string[];
   users?: string[];
   list?: string[];

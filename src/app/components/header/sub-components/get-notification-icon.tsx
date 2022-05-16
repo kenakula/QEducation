@@ -6,8 +6,8 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import {
+  EntityModel,
   NotificationAttachment,
-  NotificationAttachmentEntity,
   NotificationSeverety,
 } from 'app/constants/notification-model';
 
@@ -21,13 +21,13 @@ export const getNotificationIcon = (
   }
 
   switch (attachment.entity) {
-    case NotificationAttachmentEntity.Article:
+    case EntityModel.Article:
       return <ArticleIcon color={severety} fontSize={size} />;
-    case NotificationAttachmentEntity.Checklist:
+    case EntityModel.Checklist:
       return <PlaylistAddCheckCircleIcon color={severety} fontSize={size} />;
-    case NotificationAttachmentEntity.Script:
+    case EntityModel.Script:
       return <SendIcon color={severety} fontSize={size} />;
-    case NotificationAttachmentEntity.Test:
+    case EntityModel.Test:
       return <QuizIcon color={severety} fontSize={size} />;
     default:
       return <PriorityHighIcon color="error" fontSize={size} />;

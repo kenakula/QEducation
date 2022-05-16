@@ -1,7 +1,11 @@
 import { BootState } from 'app/constants/boot-state';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
-import { UserModel } from 'app/constants/user-model';
+import {
+  UserAssignment,
+  UserAssignmentsObject,
+  UserModel,
+} from 'app/constants/user-model';
 import { Auth, getAuth } from 'firebase/auth';
 import { makeAutoObservable, runInAction } from 'mobx';
 import React from 'react';
@@ -39,6 +43,13 @@ export class MainPageStore {
   public get isInited(): boolean {
     return this._isInited;
   }
+
+  public userAssignments: UserAssignmentsObject = {
+    articles: [],
+    tests: [],
+    checklists: [],
+    scripts: [],
+  };
 
   public userCategoryArticles: CategoryArticle[] = [];
   public selectedContentTab: PageContentType = PageContentType.Categories;
@@ -162,6 +173,7 @@ export class MainPageStore {
               this.profileInfo = val.data();
 
               this.fetchUserNotifications(this.profileInfo.uid);
+              this.fetchUserAssignments(this.profileInfo.uid);
 
               if (this.profileInfo.isSuperAdmin) {
                 this.isSuperAdmin = true;
@@ -172,6 +184,52 @@ export class MainPageStore {
 
       await this.getUserImage();
     }
+  };
+
+  fetchUserAssignments = async (uid: string): Promise<void> => {
+    this.firebase
+      .getDocumentsFromDeepCollection<UserAssignment>(
+        FirestoreCollection.Users,
+        [uid, FirestoreCollection.UserArticles],
+      )
+      .then(result => {
+        runInAction(() => {
+          this.userAssignments.articles.push(...result);
+        });
+      });
+
+    this.firebase
+      .getDocumentsFromDeepCollection<UserAssignment>(
+        FirestoreCollection.Users,
+        [uid, FirestoreCollection.UserTests],
+      )
+      .then(result => {
+        runInAction(() => {
+          this.userAssignments.tests.push(...result);
+        });
+      });
+
+    this.firebase
+      .getDocumentsFromDeepCollection<UserAssignment>(
+        FirestoreCollection.Users,
+        [uid, FirestoreCollection.UserChecklists],
+      )
+      .then(result => {
+        runInAction(() => {
+          this.userAssignments.checklists.push(...result);
+        });
+      });
+
+    this.firebase
+      .getDocumentsFromDeepCollection<UserAssignment>(
+        FirestoreCollection.Users,
+        [uid, FirestoreCollection.UserScripts],
+      )
+      .then(result => {
+        runInAction(() => {
+          this.userAssignments.scripts.push(...result);
+        });
+      });
   };
 
   fetchUserNotifications = async (uid: string): Promise<void> => {

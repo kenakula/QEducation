@@ -1,4 +1,5 @@
 import { Gender } from './gender';
+import { EntityModel, NotificationAttachmentItem } from './notification-model';
 import { UserRole } from './user-roles';
 
 export interface UserModel {
@@ -9,8 +10,19 @@ export interface UserModel {
   middleName?: string;
   email: string;
   role: UserRole;
-  birthDate?: Date;
   gender?: Gender;
   readArticles: string[];
-  image?: string;
+}
+
+export interface UserAssignment {
+  entity: EntityModel;
+  id: string;
+  item: NotificationAttachmentItem;
+}
+
+export interface UserAssignmentsObject {
+  articles: UserAssignment[];
+  tests: UserAssignment[];
+  checklists: UserAssignment[];
+  scripts: UserAssignment[];
 }

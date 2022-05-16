@@ -16,6 +16,7 @@ import { useFirebaseContext } from 'app/stores/firebase-store/firebase-store';
 import { StorageFolder } from 'app/constants/storage-folder';
 import { Main } from 'app/components/main';
 import { TechnicalIssues } from 'app/components/technical-issues';
+import { UserAssignments } from './sub-components/user-assignments';
 
 interface PageParams {
   staffId: string;
@@ -80,6 +81,10 @@ const StaffDetailsPage = observer((): JSX.Element => {
               />
             </Grid>
           ) : null}
+          <Grid item xs={12}>
+            <Typography variant="h5">Назначенные материалы</Typography>
+            <UserAssignments />
+          </Grid>
           <Grid item xs={12}>
             <UserDetailsActions
               setDeleted={setProfileDeleted}

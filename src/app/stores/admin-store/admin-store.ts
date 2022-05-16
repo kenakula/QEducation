@@ -4,13 +4,14 @@ import { BootState } from 'app/constants/boot-state';
 import { FirebaseStore } from '../firebase-store/firebase-store';
 import { ArticleModel } from 'app/constants/article-model';
 import { FirestoreCollection } from 'app/constants/firestore-collections';
-import { UserModel } from 'app/constants/user-model';
+import { UserAssignment, UserModel } from 'app/constants/user-model';
 import { nanoid } from 'nanoid';
 import { Category, CategoryArticle } from 'app/constants/category-model';
 import { IRole, UserRole } from 'app/constants/user-roles';
 import { UserCategoriesFormModel } from 'app/pages/main-page/sub-components/user-categories-dialog';
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { NotificationModel } from 'app/constants/notification-model';
+import { getAssignmentPath } from 'app/utils/get-assignment-path';
 
 export class AdminStore {
   private _bootState: BootState = BootState.None;
@@ -360,16 +361,41 @@ export class AdminStore {
       .then(() => this.getUsers());
   };
 
+  addAssignments = async (
+    list: UserAssignment[],
+    userId: string,
+  ): Promise<void> => {
+    list.forEach(item => {
+      this.firebase.addDocToDeepCollection(
+        FirestoreCollection.Users,
+        [userId, getAssignmentPath(item)],
+        nanoid(),
+        item,
+      );
+    });
+  };
+
   sendNotification = async (
     data: NotificationModel,
     userId: string,
-  ): Promise<void> =>
-    this.firebase.addDocToDeepCollection(
+  ): Promise<void> => {
+    if (data.attachment) {
+      const assignments: UserAssignment[] = data.attachment.links.map(item => ({
+        entity: data.attachment!.entity,
+        item,
+        id: item.link,
+      }));
+
+      await this.addAssignments(assignments, userId);
+    }
+
+    return this.firebase.addDocToDeepCollection(
       FirestoreCollection.Users,
       [userId, FirestoreCollection.Notifications],
       data.id,
       data,
     );
+  };
 
   init = async (): Promise<void> => {
     this._bootState = BootState.Loading;

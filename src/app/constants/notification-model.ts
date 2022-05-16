@@ -2,21 +2,22 @@ import { Timestamp } from 'firebase/firestore';
 import { RadioButtonGroupOption } from './radio-button-group-option';
 
 /* eslint-disable no-shadow */
-export enum NotificationAttachmentEntity {
+export enum EntityModel {
   Article = 'article',
   Test = 'test',
   Checklist = 'checklist',
   Script = 'script',
 }
 
-export interface NotificationAttachmentLink {
+export interface NotificationAttachmentItem {
   title: string;
   link: string;
+  attachmentId: string;
 }
 
 export interface NotificationAttachment {
-  entity: NotificationAttachmentEntity;
-  links: NotificationAttachmentLink[];
+  entity: EntityModel;
+  links: NotificationAttachmentItem[];
 }
 
 export type NotificationSeverety =
@@ -38,21 +39,21 @@ export interface NotificationModel {
 
 export const attachmentEntityOptions: RadioButtonGroupOption[] = [
   {
-    value: NotificationAttachmentEntity.Article,
+    value: EntityModel.Article,
     label: 'Статья',
   },
   {
-    value: NotificationAttachmentEntity.Test,
+    value: EntityModel.Test,
     label: 'Тест',
     disabled: true,
   },
   {
-    value: NotificationAttachmentEntity.Checklist,
+    value: EntityModel.Checklist,
     label: 'Чеклист',
     disabled: true,
   },
   {
-    value: NotificationAttachmentEntity.Script,
+    value: EntityModel.Script,
     label: 'Скрипты',
     disabled: true,
   },

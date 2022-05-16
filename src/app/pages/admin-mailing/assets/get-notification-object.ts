@@ -1,6 +1,6 @@
 import { AutocompleteOption } from 'app/constants/autocomplete-option';
 import {
-  NotificationAttachmentLink,
+  NotificationAttachmentItem,
   NotificationModel,
 } from 'app/constants/notification-model';
 import { Routes } from 'app/routes/routes';
@@ -12,7 +12,7 @@ import { MailingFormModel } from './mailing-form-model';
 export const getNotificationObject = (
   data: MailingFormModel,
 ): NotificationModel => {
-  let linksList: NotificationAttachmentLink[] = [];
+  let linksList: NotificationAttachmentItem[] = [];
 
   if (data.list) {
     linksList = data.list.map(item => ({
@@ -20,6 +20,7 @@ export const getNotificationObject = (
       link: generatePath(Routes.SINGLE_ARTICLE, {
         articleId: (item as unknown as AutocompleteOption).id,
       }),
+      attachmentId: (item as unknown as AutocompleteOption).id,
     }));
   }
 

@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import {
   attachmentEntityOptions,
-  NotificationAttachmentEntity,
-  NotificationAttachmentLink,
+  EntityModel,
+  NotificationAttachmentItem,
   NotificationModel,
   NotificationSeverety,
 } from 'app/constants/notification-model';
@@ -33,7 +33,7 @@ import { AutocompleteOption } from 'app/constants/autocomplete-option';
 import { getButtonSeveretyColor } from 'app/utils/color-helpers';
 
 export interface AssignFormModel {
-  entity: NotificationAttachmentEntity;
+  entity: EntityModel;
   list: string[];
   message: string;
   severety: NotificationSeverety;
@@ -73,7 +73,7 @@ export const AssignModal = (props: Props): JSX.Element => {
     setValue,
   } = useForm<AssignFormModel>({
     defaultValues: {
-      entity: NotificationAttachmentEntity.Article,
+      entity: EntityModel.Article,
       list: [],
       message: '',
       severety: 'primary',
@@ -81,15 +81,15 @@ export const AssignModal = (props: Props): JSX.Element => {
     resolver: yupResolver(assignFormSchema),
   });
 
-  const setMessage = (entity: NotificationAttachmentEntity): void => {
+  const setMessage = (entity: EntityModel): void => {
     switch (entity) {
-      case NotificationAttachmentEntity.Test:
+      case EntityModel.Test:
         setValue('message', ASSIGN_TEST_TEXT);
         break;
-      case NotificationAttachmentEntity.Checklist:
+      case EntityModel.Checklist:
         setValue('message', ASSIGN_CHECKLIST_TEXT);
         break;
-      case NotificationAttachmentEntity.Script:
+      case EntityModel.Script:
         setValue('message', ASSIGN_SCRIPT_TEXT);
         break;
       default:
@@ -109,11 +109,12 @@ export const AssignModal = (props: Props): JSX.Element => {
   }, [watch('entity')]);
 
   const generateNotification = (data: AssignFormModel): NotificationModel => {
-    const list: NotificationAttachmentLink[] = data.list.map(item => ({
+    const list: NotificationAttachmentItem[] = data.list.map(item => ({
       title: (item as unknown as AutocompleteOption).title,
       link: generatePath(Routes.SINGLE_ARTICLE, {
         articleId: (item as unknown as AutocompleteOption).id,
       }),
+      attachmentId: (item as unknown as AutocompleteOption).id,
     }));
 
     return {
