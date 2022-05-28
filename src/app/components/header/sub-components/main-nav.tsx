@@ -27,7 +27,6 @@ export const commonNavList: NavItem[] = [
     text: 'Тесты',
     link: Routes.TESTS,
     icon: <QuizIcon />,
-    disabled: true,
   },
   {
     text: 'Профиль',
@@ -46,6 +45,11 @@ export const adminNavList: NavItem[] = [
     text: 'Все статьи',
     link: Routes.ADMIN_ARTICLES,
     icon: <ArticleIcon />,
+  },
+  {
+    text: 'Все тесты',
+    link: Routes.ADMIN_TESTS,
+    icon: <QuizIcon />,
   },
   {
     text: 'Категории',

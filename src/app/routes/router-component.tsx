@@ -41,6 +41,9 @@ const NotFoundPage = lazy(
 const RestorePassword = lazy(
   () => import('app/pages/restore-password/restore-password'),
 );
+const AdminTestsPage = lazy(
+  () => import('app/pages/admin-tests-page/admin-tests-page'),
+);
 
 const RouterComponent = (): JSX.Element => (
   <Router>
@@ -107,6 +110,12 @@ const RouterComponent = (): JSX.Element => (
             adminRoute
             path={Routes.ADMIN_MAILING}
             component={AdminMailing}
+          />
+          <PrivateRoute
+            exact
+            adminRoute
+            path={Routes.ADMIN_TESTS}
+            component={AdminTestsPage}
           />
 
           <Route exact path={Routes.NOT_FOUND} component={NotFoundPage} />

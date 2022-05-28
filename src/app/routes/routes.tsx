@@ -13,6 +13,7 @@ export class Routes {
   public static readonly PROFILE = '/profile';
   public static readonly SINGLE_ARTICLE = '/articles/:articleId';
   public static readonly TESTS = '/tests';
+  public static readonly TEST_PAGE = '/tests/:testId';
 
   // admin
   public static readonly ADMIN = '/admin';
@@ -21,6 +22,7 @@ export class Routes {
   public static readonly ADMIN_STAFF = '/admin/staff';
   public static readonly ADMIN_STAFF_DETAILS = '/admin/staff/:staffId';
   public static readonly ADMIN_TESTS = '/admin/tests';
+  public static readonly ADMIN_TEST_EDITOR = '/admin/tests/:testId';
   public static readonly ADMIN_CATEGORIES = '/admin/categories';
   public static readonly ADMIN_MAILING = '/admin/mailing';
 }

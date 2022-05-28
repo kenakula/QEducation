@@ -12,6 +12,7 @@ import { UserCategoriesFormModel } from 'app/pages/main-page/sub-components/user
 import { VebinarModel } from 'app/constants/vebinar-model';
 import { NotificationModel } from 'app/constants/notification-model';
 import { getAssignmentPath } from 'app/utils/get-assignment-path';
+import { TestModel, tests } from 'app/constants/test-model';
 
 export class AdminStore {
   private _bootState: BootState = BootState.None;
@@ -22,13 +23,14 @@ export class AdminStore {
   public roles: IRole[] = [];
   public articles: ArticleModel[] = [];
   public articlesLoading: boolean;
+  public tests: TestModel[] = [];
+  public testsLoading: boolean;
   public categories: Category[] = [];
   public editingUserCategory: string;
   public excludedArticlesFromCategoryList: string[] = [];
   public users: UserModel[] = [];
   public usersLoading: boolean;
   public userDetailsInfo: UserModel;
-
   public editingArticle: ArticleModel;
   public articleAutoSave: boolean = false;
 
@@ -395,6 +397,12 @@ export class AdminStore {
       data.id,
       data,
     );
+  };
+
+  fetchTests = async (): Promise<void> => {
+    this.testsLoading = true;
+    this.tests = tests;
+    this.testsLoading = false;
   };
 
   init = async (): Promise<void> => {
